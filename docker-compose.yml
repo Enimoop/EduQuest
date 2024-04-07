@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: APIDockerfile
+    volumes:
+      - ./api:/project/api
+      - ./Model:/project/model
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+
+  db:
+    build:
+      context: .
+      dockerfile: DBDockerfile
+    environment:
+          MYSQL_DATABASE: 'bddEduQuest'
+          MYSQL_USER: 'user'
+          MYSQL_PASSWORD: 'passwd'
+          MYSQL_ROOT_PASSWORD: 'password'
+
+  phpmyadmin:
+          image: phpmyadmin/phpmyadmin
+          environment:
+               PMA_HOST: db
+          ports:
+               - 8081:80
+
+volumes:
+  api:
+  Model:
