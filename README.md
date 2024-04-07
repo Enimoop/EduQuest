@@ -73,3 +73,28 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+
+# Other dependencies
+
+Bootstrap 
+
+```bash
+pnpm install bootstrap
+```
+
+Axios 
+
+```bash
+pnpm install axios
+```
+
+
+# Docker
+
+to build your container
+
+```bash
+docker compose up -d --build
+```
+
