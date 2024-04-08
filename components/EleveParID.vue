@@ -22,7 +22,8 @@
   const idEleve = ref('');
 
   const afficherDetailsParId = () => {
-    axios.get(`http://localhost:3001/eleves/${idEleve.value}`)
+    const id = parseInt(idEleve.value);
+    axios.get(`http://localhost:3001/eleves/${id}`)
       .then(response => {
         eleve.value = response.data;
       })

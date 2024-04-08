@@ -3,6 +3,8 @@
     
     <ListeEleves :eleves="eleves" />
 
+    <br>
+
     <DetailsEleve :eleve="eleveSelectionne" @afficher-details-par-id="afficherDetails" />
   
 
