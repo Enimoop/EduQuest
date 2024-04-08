@@ -1,12 +1,17 @@
 <template>
-    <div>
-      <h1>Liste des élèves</h1>
-      <ul class = "list-group">
+    <div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <h3>Liste des élèves</h3>
+      <ul class="list-group">
         <li v-for="eleve in eleves" :key="eleve.id_u" class="list-group-item">
           {{ eleve.nom }} {{ eleve.prenom }}
         </li>
       </ul>
     </div>
+    
+  </div>
+</div>
   </template>
   
   <script setup>

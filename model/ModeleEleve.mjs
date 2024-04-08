@@ -22,7 +22,8 @@ class ModeleEleve {
   }
 
   recupererEleveParId(id, callback) {
-    const query = 'SELECT * FROM eleve WHERE id_u = ?';
+    const query = 'SELECT * FROM Eleve WHERE id_u = ?';
+    console.log(id);
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
