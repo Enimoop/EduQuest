@@ -1,37 +1,23 @@
-<template>
-  <div>
-    
-    <ListeEleves :eleves="eleves" />
+<script setup lang="ts">
+const router = useRouter()
 
-    <br>
-
-    <DetailsEleve :eleve="eleveSelectionne" @afficher-details-par-id="afficherDetails" />
+/* const nav = [
+  { label: 'contenu', to: '/contenu' },
   
+] */
 
-    <ListeProfesseurs :professeurs="professeurs" />
+import Header from './components/Header.vue';
+import 'bootstrap/dist/css/bootstrap.css'
+</script>
 
-    <ListeMatieres :matieres="matieres" />
 
-    
-   
-  </div>
+
+<template>
+<Header />
+
+  
+  <NuxtPage />
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import 'bootstrap/dist/css/bootstrap.css'
-import ListeEleves from './components/ListeEleve.vue';
-import ListeProfesseurs from './components/ListeProfesseur.vue';
-import DetailsEleve from './components/EleveParID.vue';
-import ListeMatieres from './components/ListeMatiere.vue';
 
 
-const eleves = ref([]);
-const professeurs = ref([]);
-const matieres = ref([]);
-const eleveSelectionne = ref(null);
-
-const afficherDetails = (eleve) => {
-  eleveSelectionne.value = eleve;
-};
-</script>
