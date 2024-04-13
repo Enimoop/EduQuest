@@ -33,6 +33,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 const contenus = ref([]);
+const libelle_matiere = ref('');
 
 
 onMounted(() => {
@@ -41,6 +42,7 @@ onMounted(() => {
   axios.get(`http://localhost:3001/contenus/${id}`)
     .then(response => {
       contenus.value = response.data;
+      libelle_matiere.value = response.data[0].libelle_matiere;
     })
     .catch(error => {
       console.error('Error fetching contents:', error);
