@@ -1,22 +1,21 @@
 <script setup lang="ts">
 const router = useRouter()
 
-/* const nav = [
-  { label: 'contenu', to: '/contenu' },
-  
-] */
 
 import Header from './components/Header.vue';
-import 'bootstrap/dist/css/bootstrap.css'
+import Footer from './components/Footer.vue';
+
+ 
 </script>
 
 
 
 <template>
-<Header />
-
-  
-  <NuxtPage />
+  <div class="main-container">
+    <Header />
+    <NuxtPage />
+    <Footer />
+  </div>
 </template>
 
 
