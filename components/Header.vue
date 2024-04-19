@@ -32,7 +32,7 @@
               </a>
               <ul class="dropdown-menu" aria-labelledby="matieresDropdown">
                 <li><router-link to="/cours" class="dropdown-item">Cours</router-link></li>
-                <li><router-link to="/exercices" class="dropdown-item">Exercices</router-link></li>
+                <li><router-link to="/exercice" class="dropdown-item">Exercices</router-link></li>
               </ul>
             </li>
           </ul>
