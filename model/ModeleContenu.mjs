@@ -96,7 +96,23 @@ class ModeleContenu {
     });
   }
 
-
+  recupererTousLesExercices(callback) {
+    const query = 'SELECT * from Exercice';
+    this.connection.query(query, (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      const cours = results.map(row => ({
+        id: row.id_contenu,
+        description_contenu: row.description_contenu,
+        date_contenu: row.date_contenu,
+        id_matiere: row.id_matiere,
+        type_exercice: row.type_exercice
+      }));
+      callback(null, cours);
+    });
+  }
 
 }
 
