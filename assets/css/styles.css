@@ -1,0 +1,121 @@
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.nuxt-page {
+  flex-grow: 1;
+}
+
+
+  div.matiere-card {
+    background-color: #daecf1;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  
+  div.matiere-card:hover {
+    background-color: #daecf1;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  .card-img-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+div.contenu-card {
+    background-color: #f8f9fa;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  }
+
+div.contenu-card:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .card-img-top {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .card-img-container:hover .card-img-top {
+    transform: scale(1.1);
+  }
+
+  nav.my-navbar {
+    background-color: #343a40 !important;
+  }
+  
+  .navbar-brand {
+    color: #fff;
+    font-weight: bold;
+    
+  }
+  
+  .navbar-nav .nav-link {
+    color: #ddeaee;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .navbar-nav .nav-link:hover {
+    background-color: #495057;
+    color: #fff;
+  }
+  
+  .navbar-collapse {
+    justify-content: center;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dropdown-menu .dropdown-item {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .dropdown-menu .dropdown-item:last-child {
+    border-bottom: none;
+  }
+  
+  .dropdown-menu .dropdown-item:hover {
+    background-color: #495057;
+    color: #fff;
+  }
+  
+  #matieresDropdown:hover .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown:hover>.dropdown-menu {
+    display: block;
+  }
+
+  .dropdown>.dropdown-toggle:active {
+    /*Without this, clicking will make it sticky*/
+      pointer-events: none;
+  }
+
+
+  .my-footer {
+    position: absolute ;
+    bottom: 0 ;
+    width: 100%;
+  }
