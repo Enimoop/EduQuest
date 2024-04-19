@@ -1,7 +1,7 @@
 <template>
     <div>
         <br>
-    <ListeMatiere :matieres="matieres" />
+    <ListeContenu :contenus="contenus" />
     <NuxtPage />
 </div>
 </template>
@@ -9,10 +9,10 @@
 
 <script setup>
 import { ref } from 'vue';
+import ListeContenu from '../components/ListeContenu.vue';
 import 'bootstrap/dist/css/bootstrap.css'
-import ListeMatiere from '../components/ListeMatiere.vue';
 
 
-const matieres = ref([]);
+const contenus = ref([]);
 
 </script>
