@@ -7,7 +7,7 @@ class ModeleContenu {
   }
 
   recupererTousLesContenus(callback) {
-    const query = 'SELECT * from Contenu c, Matiere m where c.id_matiere = m.id_matiere';
+    const query = 'SELECT * from Contenu';
     this.connection.query(query, (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -18,35 +18,81 @@ class ModeleContenu {
         description_contenu: row.description_contenu,
         date_contenu: row.date_contenu,
         id_matiere: row.id_matiere,
-        libelle_matiere: row.libelle_matiere
+        type_contenu: row.type_contenu
       }));
       callback(null, contenus);
     });
   }
 
 
-  recupererContenusParMatiere(id,callback) {
-    const query = 'SELECT * from Contenu c, Matiere m where c.id_matiere = m.id_matiere and m.id_matiere = ?';
-    this.connection.query(query,[id], (error, results, fields) => {
+  
+
+
+  recupererContenuParId(id, callback) {
+    const query = 'SELECT id_contenu, description_contenu, date_contenu, c.id_matiere, libelle_matiere, type_contenu FROM Contenu c, Matiere m WHERE c.id_matiere = m.id_matiere AND id_contenu = ?';
+    this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
         return;
       }
       if (results.length === 0) {
-        callback(null, null); // Aucun contenu dans cette matière
+        callback(null, null); // Aucun contenu trouvé avec cet ID
         return;
       }
-      const contenus_matière = results.map(row => ({
+      const contenu = {
+        id: results[0].id_contenu,
+        description_contenu: results[0].description_contenu,
+        date_contenu: results[0].date_contenu,
+        id_matiere: results[0].id_matiere,
+        libelle_matiere: results[0].libelle_matiere,
+        type_contenu: results[0].type_contenu
+
+      };
+      callback(null, contenu);
+    });
+  }
+
+
+  recupererTousLesCours(callback) {
+    const query = 'SELECT * from Cours';
+    this.connection.query(query, (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      const cours = results.map(row => ({
         id: row.id_contenu,
         description_contenu: row.description_contenu,
         date_contenu: row.date_contenu,
         id_matiere: row.id_matiere,
-        libelle_matiere: row.libelle_matiere,
-        type_contenu: row.type_contenu
+        nom_fichier: row.nom_fichier
       }));
+      callback(null, cours);
+    });
+  }
 
 
-      callback(null, contenus_matière);
+  recupererCoursParId(id, callback) {
+    const query = 'SELECT id_contenu, description_contenu, date_contenu, c.id_matiere, libelle_matiere, nom_fichier FROM Cours c, Matiere m WHERE c.id_matiere = m.id_matiere AND id_contenu = ?';
+    this.connection.query(query, [id], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      if (results.length === 0) {
+        callback(null, null); // Aucun contenu trouvé avec cet ID
+        return;
+      }
+      const cours = {
+        id: results[0].id_contenu,
+        description_contenu: results[0].description_contenu,
+        date_contenu: results[0].date_contenu,
+        id_matiere: results[0].id_matiere,
+        libelle_matiere: results[0].libelle_matiere,
+        nom_fichier: results[0].nom_fichier
+
+      };
+      callback(null, cours);
     });
   }
 
