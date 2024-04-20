@@ -114,6 +114,33 @@ class ModeleContenu {
     });
   }
 
+
+  recupererExerciceEtQuestionParId(id, callback) {
+    const query = 'SELECT id_question, e.id_contenu, description_contenu, date_contenu, e.id_matiere, libelle_matiere, intitule, type_exercice, reponse FROM Exercice e, Matiere m, Question q WHERE e.id_matiere = m.id_matiere AND e.id_contenu = q.id_contenu and e.id_contenu = ?';
+    this.connection.query(query, [id], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+    
+      const questions = results.map(row => ({
+        id: row.id_question,
+        id_contenu: row.id_contenu,
+        description_contenu: row.description_contenu,
+        date_contenu: row.date_contenu,
+        id_matiere: row.id_matiere,
+        libelle_matiere: row.libelle_matiere,
+        intitule: row.intitule,
+        type_exercice: row.type_exercice,
+        reponse: row.reponse
+
+      }));
+      callback(null, questions);
+    });
+  }
+
 }
+
+
 
 export default ModeleContenu;

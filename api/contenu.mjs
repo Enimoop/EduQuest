@@ -54,6 +54,22 @@ router.get('/exercices', (req, res) => {
 
 });
 
+
+router.get('/exercices/:id', (req, res) => {
+  const id = req.params.id;
+  modeleContenu.recupererExerciceEtQuestionParId(id, (error, questions) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la récupération du quiz' });
+      return;
+    }
+    if (!questions) {
+      res.status(404).json({ message: 'Quiz non trouvé' });
+      return;
+    }
+    res.json(questions);
+  });
+});
+
 router.get('/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.recupererContenuParId(id, (error, contenu) => {
