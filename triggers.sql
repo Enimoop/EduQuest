@@ -12,7 +12,7 @@ then
 end if;
 
 
-insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu,new.id_matiere,'Cours'); 
+insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu,new.id_matiere,new.id_u,'Cours'); 
 select count(*) into s 
  from Cours 
  where id_contenu=new.id_contenu ; 
@@ -58,7 +58,7 @@ then
 end if;
 
 
-insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu, new.id_matiere, 'Exercice'); 
+insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu, new.id_matiere,new.id_u, 'Exercice'); 
 select count(*) into s 
  from Exercice 
  where id_contenu=new.id_contenu ; 
@@ -104,7 +104,7 @@ then
 end if;
 
 
-insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu,new.id_matiere,'Quete'); 
+insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu,new.id_matiere,new.id_u,'Quete'); 
 select count(*) into s 
  from Quete 
  where id_contenu=new.id_contenu ; 
@@ -127,7 +127,7 @@ then
 end if;
 
 
-insert into Quete values(new.id_contenu,new.description_contenu,new.date_contenu,new.xp,new.id_matiere,'Guilde'); 
+insert into Quete values(new.id_contenu,new.description_contenu,new.date_contenu,new.xp,new.id_matiere,new.id_u,'Guilde'); 
 select count(*) into s 
  from Quetes_jour 
  where id_contenu=new.id_contenu ; 
@@ -150,7 +150,7 @@ then
 end if;
 
 
-insert into Quete values(new.id_contenu,new.description_contenu,new.date_contenu,new.xp,new.id_matiere,'Journaliere'); 
+insert into Quete values(new.id_contenu,new.description_contenu,new.date_contenu,new.xp,new.id_matiere,new.id_u,'Journaliere'); 
 select count(*) into s 
  from Quetes_jour 
  where id_contenu=new.id_contenu ; 
