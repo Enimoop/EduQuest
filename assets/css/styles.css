@@ -115,7 +115,90 @@ div.contenu-card:hover {
 
 
   .my-footer {
-    position: absolute ;
-    bottom: 0 ;
+    
+    bottom: 0;
     width: 100%;
+    margin-top: auto;
   }
+
+  .container {
+    max-width: 600px;
+  }
+  
+  .card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .form-check {
+    margin-top: 0.5rem;
+  }
+  
+  h1.quiz-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #343a40;
+  }
+  
+  .card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .form-check {
+    margin-top: 0.5rem;
+  }
+  
+  button.sub-btn {
+    margin-top: 1rem;
+  }
+
+  .container-cours {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .title-cours {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #444;
+  }
+  
+  .cours-details {
+    background-color: #f4f4f4;
+    padding: 2rem;
+    border-radius: 5px;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cours-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .cours-matiere {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .pdf-container {
+    margin-top: 2rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
