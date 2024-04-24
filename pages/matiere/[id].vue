@@ -1,9 +1,7 @@
 <template>
-    <NuxtLayout layout="default">
-        <div>
-            <ContenusParMatiere :contenus_matiere="contenus_matiere" />
-        </div>
-    </NuxtLayout>
+    <div>
+        <ContenusParMatiere :contenus_matiere="contenus_matiere" />
+    </div>
 </template>
 
 

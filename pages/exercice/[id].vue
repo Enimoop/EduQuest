@@ -1,10 +1,7 @@
 <template>
-  <NuxtLayout layout="default">
-    <div>
-    
+  <div>
     <ExerciceParID :exercice="exercice" />
   </div>
-  </NuxtLayout>
 </template>
 
 <script setup>
