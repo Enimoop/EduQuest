@@ -1,22 +1,7 @@
-<script setup lang="ts">
-const router = useRouter()
-
-
-import Header from './components/Header.vue';
-import Footer from './components/Footer.vue';
-
- 
-</script>
-
-
-
 <template>
-  <div class="main-container">
-    <Header />
-    <NuxtPage />
-    <Footer />
-  </div>
+  <NuxtPage />
 </template>
 
-
-
+<script setup>
+// Pas de logique spécifique à ajouter ici, car le layout global est déplacé vers layouts/default.vue
+</script>

@@ -1,8 +1,10 @@
 <template>
+  <NuxtLayout layout="default">
     <div>
     
     <CoursParID :cours="cours" />
   </div>
+  </NuxtLayout>
 </template>
 
 <script setup>
