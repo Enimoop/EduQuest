@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxtjs/composition-api": "^0.34.0",
     "axios": "^1.6.8",
+    "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
     "bulma": "^1.0.0",
     "date-fns": "^3.6.0",
