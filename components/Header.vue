@@ -38,9 +38,16 @@
           </ul>
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <router-link to="/profil" class="nav-link">
-                <!-- <img src="path/to/profile-image.jpg" alt="Profile image" class="rounded-circle me-2" width="32" height="32"> -->
+              <!-- Bouton de déconnexion -->
+              <button v-if="isLoggedIn" @click="handleLogout" class="btn btn-outline-light nav-link">Se déconnecter</button>
+            </li>
+            <li class="nav-item">
+              <router-link v-if="isLoggedIn" to="/profil" class="nav-link">
                 Mon Profil
+              </router-link>
+              <!-- Lien de connexion -->
+              <router-link v-else to="/connexion" class="nav-link">
+                Se connecter
               </router-link>
             </li>
           </ul>
@@ -50,8 +57,22 @@
   </header>
 </template>
 <script setup>
-import { defineProps } from 'vue';
+
 import { RouterLink } from 'vue-router';
+import { logout } from '~/utils/session';
+
+const router = useRouter();
+
+const handleLogout = () => {
+  logout();
+ 
+  router.push('/');
+}
+
+const props = defineProps({
+  isLoggedIn: Boolean
+});
+
 </script>
 
 <style>
