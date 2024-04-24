@@ -21,6 +21,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { createSession } from '~/utils/session';
+import { hashPassword } from '~/utils/auth.mjs';
 
 
 
@@ -35,7 +36,7 @@ const submitForm = () => {
     axios.get(`http://localhost:3001/profils/${email.value}`)
         .then(response => {
             const compte = response.data;
-            if (compte && compte.mdp === password.value) {
+            if (compte && comparePassword(password.value, compte.mdp)) {
                 console.log('Connexion réussie');
 
                 createSession(compte);
@@ -45,7 +46,7 @@ const submitForm = () => {
             }
         })
         .catch(error => {
-            if (error.response.status === 404) {
+            if (error.response && error.response.status === 404) {
                 alert('Aucun compte trouvé pour cet email');
             } else {
                 console.error('Erreur lors de la récupération du compte:', error);
