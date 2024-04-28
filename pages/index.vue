@@ -1,12 +1,16 @@
-
-
 <template>
-  <NuxtLayout layout="default">
-    <div>
-      <br>
-      <h1>Accueil</h1>
-      <p>Bienvenue sur notre site de gestion de contenu.</p>
-      <p>Vous pouvez vous connecter pour accéder à votre espace personnel.</p>
-    </div>
-  </NuxtLayout>
+   <NuxtLayout layout="default">
+  home
+  <div>{{ token || "pas de token" }}</div>
+  <div>
+    <h1>Home</h1>
+    <p>Welcome to EduQuest</p>
+  </div>
+</NuxtLayout>
 </template>
+
+<script setup lang="ts">
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
+const { data: token } = await useFetch("/api/token", { headers });
+</script>

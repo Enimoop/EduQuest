@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   api:
@@ -18,17 +18,19 @@ services:
       context: .
       dockerfile: DBDockerfile
     environment:
-          MYSQL_DATABASE: 'bddEduQuest'
-          MYSQL_USER: 'user'
-          MYSQL_PASSWORD: 'passwd'
-          MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: "bddEduQuest"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "passwd"
+      MYSQL_ROOT_PASSWORD: "password"
+    ports:
+      - "3306:3306"
 
   phpmyadmin:
-          image: phpmyadmin/phpmyadmin
-          environment:
-               PMA_HOST: db
-          ports:
-               - 8081:80
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+    ports:
+      - 8081:80
 
 volumes:
   api:
