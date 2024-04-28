@@ -3,7 +3,7 @@ import mysql from "mysql2";
 export default function createConnection() {
   // Configurez MySQL
   const connection = mysql.createConnection({
-    host: "localhost",
+    host: "db",
     user: "root",
     password: "password",
     database: "bddEduQuest",
