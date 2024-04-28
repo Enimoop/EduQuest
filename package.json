@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "docker:db": "docker build -t eduquest-db -f DBDockerfile .",
+    "docker:api": "docker build -t eduquest-api -f APIDockerfile ."
   },
   "dependencies": {
     "@nuxtjs/composition-api": "^0.34.0",
@@ -15,11 +17,13 @@
     "bootstrap": "^5.3.3",
     "bulma": "^1.0.0",
     "date-fns": "^3.6.0",
+    "mysql2": "^3.9.7",
     "nuxt": "^3.11.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
-    "@nuxtjs/style-resources": "^1.2.2"
+    "@nuxtjs/style-resources": "^1.2.2",
+    "@sidebase/nuxt-auth": "^0.7.1"
   }
 }
