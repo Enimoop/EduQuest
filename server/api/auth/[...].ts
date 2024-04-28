@@ -2,6 +2,7 @@ import { NuxtAuthHandler } from "#auth";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import ModeleProfil from "~/model/ModeleProfil.mjs";
+import axios from 'axios';
 
 export default NuxtAuthHandler({
   pages: {
@@ -21,20 +22,16 @@ export default NuxtAuthHandler({
     CredentialsProvider.default({
       name: "Credentials",
 
-      async authorize(credentials: any) {
-        //Pas safe pour la prod
-
-        const modele = new ModeleProfil();
-        const user = await new Promise<any>((resolve, reject) => {
-          modele.recupererUnCompte(credentials.email, (err: any, user: any) => {
-            if (err) reject(err);
-            else resolve(user);
-          });
-        });
-
-        if (user == null) return null;
-
-        if (user.mdp === credentials.password) return user;
+      async authorize(credentials : any) {
+        try {
+          const response = await axios.get(`http://localhost:3001/profils/${credentials.email}`);
+          const user = response.data;
+          // Vérifiez les informations d'identification ici et retournez l'utilisateur si elles sont valides
+          return user;
+        } catch (error) {
+          console.error("Error retrieving user:", error);
+          throw new Error("Error retrieving user");
+        }
       },
     }),
   ],
