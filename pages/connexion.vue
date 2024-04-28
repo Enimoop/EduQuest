@@ -1,5 +1,7 @@
-<template>  
+<template>
+<NuxtLayout layout="default">
 <FormConnexion/>
+</NuxtLayout>
 </template>
 
 <script setup>

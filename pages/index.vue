@@ -1,10 +1,12 @@
 <template>
+   <NuxtLayout layout="default">
   home
   <div>{{ token || "pas de token" }}</div>
   <div>
     <h1>Home</h1>
     <p>Welcome to EduQuest</p>
   </div>
+</NuxtLayout>
 </template>
 
 <script setup lang="ts">

@@ -1,4 +1,5 @@
 <template>
+  <NuxtLayout layout="default">
     <div>
       <!-- Contenu de la page parent -->
       <template v-if="!afficherPageEnfant">
@@ -10,6 +11,7 @@
         <NuxtPage />
       </template>
     </div>
+  </NuxtLayout>
   </template>
   
   <script setup>
