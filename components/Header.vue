@@ -92,22 +92,36 @@
           </ul>
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
+              <router-link to="/add" class="nav-link">
+                {{page}}
+              </router-link>         
+            </li>
+            <li v-if="loggedIn" class="nav-item">
               <router-link to="/profil" class="nav-link">
                 Mon Profil
               </router-link>         
             </li>
             <li class="nav-item">
-              <button v-if="loggedIn" @click="handleSignOut">Sign Out</button>
-              <button v-else @click="handleSignIn">Sign In</button>
+              <button v-if="loggedIn" @click="handleSignOut" class="nav-link">Sign Out</button>
+              <button v-else @click="handleSignIn" class="nav-link">Sign In</button>
             </li>
           </ul>
         </div>
       </div>
-    </nav>
+    </nav> 
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import {getSubFromToken,returnUserType} from "../utils/session.mjs";
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
+const { data: token } = await useFetch("/api/token", { headers });
+
+let type = null;
+let page = null;
+// if token
+
 const { status, signIn, signOut } = useAuth();
 
 async function handleSignIn() {
@@ -115,6 +129,14 @@ async function handleSignIn() {
 }
 
 const loggedIn = computed(() => status.value === "authenticated");
+
+if (status.value === "authenticated") {
+  const id = getSubFromToken(token); 
+  type = await returnUserType(id);
+  if (type !== "Eleve") {
+    page = type;
+  }
+}
 
 async function handleSignOut() {
   await signOut();
