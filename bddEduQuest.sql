@@ -69,8 +69,8 @@ CREATE TABLE `Contenu` (
   `description_contenu` text,
   `date_contenu` date DEFAULT NULL,
   `id_matiere` int NOT NULL,
-  `type_contenu` enum('Exercice','Quete','Cours') DEFAULT NULL,
-  `id_u` int NOT NULL
+  `id_u` int NOT NULL,
+  `type_contenu` enum('Exercice','Quete','Cours') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
