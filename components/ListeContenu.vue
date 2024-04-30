@@ -6,7 +6,7 @@
         <div class="card mb-4 contenu-card">
           <div class="card-body">
             <h5 class="card-title">{{ contenu.description_contenu }}</h5>
-            <p class="card-text"><small class="text-muted">{{ format(Date(contenu.date_contenu), 'dd/MM/yyyy') }}</small></p>
+            <p class="card-text"><small class="text-muted">{{  format(new Date(contenu.date_contenu), 'dd/MM/yyyy')}}</small></p>
             <p class="card-text">{{ contenu.type_contenu }}</p> 
           </div>
         </div>
