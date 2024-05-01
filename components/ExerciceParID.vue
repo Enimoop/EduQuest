@@ -32,6 +32,7 @@ import { format } from 'date-fns';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import {getSubFromToken,returnUserType} from "../utils/session.mjs";
+import {calculerNiveau} from "../utils/func.mjs";
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 
@@ -106,10 +107,13 @@ const submitResponses = () => {
             })
               .then(response => {
                 console.log('Score enregistré:', response.data);
+                let niveau = calculerNiveau(questions.value[0].id_matiere,id);
+                console.log('niveau', niveau);
               })
               .catch(error => {
                 console.error('Erreur lors de l\'enregistrement du score:', error);
               });
+              
               affscore.value = score.value;
           } else {
               let date = format(new Date(), 'yyyy-MM-dd');
@@ -124,6 +128,8 @@ const submitResponses = () => {
                 })
                   .then(response => {
                     console.log('Score mis à jour:', response.data);
+                    let niveau = calculerNiveau(questions.value[0].id_matiere,id);
+                    console.log('niveau', niveau);
                   })
                   .catch(error => {
                     console.error('Erreur lors de la mise à jour du score:', error);

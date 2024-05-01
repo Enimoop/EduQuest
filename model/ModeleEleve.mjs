@@ -42,6 +42,62 @@ class ModeleEleve {
     });
   }
 
+  recupererNotesParMatiere(id_matiere, id_u, callback) {
+    const query = `SELECT Matiere.libelle_matiere, Noter.note, Noter.id_u, Noter.date_note
+                   FROM Matiere
+                   JOIN Contenu ON Matiere.id_matiere = Contenu.id_matiere
+                   JOIN Noter ON Contenu.id_contenu = Noter.id_contenu
+                   WHERE Matiere.id_matiere = ? AND Noter.id_u = ?`;
+    this.connection.query(query, [id_matiere, id_u], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      if (results.length === 0) {
+        callback(null, null); // Aucune note trouvée avec cet ID
+        return;
+      }
+      const notes = results.map(row => ({
+        note: row.note,
+        id_u: row.id_u,
+        id_matiere: id_matiere, // Utilisation de la variable id_matiere passée en paramètre
+        libelle_matiere: row.libelle_matiere,
+        date_note: row.date_note
+      }));
+      callback(null, notes);
+    });
+  }
+
+  updateLvl(id_u, id_matiere, lvl, callback) {
+    const query = 'UPDATE Concerner SET lvl = ? WHERE id_u = ? AND id_matiere = ?';
+    this.connection.query(query, [lvl, id_u, id_matiere], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, results.affectedRows);
+    });
+  }
+
+  getLvl(id_matiere, id_u, callback) {
+    const query = 'SELECT lvl, id_u FROM Concerner WHERE id_u = ? AND id_matiere = ?';
+    this.connection.query(query, [id_u, id_matiere], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      if (results.length === 0) {
+        callback(null, null); // Aucun niveau trouvé avec cet ID
+        return;
+      }
+      const lvl = {
+        lvl: results[0].lvl,
+        id_u: results[0].id_u
+      };
+      callback(null, lvl);
+    });
+  }
+
   // Autres méthodes pour créer, mettre à jour et supprimer des élèves
 }
 
