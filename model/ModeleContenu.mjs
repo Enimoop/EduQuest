@@ -199,19 +199,20 @@ class ModeleContenu {
   recupererScoreParId(id_u, id_contenu, callback) {
     const query = 'SELECT id_u, id_contenu, note, date_note FROM Noter WHERE  id_u = ? AND id_contenu = ? ';
     this.connection.query(query, [id_u, id_contenu], (error, results, fields) => {
-      if (error) {
-        callback(error, null);
-        return;
-      }
-      const scores = results.map(row => ({
-        id_u: row.id_u,
-        id_contenu: row.id_contenu,
-        note: row.note,
-        date_note: row.date_note
+        if (error) {
+            callback(error, null);
+            return;
+        }
+        const scores = results.map(row => ({
+            id_u: row.id_u,
+            id_contenu: row.id_contenu,
+            note: row.note,
+          date_note: row.date_note
       }));
       callback(null, scores);
     });
 }
+
 
 }
 
