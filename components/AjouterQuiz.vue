@@ -120,10 +120,10 @@ const submitForm = () => {
         });
       }))
       .then((responses) => {
-        responses.forEach((response) => {
+        /* responses.forEach((response) => {
           // Affichage de la réponse pour chaque question
           alert(response.data.message);
-        });
+        }); */
 
         // Réinitialisation du formulaire
         descriptionContenu.value = '';
