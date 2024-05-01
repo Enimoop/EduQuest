@@ -3,6 +3,7 @@ import ModeleContenu from '../model/ModeleContenu.mjs';
 
 const router = express.Router();
 const modeleContenu = new ModeleContenu();
+router.use(express.json());
 
 router.get('/', (req, res) => {
   modeleContenu.recupererTousLesContenus((error, contenus) => {
@@ -85,7 +86,35 @@ router.get('/:id', (req, res) => {
   });
 });
 
+router.post('/exercices', (req, res) => {
+  // Récupérer les données du nouveau quiz/exercice à partir du corps de la requête
+  const nouveauQuiz = req.body;
 
+  // Insérer le nouveau quiz/exercice dans la base de données en utilisant le modèle
+  modeleContenu.insertNouveauQuiz(nouveauQuiz, (error, insertedId) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de l\'insertion du quiz/exercice' });
+      return;
+    }
+    // Renvoyer une réponse avec l'ID du quiz/exercice nouvellement inséré
+    res.status(201).json({ message: 'Quiz/exercice inséré avec succès', insertedId });
+  });
+});
+
+router.post('/exercices/question', (req, res) => {
+  // Récupérer les données de la nouvelle question à partir du corps de la requête
+  const nouvelleQuestion = req.body;
+
+  // Insérer la nouvelle question dans la base de données en utilisant le modèle
+  modeleContenu.insertQuestion(nouvelleQuestion, (error, insertedId) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de l\'insertion de la question' });
+      return;
+    }
+    // Renvoyer une réponse avec l'ID de la question nouvellement insérée
+    res.status(201).json({ message: 'Question insérée avec succès', insertedId });
+  });
+});
 
 
 

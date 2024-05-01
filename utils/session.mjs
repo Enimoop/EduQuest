@@ -1,25 +1,25 @@
+import axios from 'axios';  
+export function getSubFromToken(tokenRef) {
+    // Si tokenRef est une référence Vue, accédez à la propriété _value
+    const tokenData = tokenRef._value;
 
-export function createSession(user) {
-    const userData = {
-      id: user.id,
-      mail: user.mail,
-      type: user.type
-    };
-    localStorage.setItem('user', JSON.stringify(userData));
+    // Vérifie si la clé 'sub' existe dans le token
+    if ('sub' in tokenData) {
+        // Récupère la valeur de la clé 'sub'
+        const subValue = tokenData['sub'];
+        return subValue;
+    } else {
+        return null; // Si la clé 'sub' n'existe pas dans le token
+    }
+}
+
+export async function returnUserType(id) {
+    try {
+      const response = await axios.get(`http://localhost:3001/profils/type/${id}`);
+      return response.data.type;
+    } catch (error) {
+      console.error('Error fetching profil:', error);
+      return null;
+    }
   }
 
-
-
-export function checkSession() {
-    if (typeof localStorage !== 'undefined') {
-        const user = localStorage.getItem('user');
-        return !!user; // Si user est défini, retourne true, sinon retourne false
-    }
-    return false;
-}
-
-export function logout() {
-    if (typeof localStorage !== 'undefined') {
-        localStorage.removeItem('user'); // Supprime les informations de session de localStorage
-    }
-}

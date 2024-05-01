@@ -139,6 +139,37 @@ class ModeleContenu {
     });
   }
 
+
+  insertNouveauQuiz(nouveauQuiz, callback) {
+    const {description_contenu, date_contenu, id_matiere, id_u} = nouveauQuiz;
+    const query = 'INSERT INTO Exercice (description_contenu, date_contenu, id_matiere, id_u, type_exercice) VALUES (?, ?, ?, ?, ?)';
+    const values = [description_contenu, date_contenu, id_matiere, id_u, "QCM"];
+    this.connection.query(query, values, (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      // Récupérer l'ID de l'exercice nouvellement inséré
+      const insertedId = results.insertId;
+      callback(null, insertedId);
+    });
+  }
+
+  insertQuestion(question, callback) {
+    const {intitule, reponse,id_contenu} = question;
+    const query = 'INSERT INTO Question (intitule, reponse,id_contenu) VALUES (?, ?, ?)';
+    const values = [intitule, reponse,id_contenu];
+    this.connection.query(query, values, (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      // Récupérer l'ID de la question nouvellement insérée
+      const insertedId = results.insertId;
+      callback(null, insertedId);
+    });
+  }
+
 }
 
 

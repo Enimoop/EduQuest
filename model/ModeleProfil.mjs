@@ -42,7 +42,23 @@ class ModeleProfil {
     });
   }
 
-  // Autres méthodes pour créer, mettre à jour et supprimer des élèves
+  checkerTypeUser(id, callback) {
+    const query = 'SELECT type FROM User WHERE id_u = ?';
+    this.connection.query(query, [id], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      if (results.length === 0) {
+        callback(null, null); // Aucun user trouvé avec cet ID
+        return;
+      }
+      const user = {
+        type: results[0].type
+      };
+      callback(null, user);
+    });
+  }
 }
 
 export default ModeleProfil;
