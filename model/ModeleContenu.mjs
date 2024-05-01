@@ -170,6 +170,48 @@ class ModeleContenu {
     });
   }
 
+  insertScore(score, callback) {
+    const {id_u, id_contenu, note} = score;
+    const query = 'INSERT INTO Noter (id_u, id_contenu, note) VALUES (?, ?, ?)';
+    const values = [id_u, id_contenu, note];
+    this.connection.query(query, values, (error, results, fields) => {
+      if (error) {
+        callback(error);
+        return;
+      }   
+      callback(null);
+    });
+  }
+
+  updateScore(score, callback) {
+    const {id_u, id_contenu, note} = score;
+    const query = 'UPDATE Noter SET note = ? WHERE id_u = ? AND id_contenu = ?';
+    const values = [note, id_u, id_contenu];
+    this.connection.query(query, values, (error, results, fields) => {
+      if (error) {
+        callback(error);
+        return;
+      }   
+      callback(null);
+    });
+  }
+
+  recupererScoreParId(id_u, id_contenu, callback) {
+    const query = 'SELECT id_u, id_contenu, note FROM Noter WHERE  id_u = ? AND id_contenu = ? ';
+    this.connection.query(query, [id_u, id_contenu], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      const scores = results.map(row => ({
+        id_u: row.id_u,
+        id_contenu: row.id_contenu,
+        note: row.note
+      }));
+      callback(null, scores);
+    });
+}
+
 }
 
 

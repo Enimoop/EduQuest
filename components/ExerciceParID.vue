@@ -27,16 +27,31 @@
     </div>
   </template>
 
-<script setup>
+<script setup lang="ts">
 import { format } from 'date-fns';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import {getSubFromToken,returnUserType} from "../utils/session.mjs";
+
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
+const { data: token } = await useFetch("/api/token", { headers });
+
+const { status } = useAuth();
+
+let id = null;
+let type = null;
+
+if (status.value === "authenticated") {
+    id = getSubFromToken(token);
+    type = await returnUserType(id);
+}
 
 
 const questions = ref([]);
 const description_contenu = ref('');
 
-let responses = null;
+let responses = {};
 const score = ref(null);
 
 
@@ -72,6 +87,47 @@ const submitResponses = () => {
   // Calculer le score
   score.value = calculateScore(responses);
   console.log('Score:', score);
+
+  if (type === "Eleve") {
+      const nouveauScore = {
+        id_u: id,
+        id_contenu: questions.value[0].id_contenu,
+        note: score.value
+      };
+
+      axios.get(`http://localhost:3001/contenus/exercices/score/${id}/${questions.value[0].id_contenu}`)
+        .then(response => {
+          if (response.data.length === 0) {
+            axios.post('http://localhost:3001/contenus/exercices/score', nouveauScore, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+              .then(response => {
+                console.log('Score enregistré:', response.data);
+              })
+              .catch(error => {
+                console.error('Erreur lors de l\'enregistrement du score:', error);
+              });
+          } else {
+            axios.put('http://localhost:3001/contenus/exercices/score', nouveauScore, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+              .then(response => {
+                console.log('Score mis à jour:', response.data);
+              })
+              .catch(error => {
+                console.error('Erreur lors de la mise à jour du score:', error);
+              });
+          }
+        })
+        .catch(error => {
+          console.error('Erreur lors de la récupération du score:', error);
+        });
+      
+  }
 };
 
 
