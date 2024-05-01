@@ -21,8 +21,8 @@
       <div class="d-flex justify-content-center">
       <button @click="submitResponses" class="btn btn-primary btn-lg btn-block sub-btn">Soumettre les réponses</button>
     </div>
-      <div v-if="score !== null" class="text-center mt-3">
-      <h2>Votre score est de {{ score.toFixed(2) }}%</h2>
+      <div v-if="affscore !== null" class="text-center mt-3">
+      <h2>Votre score est de {{ affscore.toFixed(2) }}%</h2>
     </div>
     </div>
   </template>
@@ -53,6 +53,7 @@ const description_contenu = ref('');
 
 let responses = {};
 const score = ref(null);
+const affscore = ref(null);
 
 
 onMounted(() => {
@@ -86,7 +87,7 @@ const submitResponses = () => {
 
   // Calculer le score
   score.value = calculateScore(responses);
-  console.log('Score:', score);
+  
 
   if (type === "Eleve") {
       const nouveauScore = {
@@ -109,18 +110,28 @@ const submitResponses = () => {
               .catch(error => {
                 console.error('Erreur lors de l\'enregistrement du score:', error);
               });
+              affscore.value = score.value;
           } else {
-            axios.put('http://localhost:3001/contenus/exercices/score', nouveauScore, {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            })
-              .then(response => {
-                console.log('Score mis à jour:', response.data);
-              })
-              .catch(error => {
-                console.error('Erreur lors de la mise à jour du score:', error);
-              });
+              let date = format(new Date(), 'yyyy-MM-dd');
+              let date_note = format (new Date(response.data[0].date_note), 'yyyy-MM-dd');
+              if(date_note !== date) {
+                console.log ('date_note', response.data[0].date_note);
+                console.log ('date', date);
+                axios.put('http://localhost:3001/contenus/exercices/score', nouveauScore, {
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                })
+                  .then(response => {
+                    console.log('Score mis à jour:', response.data);
+                  })
+                  .catch(error => {
+                    console.error('Erreur lors de la mise à jour du score:', error);
+                  });
+            affscore.value = score.value;
+            } else {
+              alert('Vous avez déjà passé ce quiz aujourd\'hui');
+            }
           }
         })
         .catch(error => {
