@@ -98,6 +98,30 @@ class ModeleEleve {
     });
   }
 
+  lvlParMatiere( id_u, callback) {
+    const query = `SELECT Matiere.libelle_matiere,Matiere.id_matiere, Concerner.lvl, Concerner.id_u
+                  FROM Matiere
+                  JOIN Concerner ON Matiere.id_matiere = Concerner.id_matiere
+                  WHERE Concerner.id_u = ?`;
+    this.connection.query(query, [id_u], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      if (results.length === 0) {
+        callback(null, null); // Aucun niveau trouvé avec cet ID
+        return;
+      }
+      const lvl = results.map(row => ({
+        lvl: row.lvl,
+        id_u: id_u,
+        id_matiere: row.id_matiere,
+        libelle_matiere: row.libelle_matiere
+      }));
+      callback(null, lvl);
+    });
+  }
+
   // Autres méthodes pour créer, mettre à jour et supprimer des élèves
 }
 

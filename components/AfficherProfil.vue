@@ -1,28 +1,48 @@
 <template>
-    <div class="container">
-      <div class="card mt-5">
-        <div class="card-header bg-primary text-white">
-          <h5 class="card-title mb-0">Profil Utilisateur</h5>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-4">
-              <h6 class="card-subtitle mb-2 text-muted">Identifiant :</h6>
+  <div class="container">
+    <div class="card mt-3">
+      <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Profil Utilisateur</h5>
+      </div>
+      <div class="card-body">
+        <div class="row gx-2">
+          <div class="col-md-6 mb-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="card-subtitle mb-1 text-muted">Identifiant :</h6>
               <p class="card-text">{{ user.id }}</p>
             </div>
-            <div class="col-md-4">
-              <h6 class="card-subtitle mb-2 text-muted">Email :</h6>
-              <p class="card-text">{{ user.mail }}</p>
+            <hr class="mt-1 mb-1">
+            <small class="text-muted">Cet identifiant est unique pour chaque utilisateur.</small>
+          </div>
+          <div class="col-md-6 mb-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="card-subtitle mb-1 text-muted">Email :</h6>
+              <p class="card-text">{{ user.email }}</p>
             </div>
-            <div class="col-md-4">
-              <h6 class="card-subtitle mb-2 text-muted">Type :</h6>
+            <hr class="mt-1 mb-1">
+            <small class="text-muted">L'adresse email associée à ce compte utilisateur.</small>
+          </div>
+          <div class="col-md-6 mb-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="card-subtitle mb-1 text-muted">Nom :</h6>
+              <p class="card-text">{{ user.name }}</p>
+            </div>
+            <hr class="mt-1 mb-1">
+            <small class="text-muted">Le nom complet de l'utilisateur.</small>
+          </div>
+          <div class="col-md-6 mb-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="card-subtitle mb-1 text-muted">Type :</h6>
               <p class="card-text">{{ user.type }}</p>
             </div>
+            <hr class="mt-1 mb-1">
+            <small class="text-muted">Le type d'utilisateur (ex: administrateur, utilisateur standard, etc.).</small>
           </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script setup>
   import { ref, onMounted } from 'vue';
