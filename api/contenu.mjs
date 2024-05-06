@@ -157,4 +157,15 @@ router.get('/exercices/score/:id_u/:id_contenu', (req, res) => {
 });
 
 
+router.post('/cours', (req, res) => {
+  const nouveauCours = req.body;
+  modeleContenu.insertNouveauCours(nouveauCours, (error, insertedId) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de l\'insertion du Cours' });
+      return;
+    }
+    res.status(201).json({ message: 'Cours inséré avec succès', insertedId });
+  });
+});
+
 export default router;
