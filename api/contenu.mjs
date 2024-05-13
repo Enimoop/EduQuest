@@ -116,6 +116,45 @@ router.post('/exercices/question', (req, res) => {
   });
 });
 
+router.post('/exercices/score', (req, res) => {
+  // Récupérer les données du score à partir du corps de la requête
+  const score = req.body;
+  // Insérer le score dans la base de données en utilisant le modèle
+  modeleContenu.insertScore(score, (error) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de l\'insertion du score' });
+      return;
+    }
+    // Renvoyer une réponse avec un message de succès
+    res.status(201).json({ message: 'Score inséré avec succès' });
+  });
+});
+
+router.put('/exercices/score', (req, res) => {
+  // Récupérer les données du score à partir du corps de la requête
+  const score = req.body;
+  // Mettre à jour le score dans la base de données en utilisant le modèle
+  modeleContenu.updateScore(score, (error) => {
+      if (error) {
+          res.status(500).json({ error: 'Erreur lors de la mise à jour du score.' });
+          return;
+      }
+      res.json({ message: 'Score mis à jour avec succès' });
+  });
+});
+
+
+
+router.get('/exercices/score/:id_u/:id_contenu', (req, res) => {
+  const {id_u, id_contenu} = req.params;
+  modeleContenu.recupererScoreParId(id_u, id_contenu, (error, scores) => {
+      if (error) {
+          res.status(500).json({ error: 'Erreur lors de la récupération des scores.' });
+          return;
+      }
+      res.json(scores);
+  });
+});
 
 
 export default router;

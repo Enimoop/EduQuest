@@ -48,7 +48,7 @@ import {getSubFromToken} from "../utils/session.mjs";
 const descriptionContenu = ref('');
 const selectedMatiere = ref('');
 let id = null;
-let insertedId = null;
+let insertedId: number | null = null;
 
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
@@ -60,7 +60,6 @@ const { status } = useAuth();
 if (status.value === "authenticated") {
    id = getSubFromToken(token); 
 }
-console.log(status.value);
   
 const questions = ref([{ intitule: '', reponse: '' }]);
 
@@ -70,7 +69,7 @@ const addQuestion = () => {
 };
 
 // Fonction pour supprimer une question
-const removeQuestion = (index) => {
+const removeQuestion = (index: number) => {
   questions.value.splice(index, 1);
 };
 
@@ -121,10 +120,10 @@ const submitForm = () => {
         });
       }))
       .then((responses) => {
-        responses.forEach((response) => {
+        /* responses.forEach((response) => {
           // Affichage de la réponse pour chaque question
           alert(response.data.message);
-        });
+        }); */
 
         // Réinitialisation du formulaire
         descriptionContenu.value = '';

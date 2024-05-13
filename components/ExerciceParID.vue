@@ -21,23 +21,40 @@
       <div class="d-flex justify-content-center">
       <button @click="submitResponses" class="btn btn-primary btn-lg btn-block sub-btn">Soumettre les réponses</button>
     </div>
-      <div v-if="score !== null" class="text-center mt-3">
-      <h2>Votre score est de {{ score.toFixed(2) }}%</h2>
+      <div v-if="affscore !== null" class="text-center mt-3">
+      <h2>Votre score est de {{ affscore.toFixed(2) }}%</h2>
     </div>
     </div>
   </template>
 
-<script setup>
+<script setup lang="ts">
 import { format } from 'date-fns';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import {getSubFromToken,returnUserType} from "../utils/session.mjs";
+import {calculerNiveau} from "../utils/func.mjs";
+
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
+const { data: token } = await useFetch("/api/token", { headers });
+
+const { status } = useAuth();
+
+let id = null;
+let type = null;
+
+if (status.value === "authenticated") {
+    id = getSubFromToken(token);
+    type = await returnUserType(id);
+}
 
 
 const questions = ref([]);
 const description_contenu = ref('');
 
-let responses = null;
+let responses = {};
 const score = ref(null);
+const affscore = ref(null);
 
 
 onMounted(() => {
@@ -71,7 +88,63 @@ const submitResponses = () => {
 
   // Calculer le score
   score.value = calculateScore(responses);
-  console.log('Score:', score);
+  
+
+  if (type === "Eleve") {
+      const nouveauScore = {
+        id_u: id,
+        id_contenu: questions.value[0].id_contenu,
+        note: score.value
+      };
+
+      axios.get(`http://localhost:3001/contenus/exercices/score/${id}/${questions.value[0].id_contenu}`)
+        .then(response => {
+          if (response.data.length === 0) {
+            axios.post('http://localhost:3001/contenus/exercices/score', nouveauScore, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+              .then(response => {
+                console.log('Score enregistré:', response.data);
+                let niveau = calculerNiveau(questions.value[0].id_matiere,id);
+                console.log('niveau', niveau);
+              })
+              .catch(error => {
+                console.error('Erreur lors de l\'enregistrement du score:', error);
+              });
+              
+              affscore.value = score.value;
+          } else {
+              let date = format(new Date(), 'yyyy-MM-dd');
+              let date_note = format (new Date(response.data[0].date_note), 'yyyy-MM-dd');
+              if(date_note !== date) {
+                console.log ('date_note', response.data[0].date_note);
+                console.log ('date', date);
+                axios.put('http://localhost:3001/contenus/exercices/score', nouveauScore, {
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                })
+                  .then(response => {
+                    console.log('Score mis à jour:', response.data);
+                    let niveau = calculerNiveau(questions.value[0].id_matiere,id);
+                    console.log('niveau', niveau);
+                  })
+                  .catch(error => {
+                    console.error('Erreur lors de la mise à jour du score:', error);
+                  });
+            affscore.value = score.value;
+            } else {
+              alert('Vous avez déjà passé ce quiz aujourd\'hui');
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Erreur lors de la récupération du score:', error);
+        });
+      
+  }
 };
 
 
