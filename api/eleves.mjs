@@ -74,6 +74,21 @@ router.get('/lvl/:id_matiere/:id', (req, res) => {
     res.json(lvl);
   });
 });
+
+router.get('/lvl/:id', (req, res) => {
+  const id = req.params.id;
+  modeleEleve.lvlParMatiere(id, (error, lvl) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la récupération du niveau' });
+      return;
+    }
+    if (!lvl) {
+      res.status(404).json({ message: 'Niveau non trouvé' });
+      return;
+    }
+    res.json(lvl);
+  });
+});
 // Autres routes pour la création, la mise à jour et la suppression des élèves
 
 export default router;

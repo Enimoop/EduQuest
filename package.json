@@ -18,13 +18,16 @@
     "bootstrap": "^5.3.3",
     "bulma": "^1.0.0",
     "date-fns": "^3.6.0",
+    "formidable": "^3.5.1",
+    "h3-formidable": "^1.0.0",
+    "http-errors": "^2.0.0",
     "mysql2": "^3.9.7",
     "nuxt": "^3.11.2",
-    "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue": "^3.4.27",
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@nuxtjs/style-resources": "^1.2.2",
-    "@sidebase/nuxt-auth": "^0.7.1"
+    "@sidebase/nuxt-auth": "^0.7.2"
   }
 }

@@ -214,8 +214,23 @@ class ModeleContenu {
 }
 
 
+insertNouveauCours(nouveauCours, callback) {
+  const {description_contenu, date_contenu, id_matiere, id_u, nom_fichier} = nouveauCours;
+  const query = 'INSERT INTO Cours (description_contenu, date_contenu, id_matiere, id_u, nom_fichier) VALUES (?, ?, ?, ?, ?)';
+  const values = [description_contenu, date_contenu, id_matiere, id_u, nom_fichier];
+  this.connection.query(query, values, (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    // Récupérer l'ID de l'exercice nouvellement inséré
+    const insertedId = results.insertId;
+    callback(null, insertedId);
+  });
+
 }
 
+}
 
 
 export default ModeleContenu;

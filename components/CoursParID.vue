@@ -25,7 +25,7 @@ onMounted(() => {
   axios.get(`http://localhost:3001/contenus/cours/${id}`)
     .then(response => {
       cours.value = response.data;
-      pdfPath = "/pdf/" + response.data.nom_fichier + ".pdf";
+      pdfPath = "/pdf/" + response.data.nom_fichier;
       console.log(pdfPath);
     })
     .catch(error => {

@@ -4,7 +4,7 @@ export function getSubFromToken(tokenRef) {
     const tokenData = tokenRef._value;
 
     // Vérifie si la clé 'sub' existe dans le token
-    if ('sub' in tokenData) {
+    if (tokenData && 'sub' in tokenData) {
         // Récupère la valeur de la clé 'sub'
         const subValue = tokenData['sub'];
         return subValue;

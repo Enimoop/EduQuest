@@ -119,13 +119,13 @@ const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 const { data: token } = await useFetch("/api/token", { headers });
 
 let type = null;
-let page = null;
+let page: string | null = null;
 // if token
 
 const { status, signIn, signOut } = useAuth();
 
 async function handleSignIn() {
-  await signIn();
+  await signIn(undefined);
 }
 
 const loggedIn = computed(() => status.value === "authenticated");

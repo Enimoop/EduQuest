@@ -85,7 +85,7 @@ const submitForm = () => {
   // Construction de l'objet à envoyer
   const nouveauQuiz = {
     description_contenu: descriptionContenu.value,
-    date_contenu: "2024-04-30",
+    date_contenu: new Date().toISOString().slice(0, 10),
     id_matiere: selectedMatiere.value,
     id_u: id
   };
