@@ -5,6 +5,8 @@ import ModeleProfil from "~/model/ModeleProfil.mjs";
 import axios from 'axios';
 
 export default NuxtAuthHandler({
+  secret:"secret",
+  
   pages: {
     signIn: "/login",
   },

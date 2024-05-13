@@ -47,7 +47,7 @@ const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 
 const { data: token } = await useFetch("/api/token", { headers });
 
-let id = null;
+let id: number | null;
 
 const { status } = useAuth();
 
@@ -62,9 +62,11 @@ if (status.value === "authenticated") {
   const contentDescription = ref('');
   const selectedSubject = ref('Français');
   
-  function onFileChange(e) {
-    const file = e.target.files[0];
+  function onFileChange(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+  if (file) {
     pdf.value = URL.createObjectURL(file);
+  }
   }
   
   async function uploadPdf() {
@@ -84,26 +86,25 @@ if (status.value === "authenticated") {
       body: formData,
     });
 
-    // Si le téléchargement est réussi, enregistrez les autres données dans la base de données
+    
     const nouveauCours = {
       description_contenu: contentDescription.value,
-      date_contenu: "2024-04-30", // Vous pouvez mettre la date que vous souhaitez ici
+      date_contenu: new Date().toISOString().slice(0, 10), 
       id_matiere: selectedSubject.value,
-      id_u: id, // Mettez l'ID de l'utilisateur approprié ici
-      nom_fichier: pdfName // Utilisez le nom de fichier renvoyé par l'API si nécessaire
+      id_u: id,
+      nom_fichier: pdfName 
     };
 
-    // Envoi des autres données à votre endpoint de sauvegarde
     const saveResponse = await axios.post('http://localhost:3001/contenus/cours', nouveauCours, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
-    console.log(saveResponse.data); // Affichez la réponse de l'enregistrement en base de données si nécessaire
+   
 
     success.value = message;
 
-  } catch (e) {
+  } catch (e: any) {
     error.value = e.statusMessage;
   }
 }

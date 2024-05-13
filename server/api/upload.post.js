@@ -34,7 +34,6 @@ export default defineEventHandler(async (event) => {
       let newPath = path.join("public", "pdf", pdfName);
       fs.copyFileSync(filepath, newPath);
     }
-    console.log(pdfName);
 
     return {
       status: 200,
