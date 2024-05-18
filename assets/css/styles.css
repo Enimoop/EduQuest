@@ -123,15 +123,34 @@ div.contenu-card:hover {
 
   .container {
     max-width: 600px;
+    padding: 0 15px;
   }
   
   .card {
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
   }
   
   .card-body {
     padding: 1.5rem;
+    margin-bottom: 0;
+  }
+  
+  .row.gx-2 {
+    margin-bottom: 0;
+  }
+  
+  .mb-2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  hr {
+    margin: 0;
+  }
+  
+  small.text-muted {
+    margin-bottom: 0;
   }
   
   .form-check {

@@ -17,18 +17,10 @@
           <div class="col-md-6 mb-2">
             <div class="d-flex justify-content-between align-items-center">
               <h6 class="card-subtitle mb-1 text-muted">Email :</h6>
-              <p class="card-text">{{ user.email }}</p>
+              <p class="card-text">{{ user.mail }}</p>
             </div>
             <hr class="mt-1 mb-1">
             <small class="text-muted">L'adresse email associée à ce compte utilisateur.</small>
-          </div>
-          <div class="col-md-6 mb-2">
-            <div class="d-flex justify-content-between align-items-center">
-              <h6 class="card-subtitle mb-1 text-muted">Nom :</h6>
-              <p class="card-text">{{ user.name }}</p>
-            </div>
-            <hr class="mt-1 mb-1">
-            <small class="text-muted">Le nom complet de l'utilisateur.</small>
           </div>
           <div class="col-md-6 mb-2">
             <div class="d-flex justify-content-between align-items-center">
@@ -43,22 +35,44 @@
     </div>
   </div>
 </template>
+
   
-  <script setup>
-  import { ref, onMounted } from 'vue';
-    import axios from 'axios';
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { getSubFromToken, returnUserType } from "../utils/session.mjs";
+import axios from 'axios';
 
-    const user = ref([]);
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 
-    onMounted(() => {
-      const email = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).mail : '';
-      axios.get(`http://localhost:3001/profils/${email}`)
-        .then(response => {
-          user.value = response.data;
-          console.log(user.value);
-        })
-        .catch(error => {
-          console.error('Error fetching user:', error);
-        });
+const { data: token } = await useFetch("/api/token", { headers });
+
+const id = getSubFromToken(token);
+const type = await returnUserType(id);
+
+const { status } = useAuth();
+
+interface User {
+  id: number;
+  mail: string;
+  type: string;
+}
+
+const user = ref<User>({
+  id: 0,
+  mail: "",
+  type: "",
+  
+});
+
+onMounted(() => {
+  axios.get(`http://localhost:3001/profils/id/${id}`)
+    .then(response => {
+      user.value = response.data;
+      console.log(user.value);
+    })
+    .catch(error => {
+      console.error('Error fetching profils:', error);
     });
-  </script>
+});
+
+</script>
