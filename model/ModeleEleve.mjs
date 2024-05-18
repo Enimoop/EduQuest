@@ -186,6 +186,38 @@ class ModeleEleve {
     });
   }
 
+  recupererNotesParContenu(id, callback) {
+    const query = `
+        SELECT n.note, n.id_contenu, n.id_u, n.date_note, c.description_contenu
+        FROM Noter n
+        JOIN Contenu c ON n.id_contenu = c.id_contenu
+        WHERE n.id_u = ?
+        AND YEARWEEK(n.date_note, 1) = YEARWEEK(CURDATE(), 1)
+        `;
+    this.connection.query(query, [id], (error, results, fields) => {
+        if (error) {
+            console.error('Erreur lors de l\'exécution de la requête:', error); // Ajout de log pour les erreurs SQL
+            callback(error, null);
+            return;
+        }
+        if (results.length === 0) {
+            console.log('Aucune note trouvée pour l\'id:', id); // Ajout de log pour vérifier les résultats vides
+            callback(null, null);
+            return;
+        }
+        const notes_contenu = results.map(row => ({
+            note: row.note,
+            id_contenu: row.id_contenu,
+            id_u: row.id_u,
+            date_note: row.date_note,
+            description_contenu: row.description_contenu
+        }));
+
+        callback(null, notes_contenu);
+    });
+}
+
+
     // Autres méthodes pour créer, mettre à jour et supprimer des élèves
   }
 
