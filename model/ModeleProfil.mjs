@@ -59,6 +59,29 @@ class ModeleProfil {
       callback(null, user);
     });
   }
+
+
+recupererUnCompteId(id, callback) {
+  const query = 'SELECT * FROM User WHERE id_u = ?';
+  this.connection.query(query, [id], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    if (results.length === 0) {
+      callback(null, null); // Aucun user trouvé avec cet ID
+      return;
+    }
+    const user = {
+      id: results[0].id_u,
+      mail: results[0].mail,
+      mdp: results[0].mdp,
+      type: results[0].type
+    };
+    callback(null, user);
+  });
 }
 
+
+}
 export default ModeleProfil;
