@@ -127,6 +127,22 @@ router.get('/guilde/:ideleve/:idguilde', (req, res) => {
     res.json(notes);
   });
 });
+
+router.get('/notes/:id', (req, res) => {
+  const id = req.params.id;
+  console.log(`Requête reçue pour id: ${id}`);
+  modeleEleve.recupererNotesParContenu(id, (error, notes) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la récupération des notes' });
+      return;
+    }
+    if (!notes) {
+      res.status(404).json({ message: 'Notes non trouvées' });
+      return;
+    }
+    res.json(notes);
+  });
+});
 // Autres routes pour la création, la mise à jour et la suppression des élèves
 
 export default router;
