@@ -36,9 +36,14 @@ interface Lvls {
   lvl: number;
 }
 
-
+interface Note {
+  id_contenu: number;
+  date_note: string;
+  note: number;
+}
 
 const lvls = ref<Lvls[]>([]);
+const notes = ref<Note[]>([]);
 
 onMounted(() => {
   axios.get(`http://localhost:3001/eleves/lvl/${id}`)
@@ -49,6 +54,14 @@ onMounted(() => {
     })
     .catch(error => {
       console.error('Error fetching levels:', error);
+    });
+    axios.get(`http://localhost:3001/eleves/notes/${id}`)
+    .then(response => {
+      notes.value = response.data;
+      console.log(notes.value);
+    })
+    .catch(error => {
+      console.error('Error fetching notes:', error);
     });
 });
 
