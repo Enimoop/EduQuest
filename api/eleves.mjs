@@ -31,6 +31,19 @@ router.get('/:id', (req, res) => {
   });
 });
 
+router.get('/nom/:string', (req, res) => {
+  const string = req.params.string;
+  modeleEleve.recupererEleveParNomPrenom(string, (error, eleves) => {
+    if (error) {
+      res.status(500).json({
+          message: 'Erreur lors de la récupération des eleves'
+      });
+      return;
+  }
+  res.json(eleves);
+  });
+});
+
 router.get('/notes/:id_matiere/:id', (req, res) => {
   const id_matiere = req.params.id_matiere; // Utilisation de id_matiere plutôt que id pour la matière
   const id = req.params.id; // Utilisation de id pour l'utilisateur

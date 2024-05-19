@@ -43,6 +43,19 @@ class ModeleGuilde {
         });
     }
 
+    insertEleveDansGuilde(nouveauEleve, callback) {
+        const {id, id_guilde} = nouveauEleve;
+        const query = 'INSERT INTO Rejoindre (id_u, id_guilde) VALUES (?, ?)';
+        const values = [id, id_guilde];
+        this.connection.query(query, values, (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            callback(null,results.id_u);
+        });
+    }
+
     créerGuilde(nom, id_meneur, callback) {
         const query = 'INSERT INTO Guilde (nom, id_meneur) VALUES (?, ?)';
         this.connection.query(query, [nom, id_meneur], (error, results, fields) => {

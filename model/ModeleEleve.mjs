@@ -42,6 +42,24 @@ class ModeleEleve {
     });
   }
 
+  recupererEleveParNomPrenom(string, callback) {
+    const query = 'SELECT * FROM Eleve WHERE nom LIKE ? OR prenom LIKE ?';
+    const searchString = `%${string}%`;
+    this.connection.query(query, [searchString, searchString], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      
+      const eleves = results.map(row => ({
+        id: row.id_u,
+        nom: row.nom,
+        prenom: row.prenom
+      }));
+      callback(null, eleves);
+    });
+  }
+
   recupererNotesParMatiere(id_matiere, id_u, callback) {
     const query = `SELECT Matiere.libelle_matiere, Noter.note, Noter.id_u, Noter.date_note
                    FROM Matiere
