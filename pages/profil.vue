@@ -2,6 +2,8 @@
   <NuxtLayout layout="default">
     <AfficherProfil />
     <br>
+    <GuildeProf v-if="type === 'Prof'"/>
+    <br>
     <LvlParMatiere v-if="type === 'Eleve'"/> 
   </NuxtLayout>
 </template>
@@ -10,6 +12,7 @@
 
 import AfficherProfil from '../components/AfficherProfil.vue';
 import LvlParMatiere from '../components/LvlParMatiere.vue';
+import GuildeProf from '../components/GuildeProf.vue';
 import 'bootstrap/dist/css/bootstrap.css';
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;

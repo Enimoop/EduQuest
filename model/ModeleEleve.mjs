@@ -122,6 +122,25 @@ class ModeleEleve {
     });
   }
 
+
+  recupererElevesDansGuilde(id_guilde, callback) {
+    const query = `SELECT Eleve.id_u, Eleve.nom, Eleve.prenom
+    FROM Eleve
+    JOIN Rejoindre ON Eleve.id_u = Rejoindre.id_u
+    WHERE Rejoindre.id_guilde = ?`;
+    this.connection.query(query, [id_guilde], (error, results, fields) => {
+        if (error) {
+            callback(error, null);
+            return;
+        }
+        const eleves = results.map(row => ({
+            id: row.id_u,
+            nom: row.nom,
+            prenom: row.prenom
+        }));
+        callback(null, eleves);
+    });
+}
   // Autres méthodes pour créer, mettre à jour et supprimer des élèves
 }
 

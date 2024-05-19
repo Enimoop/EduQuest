@@ -89,6 +89,18 @@ router.get('/lvl/:id', (req, res) => {
     res.json(lvl);
   });
 });
+
+router.get('/guilde/:idguilde', (req, res) => {
+  modeleEleve.recupererElevesDansGuilde(req.params.idguilde, (error, eleves) => {
+      if (error) {
+          res.status(500).json({
+              message: 'Erreur lors de la récupération des eleves'
+          });
+          return;
+      }
+      res.json(eleves);
+  });
+});
 // Autres routes pour la création, la mise à jour et la suppression des élèves
 
 export default router;

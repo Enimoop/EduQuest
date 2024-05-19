@@ -1,0 +1,58 @@
+import createConnection from './db.mjs';
+
+class ModeleGuilde {
+    constructor() {
+        this.connection = createConnection();
+    }
+
+    recupererToutesLesGuildes(callback) {
+        const query = 'SELECT * FROM Guilde';
+        this.connection.query(query, (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            const guildes = results.map(row => ({
+                id: row.id_guilde,
+                nom: row.nom_guilde,
+                description: row.description_guilde,
+                id_prof: row.id_prof
+            }));
+            callback(null, guildes);
+        });
+    }
+
+    recupererGuildeParProf(id_prof, callback) {
+        const query = 'SELECT * FROM Guilde WHERE id_prof = ?';
+        this.connection.query(query, [id_prof], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            if (results.length === 0) {
+                callback(null, null); // Aucune guilde trouvée avec cet ID
+                return;
+            }
+            const guildes = results.map(row => ({
+                id: row.id_guilde,
+                nom: row.nom_guilde,
+                description: row.description_guilde,
+                id_prof: row.id_prof
+            }));
+            callback(null, guildes);
+        });
+    }
+
+    créerGuilde(nom, id_meneur, callback) {
+        const query = 'INSERT INTO Guilde (nom, id_meneur) VALUES (?, ?)';
+        this.connection.query(query, [nom, id_meneur], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            callback(null, results.insertId);
+        });
+    }
+}
+
+export default ModeleGuilde;
