@@ -44,4 +44,19 @@ router.post('/addEleve', (req, res) => {
     });
 });
 
+router.delete('/deleteEleve/:id', (req, res) => {
+    const id = req.params.id;
+    modeleGuilde.deleteElevefromGuilde(id, (error) => {
+        if (error) {
+            res.status(500).json({
+                message: 'Erreur lors de la suppression de l\'élève de la guilde'
+            });
+            return;
+        }
+        res.json({
+            message: 'Elève supprimé de la guilde'
+        });
+    });
+});
+
 export default router;

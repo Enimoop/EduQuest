@@ -41,7 +41,7 @@
                                 <tr >
                                     <td>{{ eleve.nom }}</td>
                                     <td>{{ eleve.prenom }}</td>
-                                    <td>un bouyon</td>
+                                    <td><button @click="retirerEleve(eleve.id)">Retirer</button></td>
                                     <td><button @click="voirPlus(eleve.id)">voir plus</button></td>
                                 </tr>
                                 <!-- Tableau des notes -->
@@ -185,6 +185,20 @@ const addEleveToGuilde = (eleve: Eleves, guildeId: number) => {
             console.error('Error adding eleve to guilde:', error);
         });
 };
+
+const retirerEleve = (eleveId: number) => {
+        axios.delete(`http://localhost:3001/guildes/deleteEleve/${eleveId}`)
+            .then(response => {
+                // Rafraîchir la liste des élèves après la suppression
+                return axios.get(`http://localhost:3001/eleves/guilde/${currentGuildeId.value}`);
+            })
+            .then(response => {
+                eleves.value = response.data;
+            })
+            .catch(error => {
+                console.error('Erreur lors de la suppression de l\'élève:', error);
+            });
+    };
 
 const voirPlus = (eleveId: number) => {
     axios.get(`http://localhost:3001/eleves/guilde/${id}/${eleveId}`)

@@ -56,6 +56,17 @@ class ModeleGuilde {
         });
     }
 
+    deleteElevefromGuilde(id, callback) {
+        const query = 'DELETE FROM Rejoindre WHERE id_u = ?';
+        this.connection.query(query, [id], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            callback(null, results.affectedRows);
+        });
+    }
+
     créerGuilde(nom, id_meneur, callback) {
         const query = 'INSERT INTO Guilde (nom, id_meneur) VALUES (?, ?)';
         this.connection.query(query, [nom, id_meneur], (error, results, fields) => {
