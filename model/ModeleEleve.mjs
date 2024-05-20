@@ -1,3 +1,4 @@
+import { da, id } from 'date-fns/locale';
 import createConnection from './db.mjs';
 
 class ModeleEleve {
@@ -42,10 +43,12 @@ class ModeleEleve {
     });
   }
 
-  recupererEleveParNomPrenom(string, callback) {
-    const query = 'SELECT * FROM Eleve WHERE nom LIKE ? OR prenom LIKE ?';
+  recupererEleveParNomPrenom(string, guildeid, callback) {
+    const query = `SELECT * FROM Eleve
+                  WHERE (nom LIKE ? OR prenom LIKE ?)
+                  AND id_u NOT IN (SELECT id_u FROM Rejoindre WHERE id_guilde = ?)`;
     const searchString = `%${string}%`;
-    this.connection.query(query, [searchString, searchString], (error, results, fields) => {
+    this.connection.query(query, [searchString, searchString, guildeid], (error, results, fields) => {
       if (error) {
         callback(error, null);
         return;
@@ -159,7 +162,26 @@ class ModeleEleve {
         callback(null, eleves);
     });
 }
-  // Autres méthodes pour créer, mettre à jour et supprimer des élèves
-}
+
+  recupererNotesParProf(id_prof, id_eleve, callback) {
+    const query = `SELECT * FROM Noter n JOIN Exercice e ON n.id_contenu = e.id_contenu
+                  WHERE n.id_u = ? AND e.id_u = ?`;
+    this.connection.query(query, [id_eleve, id_prof], (error, results, fields) => {
+      if(error) {
+        callback(error, null);
+        return;
+      }
+      const notes = results.map(row => ({
+        id: row.id_contenu,
+        description: row.description_contenu,
+        note: row.note,
+        date: row.date_note
+      }));
+      callback(null, notes);
+    });
+  }
+
+    // Autres méthodes pour créer, mettre à jour et supprimer des élèves
+  }
 
 export default ModeleEleve;

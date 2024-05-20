@@ -31,9 +31,10 @@ router.get('/:id', (req, res) => {
   });
 });
 
-router.get('/nom/:string', (req, res) => {
+router.get('/nom/:string/guilde/:guildeid', (req, res) => {
   const string = req.params.string;
-  modeleEleve.recupererEleveParNomPrenom(string, (error, eleves) => {
+  const guildeid = req.params.guildeid;
+  modeleEleve.recupererEleveParNomPrenom(string, guildeid, (error, eleves) => {
     if (error) {
       res.status(500).json({
           message: 'Erreur lors de la récupération des eleves'
@@ -112,6 +113,18 @@ router.get('/guilde/:idguilde', (req, res) => {
           return;
       }
       res.json(eleves);
+  });
+});
+
+router.get('/guilde/:idprof/:ideleve', (req, res) => {
+  modeleEleve.recupererNotesParProf(req.params.idprof, req.params.ideleve, (error, notes) => {
+    if (error) {
+      res.status(500).json({
+          message: 'Erreur lors de la récupération des notes'
+      });
+      return;
+    }
+    res.json(notes);
   });
 });
 // Autres routes pour la création, la mise à jour et la suppression des élèves
