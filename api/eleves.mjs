@@ -116,8 +116,8 @@ router.get('/guilde/:idguilde', (req, res) => {
   });
 });
 
-router.get('/guilde/:idprof/:ideleve', (req, res) => {
-  modeleEleve.recupererNotesParProf(req.params.idprof, req.params.ideleve, (error, notes) => {
+router.get('/guilde/:ideleve/:idguilde', (req, res) => {
+  modeleEleve.recupererNotesParGuilde( req.params.ideleve,req.params.idguilde, (error, notes) => {
     if (error) {
       res.status(500).json({
           message: 'Erreur lors de la récupération des notes'

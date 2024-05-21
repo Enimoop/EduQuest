@@ -44,7 +44,7 @@
                     <td>{{ eleve.nom }}</td>
                     <td>{{ eleve.prenom }}</td>
                     <td><button @click="retirerEleve(eleve.id)" class="btn btn-danger">Retirer</button></td>
-                    <td><button @click="voirPlus(eleve.id)" class="btn btn-primary">Voir plus</button></td>
+                    <td><button @click="voirPlus(eleve.id, guilde.id)" class="btn btn-primary">Voir plus</button></td>
                   </tr>
   
                   <!-- Tableau des notes -->
@@ -232,12 +232,12 @@ const retirerEleve = (eleveId: number) => {
         });
 };
 
-const voirPlus = (eleveId: number) => {
+const voirPlus = (eleveId: number, guildeId:number) => {
     if (currentEleveId.value === eleveId) {
         currentEleveId.value = null;
         return;
     }
-    axios.get(`http://localhost:3001/eleves/guilde/${id}/${eleveId}`)
+    axios.get(`http://localhost:3001/eleves/guilde/${eleveId}/${guildeId}`)
         .then(response => {
             currentEleveNotes.value = response.data;
             currentEleveId.value = eleveId;

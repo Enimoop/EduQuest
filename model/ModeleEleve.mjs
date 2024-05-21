@@ -163,10 +163,14 @@ class ModeleEleve {
     });
 }
 
-  recupererNotesParProf(id_prof, id_eleve, callback) {
-    const query = `SELECT * FROM Noter n JOIN Exercice e ON n.id_contenu = e.id_contenu
-                  WHERE n.id_u = ? AND e.id_u = ?`;
-    this.connection.query(query, [id_eleve, id_prof], (error, results, fields) => {
+  recupererNotesParGuilde(id_eleve, id_guilde, callback) {
+    const query = `SELECT n.id_u AS id_eleve, n.*, e.*, g.nom_guilde, g.description_guilde
+                    FROM Noter n
+                    JOIN Exercice e ON n.id_contenu = e.id_contenu
+                    JOIN Guilde g ON e.id_guilde = g.id_guilde
+                    WHERE n.id_u = ? AND g.id_guilde = ?
+                    `;
+    this.connection.query(query, [id_eleve, id_guilde], (error, results, fields) => {
       if(error) {
         callback(error, null);
         return;
@@ -175,6 +179,7 @@ class ModeleEleve {
         id: row.id_contenu,
         description: row.description_contenu,
         note: row.note,
+        id_eleve: row.id_eleve,
         date: row.date_note
       }));
       callback(null, notes);
