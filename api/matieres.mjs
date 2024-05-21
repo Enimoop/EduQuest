@@ -19,9 +19,10 @@ router.get('/', (req, res) => {
 });
 
 
-router.get('/:id', (req, res) => {
+router.get('/:idm/:id', (req, res) => {
+  const idm = req.params.idm;
   const id = req.params.id;
-  modeleMatiere.recupererContenusParMatiere(id, (error, contenus_matiere) => {
+  modeleMatiere.recupererContenusParMatiere(id,idm, (error, contenus_matiere) => {
     if (error) {
       res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
       return;

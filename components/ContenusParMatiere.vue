@@ -18,20 +18,27 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 import { format } from 'date-fns';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
+const { data: token } = await useFetch("/api/token", { headers });
+
+const idu = getSubFromToken(token);
 
 const contenus = ref([]);
 const libelle_matiere = ref('');
 
 
 
+
 onMounted(() => {
   const route = useRoute()
   const id = route.params.id;
-  axios.get(`http://localhost:3001/matieres/${id}`)
+  axios.get(`http://localhost:3001/matieres/${id}/${idu}`)
     .then(response => {
       contenus.value = response.data;
       libelle_matiere.value = response.data[0].libelle_matiere;
