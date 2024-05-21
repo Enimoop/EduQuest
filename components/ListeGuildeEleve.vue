@@ -33,7 +33,7 @@ interface Guildes {
     id: number;
     nom: string;
     description: string;
-    id_prof: number;
+    prof: string;
 }
 
 const guildes = ref<Guildes[]>([]);
