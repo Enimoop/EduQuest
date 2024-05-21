@@ -67,9 +67,11 @@ class ModeleGuilde {
         });
     }
 
-    créerGuilde(nom, id_meneur, callback) {
-        const query = 'INSERT INTO Guilde (nom, id_meneur) VALUES (?, ?)';
-        this.connection.query(query, [nom, id_meneur], (error, results, fields) => {
+    creerGuilde(nouvelleGuilde, callback) {
+        const {nom_guilde, description_guilde, id_prof} = nouvelleGuilde;
+        const query = 'INSERT INTO Guilde (nom_guilde, description_guilde, id_prof) VALUES (?, ?, ?)';
+        const values = [nom_guilde, description_guilde, id_prof];
+        this.connection.query(query, values, (error, results, fields) => {
             if (error) {
                 callback(error, null);
                 return;

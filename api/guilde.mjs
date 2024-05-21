@@ -59,4 +59,19 @@ router.delete('/deleteEleve/:id', (req, res) => {
     });
 });
 
+router.post('/addGuilde', (req, res) => {
+    const nouvelleGuilde = req.body;
+    modeleGuilde.creerGuilde(nouvelleGuilde, (error, id) => {
+        if (error) {
+            res.status(500).json({
+                message: 'Erreur lors de l\'ajout de la guilde'
+            });
+            return;
+        }
+        res.json({
+            id: id
+        });
+    });
+});
+
 export default router;
