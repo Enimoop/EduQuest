@@ -22,7 +22,7 @@ onMounted(() => {
   const route = useRoute();
   const id = route.params.id;
 
-  axios.get(`http://localhost:3001/contenus/cours/${id}`)
+  axios.get(`http://localhost:3001/contenus/cour/${id}`)
     .then(response => {
       cours.value = response.data;
       pdfPath = "/pdf/" + response.data.nom_fichier;
