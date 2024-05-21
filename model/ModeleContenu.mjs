@@ -141,9 +141,9 @@ class ModeleContenu {
 
 
   insertNouveauQuiz(nouveauQuiz, callback) {
-    const {description_contenu, date_contenu, id_matiere, id_u} = nouveauQuiz;
-    const query = 'INSERT INTO Exercice (description_contenu, date_contenu, id_matiere, id_u, type_exercice) VALUES (?, ?, ?, ?, ?)';
-    const values = [description_contenu, date_contenu, id_matiere, id_u, "QCM"];
+    const {description_contenu, date_contenu, id_matiere, id_u, id_guilde} = nouveauQuiz;
+    const query = 'INSERT INTO Exercice (description_contenu, date_contenu, id_matiere, id_u,id_guilde, type_exercice) VALUES (?, ?, ?, ?, ?,?)';
+    const values = [description_contenu, date_contenu, id_matiere, id_u,id_guilde, "QCM"];
     this.connection.query(query, values, (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -215,9 +215,9 @@ class ModeleContenu {
 
 
 insertNouveauCours(nouveauCours, callback) {
-  const {description_contenu, date_contenu, id_matiere, id_u, nom_fichier} = nouveauCours;
-  const query = 'INSERT INTO Cours (description_contenu, date_contenu, id_matiere, id_u, nom_fichier) VALUES (?, ?, ?, ?, ?)';
-  const values = [description_contenu, date_contenu, id_matiere, id_u, nom_fichier];
+  const {description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier} = nouveauCours;
+  const query = 'INSERT INTO Cours (description_contenu, date_contenu, id_matiere, id_u,  id_guilde, nom_fichier) VALUES (?, ?, ?, ?, ?, ?)';
+  const values = [description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier];
   this.connection.query(query, values, (error, results, fields) => {
     if (error) {
       callback(error, null);

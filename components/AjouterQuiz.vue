@@ -2,6 +2,14 @@
   <div class="container mt-5">
     <h1 class="mb-4 text-center">Nouveau Quiz/Exercice</h1>
     <form @submit.prevent="submitForm" class="mx-auto" style="max-width: 400px;">
+      <!-- Sélection de la guilde -->
+      <div class="mb-3">
+        <label for="guilde" class="form-label">Guilde</label>
+        <select class="form-select" v-model="selectedGuilde" id="guilde" required>
+          <option value="">Choisir une guilde</option>
+          <option v-for="guilde in guildes" :key="guilde.id" :value="guilde.id">{{ guilde.nom }}</option>
+        </select>
+      </div>
       <!-- Description du contenu -->
       <div class="mb-3">
         <label for="descriptionContenu" class="form-label">Description du contenu</label>
@@ -47,6 +55,7 @@ import {getSubFromToken} from "../utils/session.mjs";
 // Variables réactives pour stocker les données du formulaire
 const descriptionContenu = ref('');
 const selectedMatiere = ref('');
+const selectedGuilde = ref('');
 let id = null;
 let insertedId: number | null = null;
 
@@ -61,6 +70,30 @@ if (status.value === "authenticated") {
  id = getSubFromToken(token); 
 }
 
+interface Guildes {
+    id: number;
+    nom: string;
+    description: string;
+    id_prof: number;
+}
+
+const guildes = ref<Guildes[]>([]);
+
+// Fonction pour récupérer les guildes du professeur
+const fetchGuildes = async () => {
+  try {
+    const response = await axios.get(`http://localhost:3001/guildes/prof/${id}`);
+    guildes.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des guildes:', error);
+    alert('Une erreur s\'est produite lors de la récupération des guildes.');
+  }
+};
+
+onMounted(() => {
+  fetchGuildes();
+});
+
 const questions = ref([{ intitule: '', reponse: '' }]);
 
 // Fonction pour ajouter une question
@@ -74,7 +107,6 @@ questions.value.splice(index, 1);
 };
 
 // Fonction pour soumettre le formulaire
-// Fonction pour soumettre le formulaire
 const submitForm = () => {
 // Vérification si tous les champs sont remplis
 if (!descriptionContenu.value || !selectedMatiere.value) {
@@ -87,10 +119,11 @@ const nouveauQuiz = {
   description_contenu: descriptionContenu.value,
   date_contenu: new Date().toISOString().slice(0, 10),
   id_matiere: selectedMatiere.value,
-  id_u: id
+  id_u: id,
+  id_guilde: selectedGuilde.value
 };
 
-console.log(nouveauQuiz);
+
 
 // Envoi des données du formulaire à l'API
 axios.post('http://localhost:3001/contenus/exercices', nouveauQuiz, {
