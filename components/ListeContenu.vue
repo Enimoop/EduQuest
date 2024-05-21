@@ -15,15 +15,22 @@
   </div>
 </template>
   
-<script setup>
+<script setup lang="ts">
 import { format } from 'date-fns';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
+const { data: token } = await useFetch("/api/token", { headers });
+
+const id = getSubFromToken(token);
+
+
 const contenus = ref([]);
   
   onMounted(() => {
-  axios.get('http://localhost:3001/contenus')
+  axios.get(`http://localhost:3001/contenus/all/${id}`)
     .then(response => {
       contenus.value = response.data;
     })

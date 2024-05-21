@@ -6,9 +6,16 @@ class ModeleContenu {
     this.connection = createConnection();
   }
 
-  recupererTousLesContenus(callback) {
-    const query = 'SELECT * from Contenu';
-    this.connection.query(query, (error, results, fields) => {
+  recupererTousLesContenus(id,callback) {
+    const query = `SELECT c.*,
+                  g.nom_guilde,
+                  g.description_guilde
+                  FROM Contenu c
+                  LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
+                  LEFT JOIN User u ON c.id_u = u.id_u
+                  LEFT JOIN Guilde g ON c.id_guilde = g.id_guilde
+                  WHERE (r.id_u = ? OR u.type = 'Admin')`;
+    this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
         return;
@@ -18,7 +25,9 @@ class ModeleContenu {
         description_contenu: row.description_contenu,
         date_contenu: row.date_contenu,
         id_matiere: row.id_matiere,
-        type_contenu: row.type_contenu
+        id_guilde: row.id_guilde,
+        type_contenu: row.type_contenu,
+        nom_guilde: row.nom_guilde
       }));
       callback(null, contenus);
     });
@@ -53,9 +62,16 @@ class ModeleContenu {
   }
 
 
-  recupererTousLesCours(callback) {
-    const query = 'SELECT * from Cours';
-    this.connection.query(query, (error, results, fields) => {
+  recupererTousLesCours(id,callback) {
+    const query = `SELECT c.*,
+                  g.nom_guilde,
+                  g.description_guilde
+                  FROM Cours c
+                  LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
+                  LEFT JOIN User u ON c.id_u = u.id_u
+                  LEFT JOIN Guilde g ON c.id_guilde = g.id_guilde
+                  WHERE (r.id_u = ? OR u.type = 'Admin')`;
+    this.connection.query(query, [id],(error, results, fields) => {
       if (error) {
         callback(error, null);
         return;
@@ -65,7 +81,9 @@ class ModeleContenu {
         description_contenu: row.description_contenu,
         date_contenu: row.date_contenu,
         id_matiere: row.id_matiere,
-        nom_fichier: row.nom_fichier
+        id_guilde: row.id_guilde,
+        nom_fichier: row.nom_fichier,
+        nom_guilde: row.nom_guilde
       }));
       callback(null, cours);
     });
@@ -96,21 +114,30 @@ class ModeleContenu {
     });
   }
 
-  recupererTousLesExercices(callback) {
-    const query = 'SELECT * from Exercice';
-    this.connection.query(query, (error, results, fields) => {
+  recupererTousLesExercices(id,callback) {
+    const query = `SELECT e.*,
+                  g.nom_guilde,
+                  g.description_guilde
+                  FROM Exercice e
+                  LEFT JOIN Rejoindre r ON e.id_guilde = r.id_guilde
+                  LEFT JOIN User u ON e.id_u = u.id_u
+                  LEFT JOIN Guilde g ON e.id_guilde = g.id_guilde
+                  WHERE (r.id_u = ? OR u.type = 'Admin')`;
+    this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
         return;
       }
-      const cours = results.map(row => ({
+      const exos = results.map(row => ({
         id: row.id_contenu,
         description_contenu: row.description_contenu,
         date_contenu: row.date_contenu,
         id_matiere: row.id_matiere,
-        type_exercice: row.type_exercice
+        id_guilde: row.id_guilde,
+        type_exercice: row.type_exercice,
+        nom_guilde: row.nom_guilde
       }));
-      callback(null, cours);
+      callback(null, exos);
     });
   }
 

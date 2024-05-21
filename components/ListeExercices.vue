@@ -7,7 +7,8 @@
           <div class="card mb-4 contenu-card">
             <div class="card-body">
               <h5 class="card-title">{{ exercice.description_contenu }}</h5>
-              <p class="card-text"><small class="text-muted">{{ format(new Date(exercice.date_contenu), 'dd/MM/yyyy') }}</small></p>
+              <p class="card-text"><small class="text-muted">{{ format(new Date(exercice.date_contenu), 'dd/MM/yyyy')
+                  }}</small></p>
               <!-- <p class="card-text">{{ cour.type_contenu }}</p>  -->
             </div>
           </div>
@@ -16,21 +17,29 @@
     </div>
   </div>
 </template>
-    
-  <script setup>
-  import { format } from 'date-fns';
-  import { ref, onMounted } from 'vue';
-  import axios from 'axios';
-  
-  const exercices = ref([]);
-    
-    onMounted(() => {
-    axios.get('http://localhost:3001/contenus/exercices')
-      .then(response => {
-        exercices.value = response.data;
-      })
-      .catch(error => {
-        exercices.error('Error fetching lesson:', error);
-      });
-  });
-    </script>
+
+<script setup lang="ts">
+import { format } from 'date-fns';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
+const { data: token } = await useFetch("/api/token", { headers });
+
+
+
+const id = getSubFromToken(token);
+
+const exercices = ref([]);
+
+onMounted(() => {
+  axios.get(`http://localhost:3001/contenus/exercices/${id}`)
+    .then(response => {
+      exercices.value = response.data;
+    })
+    .catch(error => {
+      exercices.error('Error fetching exercices:', error);
+    });
+});
+</script>
