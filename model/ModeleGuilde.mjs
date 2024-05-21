@@ -22,7 +22,7 @@ class ModeleGuilde {
         });
     }
 
-    recupererGuildeParProf(id_prof, callback) {
+    recupererGuildesParProf(id_prof, callback) {
         const query = 'SELECT * FROM Guilde WHERE id_prof = ?';
         this.connection.query(query, [id_prof], (error, results, fields) => {
             if (error) {
@@ -42,6 +42,27 @@ class ModeleGuilde {
             callback(null, guildes);
         });
     }
+
+    recupererGuildesParEleve(id_u, callback) {
+        const query = `SELECT g.id_guilde, g.nom_guilde, g.description_guilde, p.nom AS nom_prof
+                        FROM Guilde g
+                        JOIN Rejoindre r ON g.id_guilde = r.id_guilde
+                        JOIN Prof p ON g.id_prof = p.id_u
+                        WHERE r.id_u = ?`;
+        this.connection.query(query, [id_u], (error, results, fields) => {
+          if (error) {
+            callback(error, null);
+            return;
+          }
+          const guildes = results.map(row => ({
+            id: row.id_guilde,
+            nom: row.nom_guilde,
+            description: row.description_guilde,
+            prof: row.nom_prof
+          }));
+          callback(null, guildes);
+        });
+      }
 
     insertEleveDansGuilde(nouveauEleve, callback) {
         const {id, id_guilde} = nouveauEleve;

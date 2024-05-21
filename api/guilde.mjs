@@ -18,7 +18,19 @@ router.get('/', (req, res) => {
 });
 
 router.get('/prof/:idprof', (req, res) => {
-    modeleGuilde.recupererGuildeParProf(req.params.idprof, (error, guildes) => {
+    modeleGuilde.recupererGuildesParProf(req.params.idprof, (error, guildes) => {
+        if (error) {
+            res.status(500).json({
+                message: 'Erreur lors de la récupération des guildes'
+            });
+            return;
+        }
+        res.json(guildes);
+    });
+});
+
+router.get('/eleve/:ideleve', (req, res) => {
+    modeleGuilde.recupererGuildesParEleve(req.params.ideleve, (error, guildes) => {
         if (error) {
             res.status(500).json({
                 message: 'Erreur lors de la récupération des guildes'

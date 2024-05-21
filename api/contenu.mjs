@@ -171,4 +171,15 @@ router.post('/cours', (req, res) => {
   });
 });
 
+router.get('/guilde/:id_guilde', (req, res) => {
+  const id_guilde = req.params.id_guilde;
+  modeleContenu.recupererContenusParGuilde(id_guilde, (error, contenus) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
+      return;
+    }
+    res.json(contenus);
+  });
+});
+
 export default router;
