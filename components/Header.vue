@@ -89,6 +89,9 @@
                 </li>
               </ul>
             </li>
+            <li class="nav-item">
+              <router-link to="/guilde" class="nav-link">Guildes</router-link>
+            </li>
           </ul>
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">

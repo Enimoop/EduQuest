@@ -68,9 +68,10 @@ const affscore = ref<number | null>(null);
 onMounted(async () => {
 const route = useRoute()
 const id = route.params.id;
-axios.get(`http://localhost:3001/contenus/exercices/${id}`)
+axios.get(`http://localhost:3001/contenus/exercice/${id}`)
   .then(response => {
     questions.value = response.data;
+    console.log('Questions:', questions.value);
     description_contenu.value = response.data[0].description_contenu;
     
   })

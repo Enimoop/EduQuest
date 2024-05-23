@@ -1,3 +1,4 @@
+import { da, id } from 'date-fns/locale';
 import createConnection from './db.mjs';
 
 class ModeleEleve {
@@ -39,6 +40,26 @@ class ModeleEleve {
         niveau: results[0].niveau
       };
       callback(null, eleve);
+    });
+  }
+
+  recupererEleveParNomPrenom(string, guildeid, callback) {
+    const query = `SELECT * FROM Eleve
+                  WHERE (nom LIKE ? OR prenom LIKE ?)
+                  AND id_u NOT IN (SELECT id_u FROM Rejoindre WHERE id_guilde = ?)`;
+    const searchString = `%${string}%`;
+    this.connection.query(query, [searchString, searchString, guildeid], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      
+      const eleves = results.map(row => ({
+        id: row.id_u,
+        nom: row.nom,
+        prenom: row.prenom
+      }));
+      callback(null, eleves);
     });
   }
 
@@ -122,7 +143,50 @@ class ModeleEleve {
     });
   }
 
-  // Autres méthodes pour créer, mettre à jour et supprimer des élèves
+
+  recupererElevesDansGuilde(id_guilde, callback) {
+    const query = `SELECT Eleve.id_u, Eleve.nom, Eleve.prenom
+    FROM Eleve
+    JOIN Rejoindre ON Eleve.id_u = Rejoindre.id_u
+    WHERE Rejoindre.id_guilde = ?`;
+    this.connection.query(query, [id_guilde], (error, results, fields) => {
+        if (error) {
+            callback(error, null);
+            return;
+        }
+        const eleves = results.map(row => ({
+            id: row.id_u,
+            nom: row.nom,
+            prenom: row.prenom
+        }));
+        callback(null, eleves);
+    });
 }
+
+  recupererNotesParGuilde(id_eleve, id_guilde, callback) {
+    const query = `SELECT n.id_u AS id_eleve, n.*, e.*, g.nom_guilde, g.description_guilde
+                    FROM Noter n
+                    JOIN Exercice e ON n.id_contenu = e.id_contenu
+                    JOIN Guilde g ON e.id_guilde = g.id_guilde
+                    WHERE n.id_u = ? AND g.id_guilde = ?
+                    `;
+    this.connection.query(query, [id_eleve, id_guilde], (error, results, fields) => {
+      if(error) {
+        callback(error, null);
+        return;
+      }
+      const notes = results.map(row => ({
+        id: row.id_contenu,
+        description: row.description_contenu,
+        note: row.note,
+        id_eleve: row.id_eleve,
+        date: row.date_note
+      }));
+      callback(null, notes);
+    });
+  }
+
+    // Autres méthodes pour créer, mettre à jour et supprimer des élèves
+  }
 
 export default ModeleEleve;

@@ -5,8 +5,9 @@ const router = express.Router();
 const modeleContenu = new ModeleContenu();
 router.use(express.json());
 
-router.get('/', (req, res) => {
-  modeleContenu.recupererTousLesContenus((error, contenus) => {
+router.get('/all/:id', (req, res) => {
+  const id = req.params.id;
+  modeleContenu.recupererTousLesContenus(id,(error, contenus) => {
     if (error) {
       res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
       return;
@@ -15,8 +16,9 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/cours', (req, res) => {
-  modeleContenu.recupererTousLesCours((error, cours) => {
+router.get('/cours/:id', (req, res) => {
+  const id = req.params.id;
+  modeleContenu.recupererTousLesCours(id,(error, cours) => {
 
     if (error) {
       res.status(500).json({ message: 'Erreur lors de la récupération des cours' });
@@ -27,7 +29,7 @@ router.get('/cours', (req, res) => {
 
 });
 
-router.get('/cours/:id', (req, res) => {
+router.get('/cour/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.recupererCoursParId(id, (error, cours) => {
     if (error) {
@@ -43,8 +45,9 @@ router.get('/cours/:id', (req, res) => {
 });
 
 
-router.get('/exercices', (req, res) => {
-  modeleContenu.recupererTousLesExercices((error, exercices) => {
+router.get('/exercices/:id', (req, res) => {
+  const id = req.params.id;
+  modeleContenu.recupererTousLesExercices(id,(error, exercices) => {
 
     if (error) {
       res.status(500).json({ message: 'Erreur lors de la récupération des exercices' });
@@ -56,7 +59,7 @@ router.get('/exercices', (req, res) => {
 });
 
 
-router.get('/exercices/:id', (req, res) => {
+router.get('/exercice/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.recupererExerciceEtQuestionParId(id, (error, questions) => {
     if (error) {
@@ -165,6 +168,28 @@ router.post('/cours', (req, res) => {
       return;
     }
     res.status(201).json({ message: 'Cours inséré avec succès', insertedId });
+  });
+});
+
+router.get('/guilde/:id_guilde', (req, res) => {
+  const id_guilde = req.params.id_guilde;
+  modeleContenu.recupererContenusParGuilde(id_guilde, (error, contenus) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
+      return;
+    }
+    res.json(contenus);
+  });
+});
+
+router.delete('/delete/:id', (req, res) => {
+  const id = req.params.id;
+  modeleContenu.deleteContenu(id, (error) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la suppression du contenu' });
+      return;
+    }
+    res.json({ message: 'Contenu supprimé avec succès' });
   });
 });
 

@@ -26,9 +26,16 @@ class ModeleMatiere {
     }
 
 
-    recupererContenusParMatiere(id,callback) {
-      const query = 'SELECT * from Contenu c, Matiere m where c.id_matiere = m.id_matiere and m.id_matiere = ?';
-      this.connection.query(query,[id], (error, results, fields) => {
+    recupererContenusParMatiere(id_u,id_matiere,callback) {
+      const query = `SELECT c.*, m.*
+                    FROM Contenu c
+                    JOIN Matiere m ON c.id_matiere = m.id_matiere
+                    LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
+                    LEFT JOIN User u ON c.id_u = u.id_u
+                    WHERE (r.id_u = ? OR u.type = 'Admin')
+                    AND m.id_matiere = ?
+                    `;
+      this.connection.query(query,[id_u, id_matiere], (error, results, fields) => {
         if (error) {
           callback(error, null);
           return;

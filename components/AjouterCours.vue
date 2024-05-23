@@ -1,5 +1,13 @@
 <template>
     <form @submit.prevent="uploadPdf" class="container mt-4">
+      <!-- Sélection de la guilde -->
+    <div class="mb-3">
+      <label for="guilde" class="form-label">Guilde:</label>
+      <select id="guilde" class="form-select" v-model="selectedGuilde" required>
+        <option value="">Choisir une guilde</option>
+        <option v-for="guilde in guildes" :key="guilde.id" :value="guilde.id">{{ guilde.nom }}</option>
+      </select>
+    </div>
       <div class="mb-3">
         <label for="dropzone-file" class="form-label">Choisir un fichier PDF:</label>
         <div class="dropzone">
@@ -61,6 +69,31 @@ if (status.value === "authenticated") {
   const error = ref();
   const contentDescription = ref('');
   const selectedSubject = ref('Français');
+  const selectedGuilde = ref('');
+
+  interface Guildes {
+    id: number;
+    nom: string;
+    description: string;
+    id_prof: number;
+}
+
+const guildes = ref<Guildes[]>([]);
+
+// Fonction pour récupérer les guildes du professeur
+const fetchGuildes = async () => {
+  try {
+    const response = await axios.get(`http://localhost:3001/guildes/prof/${id}`);
+    guildes.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des guildes:', error);
+    alert('Une erreur s\'est produite lors de la récupération des guildes.');
+  }
+};
+
+onMounted(() => {
+  fetchGuildes();
+});
   
   function onFileChange(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
@@ -92,6 +125,7 @@ if (status.value === "authenticated") {
       date_contenu: new Date().toISOString().slice(0, 10), 
       id_matiere: selectedSubject.value,
       id_u: id,
+      id_guilde: selectedGuilde.value,
       nom_fichier: pdfName 
     };
 
