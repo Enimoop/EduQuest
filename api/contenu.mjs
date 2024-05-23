@@ -193,4 +193,50 @@ router.delete('/delete/:id', (req, res) => {
   });
 });
 
+router.put('/update/exo', (req, res) => {
+  const exo = req.body;
+  modeleContenu.updateExo(exo, (error) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la mise à jour du contenu' });
+      return;
+    }
+    res.json({ message: 'Contenu mis à jour avec succès' });
+  });
+});
+
+
+router.put('/update/cours', (req, res) => {
+  const cours = req.body;
+  modeleContenu.updateCours(cours, (error) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la mise à jour du contenu' });
+      return;
+    }
+    res.json({ message: 'Contenu mis à jour avec succès' });
+  });
+});
+
+router.put('/update/question', (req, res) => {
+  const question = req.body;
+  modeleContenu.updateQuestion(question, (error) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la mise à jour de la question' });
+      return;
+    }
+    res.json({ message: 'Question mise à jour avec succès' });
+  });
+});
+
+
+router.delete('/delete/question/:id', (req, res) => {
+  const id = req.params.id;
+  modeleContenu.deleteQuestion(id, (error) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la suppression du contenu' });
+      return;
+    }
+    res.json({ message: 'Contenu supprimé avec succès' });
+  });
+});
+
 export default router;

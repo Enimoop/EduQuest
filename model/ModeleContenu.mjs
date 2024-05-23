@@ -91,7 +91,23 @@ class ModeleContenu {
 
 
   recupererCoursParId(id, callback) {
-    const query = 'SELECT id_contenu, description_contenu, date_contenu, c.id_matiere, libelle_matiere, nom_fichier FROM Cours c, Matiere m WHERE c.id_matiere = m.id_matiere AND id_contenu = ?';
+    const query = `SELECT 
+                  c.id_contenu, 
+                  c.description_contenu, 
+                  c.date_contenu, 
+                  c.id_matiere, 
+                  m.libelle_matiere, 
+                  c.nom_fichier,
+                  c.id_guilde,
+                  g.nom_guilde 
+                  FROM 
+                  Cours c
+                  JOIN 
+                  Matiere m ON c.id_matiere = m.id_matiere
+                  LEFT JOIN 
+                  Guilde g ON c.id_guilde = g.id_guilde
+                  WHERE 
+                  c.id_contenu = ?`;
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -107,7 +123,9 @@ class ModeleContenu {
         date_contenu: results[0].date_contenu,
         id_matiere: results[0].id_matiere,
         libelle_matiere: results[0].libelle_matiere,
-        nom_fichier: results[0].nom_fichier
+        nom_fichier: results[0].nom_fichier,
+        id_guilde: results[0].id_guilde,
+        nom_guilde: results[0].nom_guilde
 
       };
       callback(null, cours);
@@ -143,7 +161,28 @@ class ModeleContenu {
 
 
   recupererExerciceEtQuestionParId(id, callback) {
-    const query = 'SELECT id_question, e.id_contenu, description_contenu, date_contenu, e.id_matiere, libelle_matiere, intitule, type_exercice, reponse FROM Exercice e, Matiere m, Question q WHERE e.id_matiere = m.id_matiere AND e.id_contenu = q.id_contenu and e.id_contenu = ?';
+    const query = `SELECT 
+                    q.id_question, 
+                    e.id_contenu, 
+                    e.description_contenu, 
+                    e.date_contenu, 
+                    e.id_matiere, 
+                    m.libelle_matiere, 
+                    g.id_guilde, 
+                    g.nom_guilde, 
+                    intitule, 
+                    type_exercice, 
+                    reponse 
+                  FROM 
+                    Exercice e
+                  JOIN 
+                    Matiere m ON e.id_matiere = m.id_matiere
+                  JOIN 
+                    Question q ON e.id_contenu = q.id_contenu
+                  JOIN
+                    Guilde g ON e.id_guilde = g.id_guilde
+                  WHERE 
+                    e.id_contenu = ?`;
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -159,7 +198,9 @@ class ModeleContenu {
         libelle_matiere: row.libelle_matiere,
         intitule: row.intitule,
         type_exercice: row.type_exercice,
-        reponse: row.reponse
+        reponse: row.reponse,
+        id_guilde: row.id_guilde,
+        nom_guilde: row.nom_guilde
 
       }));
       callback(null, questions);
@@ -296,7 +337,57 @@ deleteContenu(id, callback) {
     callback(null);
   });
 }
+
+updateExo(exo, callback) {
+  const {id_contenu, description_contenu, id_matiere, id_guilde} = exo;
+  const query = 'UPDATE Exercice SET description_contenu = ?, id_matiere = ?, id_guilde = ? WHERE id_contenu = ?';
+  const values = [description_contenu, id_matiere, id_guilde, id_contenu];
+  this.connection.query(query, values, (error, results, fields) => {
+    if (error) {
+      callback(error);
+      return;
+    }
+    callback(null);
+  });
 }
 
+updateQuestion(question, callback) {
+  const {id_question, intitule, reponse} = question;
+  const query = 'UPDATE Question SET intitule = ?, reponse = ? WHERE id_question = ?';
+  const values = [intitule, reponse, id_question];
+  this.connection.query(query, values, (error, results, fields) => {
+    if (error) {
+      callback(error);
+      return;
+    }
+    callback(null);
+  });
+}
+
+deleteQuestion(id, callback) {
+  const query = 'DELETE FROM Question WHERE id_question = ?';
+  this.connection.query(query, [id], (error, results, fields) => {
+    if (error) {
+      callback(error);
+      return;
+    }
+    callback(null);
+  });
+}
+
+updateCours(cours, callback) {
+  const {id_contenu, description_contenu, id_matiere, id_guilde, nom_fichier} = cours;
+  const query = 'UPDATE Cours SET description_contenu = ?, id_matiere = ?, id_guilde = ?, nom_fichier = ? WHERE id_contenu = ?';
+  const values = [description_contenu,id_matiere, id_guilde, nom_fichier, id_contenu];
+  this.connection.query(query, values, (error, results, fields) => {
+    if (error) {
+      callback(error);
+      return;
+    }
+    callback(null);
+  });
+}
+
+}
 
 export default ModeleContenu;
