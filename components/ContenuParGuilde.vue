@@ -32,6 +32,7 @@ const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 const { data: token } = await useFetch("/api/token", { headers });
 
 const idu = getSubFromToken(token);
+const type = await returnUserType(idu);
 
 interface Contenus {
     id: number;
@@ -50,6 +51,7 @@ onMounted(() => {
     const id = route.params.id;
     axios.get(`http://localhost:3001/contenus/guilde/${id}`)
         .then(response => {
+            console.log(response.data);
             contenus.value = response.data;
             nom_guilde.value = response.data[0].nom_guilde;
             description_guilde.value = response.data[0].description_guilde;

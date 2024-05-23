@@ -285,6 +285,17 @@ recupererContenusParGuilde(id_guilde, callback) {
   });
 
 }
+
+deleteContenu(id, callback) {
+  const query = 'DELETE FROM Contenu WHERE id_contenu = ?';
+  this.connection.query(query, [id], (error, results, fields) => {
+    if (error) {
+      callback(error);
+      return;
+    }
+    callback(null);
+  });
+}
 }
 
 

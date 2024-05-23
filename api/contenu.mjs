@@ -182,4 +182,15 @@ router.get('/guilde/:id_guilde', (req, res) => {
   });
 });
 
+router.delete('/delete/:id', (req, res) => {
+  const id = req.params.id;
+  modeleContenu.deleteContenu(id, (error) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la suppression du contenu' });
+      return;
+    }
+    res.json({ message: 'Contenu supprimé avec succès' });
+  });
+});
+
 export default router;
