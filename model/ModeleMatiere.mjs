@@ -73,6 +73,7 @@ class ModeleMatiere {
           callback(null, libelle_matiere);
       });
   }
+  
 }
 
 export default ModeleMatiere;

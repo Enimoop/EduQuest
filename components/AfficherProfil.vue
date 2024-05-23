@@ -1,64 +1,100 @@
 <template>
-  <div class="container">
-    <div class="card mt-3">
-      <div class="card-header bg-primary text-white">
+  <div class="container mt-5">
+    <div class="card">
+      <div class="card-header bg-primary text-white text-center">
         <h5 class="card-title mb-0">Profil Utilisateur</h5>
       </div>
       <div class="card-body">
-        <div class="row gx-2">
-          <div class="col-md-6 mb-2">
-            <div class="d-flex justify-content-between align-items-center">
-              <h6 class="card-subtitle mb-1 text-muted">Identifiant :</h6>
-              <p class="card-text">{{ user.id }}</p>
-            </div>
-            <hr class="mt-1 mb-1">
-            <small class="text-muted">Cet identifiant est unique pour chaque utilisateur.</small>
+        <form @submit.prevent="handleUpdate">
+          <div class="mb-3">
+            <label for="userId" class="form-label">Identifiant : <span id="userId">{{ user.id }}</span></label>
+            <small class="text-muted d-block">Cet identifiant est unique pour chaque utilisateur.</small>
           </div>
-          <div class="col-md-6 mb-2">
-            <div class="d-flex justify-content-between align-items-center">
-              <h6 class="card-subtitle mb-1 text-muted">Email :</h6>
-              <p class="card-text">{{ user.email }}</p>
-            </div>
-            <hr class="mt-1 mb-1">
+          <div class="mb-3">
+            <label for="userEmail" class="form-label">Email :</label>
+            <input type="email" id="userEmail" v-model="user.mail" class="form-control" name = mail required>
             <small class="text-muted">L'adresse email associée à ce compte utilisateur.</small>
           </div>
-          <div class="col-md-6 mb-2">
-            <div class="d-flex justify-content-between align-items-center">
-              <h6 class="card-subtitle mb-1 text-muted">Nom :</h6>
-              <p class="card-text">{{ user.name }}</p>
-            </div>
-            <hr class="mt-1 mb-1">
-            <small class="text-muted">Le nom complet de l'utilisateur.</small>
+          <div class="mb-3">
+            <label for="userType" class="form-label">Type : <span id="userType">{{ user.type }}</span></label>
+            <small class="text-muted d-block">Le type d'utilisateur (ex: administrateur, utilisateur standard, etc.).</small>
           </div>
-          <div class="col-md-6 mb-2">
-            <div class="d-flex justify-content-between align-items-center">
-              <h6 class="card-subtitle mb-1 text-muted">Type :</h6>
-              <p class="card-text">{{ user.type }}</p>
-            </div>
-            <hr class="mt-1 mb-1">
-            <small class="text-muted">Le type d'utilisateur (ex: administrateur, utilisateur standard, etc.).</small>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Changer le mot de passe :</label>
+            <input type="password" id="newPassword" v-model="password" class="form-control" placeholder="Nouveau mot de passe" name = mdp>
           </div>
-        </div>
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirmer le mot de passe :</label>
+            <input type="password" id="confirmPassword" v-model="confirmPassword" class="form-control" placeholder="Confirmer le mot de passe" name = mdpConfirm>
+            <small class="text-muted">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.</small>
+          </div>
+          <div class="text-center">
+            <button type = "submit" class="btn btn-primary">Mettre à jour</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
-  
-  <script setup>
-  import { ref, onMounted } from 'vue';
-    import axios from 'axios';
 
-    const user = ref([]);
 
-    onMounted(() => {
-      const email = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).mail : '';
-      axios.get(`http://localhost:3001/profils/${email}`)
-        .then(response => {
-          user.value = response.data;
-          console.log(user.value);
-        })
-        .catch(error => {
-          console.error('Error fetching user:', error);
-        });
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { getSubFromToken, returnUserType } from "../utils/session.mjs";
+import {updateProfil} from "../utils/func.mjs";
+import axios from 'axios';
+
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
+const { data: token } = await useFetch("/api/token", { headers });
+
+const id = getSubFromToken(token);
+const type = await returnUserType(id);
+
+const { status } = useAuth();
+
+interface User {
+  id: number;
+  mail: string;
+  type: string;
+}
+
+const user = ref<User>({
+  id: 0,
+  mail: "",
+  type: "",
+});
+
+const password = ref<string>("");
+const confirmPassword = ref<string>("");
+
+
+const handleUpdate = () => {
+  if (password.value !== confirmPassword.value) {
+    console.error("Les mots de passe ne correspondent pas.");
+    return;
+  }
+
+  const updatedUser = {
+    id: id,
+    mail: user.value.mail,
+    mdp: password.value,
+  };
+  updateProfil(updatedUser);
+  password.value = "";
+  confirmPassword.value = "";
+};
+
+
+onMounted(() => {
+  axios.get(`http://localhost:3001/profils/id/${id}`)
+    .then(response => {
+      user.value = response.data;
+      console.log(user.value);
+    })
+    .catch(error => {
+      console.error('Error fetching profils:', error);
     });
-  </script>
+});
+
+</script>
