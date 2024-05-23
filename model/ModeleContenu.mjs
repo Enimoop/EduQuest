@@ -162,27 +162,27 @@ class ModeleContenu {
 
   recupererExerciceEtQuestionParId(id, callback) {
     const query = `SELECT 
-                    q.id_question, 
-                    e.id_contenu, 
-                    e.description_contenu, 
-                    e.date_contenu, 
-                    e.id_matiere, 
-                    m.libelle_matiere, 
-                    g.id_guilde, 
-                    g.nom_guilde, 
-                    intitule, 
-                    type_exercice, 
-                    reponse 
+                      q.id_question, 
+                      e.id_contenu, 
+                      e.description_contenu, 
+                      e.date_contenu, 
+                      e.id_matiere, 
+                      m.libelle_matiere, 
+                      IFNULL(g.id_guilde, 'Aucune') AS id_guilde, 
+                      IFNULL(g.nom_guilde, 'Aucune') AS nom_guilde, 
+                      intitule, 
+                      type_exercice, 
+                      reponse 
                   FROM 
-                    Exercice e
+                      Exercice e
                   JOIN 
-                    Matiere m ON e.id_matiere = m.id_matiere
-                  JOIN 
-                    Question q ON e.id_contenu = q.id_contenu
-                  JOIN
-                    Guilde g ON e.id_guilde = g.id_guilde
+                      Matiere m ON e.id_matiere = m.id_matiere
+                  LEFT JOIN 
+                      Question q ON e.id_contenu = q.id_contenu
+                  LEFT JOIN
+                      Guilde g ON e.id_guilde = g.id_guilde
                   WHERE 
-                    e.id_contenu = ?`;
+                      e.id_contenu =?`;
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -327,8 +327,19 @@ recupererContenusParGuilde(id_guilde, callback) {
 
 }
 
-deleteContenu(id, callback) {
-  const query = 'DELETE FROM Contenu WHERE id_contenu = ?';
+deleteExo(id, callback) {
+  const query = 'DELETE FROM Exercice WHERE id_contenu = ?';
+  this.connection.query(query, [id], (error, results, fields) => {
+    if (error) {
+      callback(error);
+      return;
+    }
+    callback(null);
+  });
+}
+
+deleteCours(id, callback) {
+  const query = 'DELETE FROM Cours WHERE id_contenu = ?';
   this.connection.query(query, [id], (error, results, fields) => {
     if (error) {
       callback(error);
