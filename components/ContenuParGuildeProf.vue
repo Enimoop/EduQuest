@@ -22,7 +22,7 @@
                     <td>{{ format(new Date(contenu.date_contenu),
                     'dd/MM/yyyy')}}</td>
                     <td><button @click="retirerContenu(contenu.id)" class="btn btn-danger">Retirer</button></td>
-                    <td><button @click="voirPlus(eleve.id, guilde.id)" class="btn btn-primary">Voir plus</button>
+                    <td><button @click="voirPlus(contenu.id, contenu.type_contenu)" class="btn btn-primary">Voir plus</button>
                     </td>
                     <td><button @click="voirPlus(eleve.id, guilde.id)" class="btn btn-primary">Modifier</button>
                     </td>
@@ -38,6 +38,7 @@
 import { format } from 'date-fns';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useRouter, useRoute } from 'vue-router';
 
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
@@ -57,6 +58,9 @@ const nom_guilde = ref('');
 const description_guilde = ref('');
 
 const contenus = ref<Contenus[]>([]);
+
+const router = useRouter();
+const route = useRoute();
 
 onMounted(() => {
     const route = useRoute()
@@ -81,6 +85,16 @@ const retirerContenu = (id: number) => {
     .catch(error => {
       console.error('Erreur lors de la suppression du contenu:', error);
     });
+};
+
+const voirPlus = (id_contenu: number, type_contenu: string) => {
+    if (type_contenu === 'Exercice') {
+        router.push(`/exercice/${id_contenu}`);
+    } else if (type_contenu === 'Cours') {
+        router.push(`/cours/${id_contenu}`);
+    } else {
+        console.warn('Type de contenu non pris en charge:', type_contenu);
+    }
 };
 
 </script>
