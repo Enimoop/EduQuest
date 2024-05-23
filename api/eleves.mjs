@@ -143,6 +143,7 @@ router.get('/notes/:id', (req, res) => {
     res.json(notes);
   });
 });
+
 // Autres routes pour la création, la mise à jour et la suppression des élèves
 
 export default router;

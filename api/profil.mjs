@@ -5,6 +5,7 @@ import { ro } from 'date-fns/locale';
 
 const router = express.Router();
 const modeleProfil = new ModeleProfil();
+router.use(express.json());
 
 router.get('/', (req, res) => {
   modeleProfil.recupererTousLesProfils((error, profils) => {
@@ -78,6 +79,24 @@ router.get('/notes/:id', (req, res) => {
     }
     console.log('Notes retrieved:', notes);
     res.json(notes);
+  });
+});
+
+
+router.put('/update', (req, res) => {
+  const { id,mail,mdp } = req.body;
+  console.log("API")
+  console.log(id,mail,mdp)
+  modeleProfil.updateProfil(id, mail, mdp, (error, result) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la mise à jour du profil' });
+      return;
+    }
+    if (result === 0) {
+      res.status(404).json({ message: 'Aucun utilisateur trouvé avec cet ID' });
+      return;
+    }
+    res.json({ message: 'Profil mis à jour avec succès' });
   });
 });
 

@@ -217,7 +217,6 @@ class ModeleEleve {
     });
 }
 
-
     // Autres méthodes pour créer, mettre à jour et supprimer des élèves
   }
 
