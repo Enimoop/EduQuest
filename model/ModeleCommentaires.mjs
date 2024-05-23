@@ -1,7 +1,6 @@
 import createConnection from "./db.mjs";
-import ModelePosts from "./ModelePosts.mjs";
 
-class ModelePosts {
+class ModeleCommentaires {
   constructor() {
     this.connection = createConnection();
   }
@@ -14,9 +13,10 @@ class ModelePosts {
         return;
       }
       const commentaires = results.map((row) => ({
-        id: row.id_commentaire,
-        contenu: row.contenu,
-        date: row.date,
+        id: row.id_com,
+        user: row.id_u,
+        contenu: row.contenu_com,
+        date: row.date_com,
         id_post: row.id_post,
       }));
       callback(null, commentaires);
@@ -40,4 +40,4 @@ class ModelePosts {
   }
 }
 
-export default ModelePosts;
+export default ModeleCommentaires;
