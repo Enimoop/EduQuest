@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : db
--- Généré le : sam. 20 avr. 2024 à 15:35
+-- Généré le : jeu. 23 mai 2024 à 09:12
 -- Version du serveur : 8.3.0
 -- Version de PHP : 8.2.8
 
@@ -47,6 +47,22 @@ CREATE TABLE `Concerner` (
   `lvl` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Déchargement des données de la table `Concerner`
+--
+
+INSERT INTO `Concerner` (`id_u`, `id_matiere`, `lvl`) VALUES
+(1, 1, 5),
+(1, 2, 5),
+(1, 3, 0),
+(1, 4, 3),
+(1, 5, 2),
+(4, 1, 0),
+(4, 2, 0),
+(4, 3, 0),
+(4, 4, 0),
+(4, 5, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -70,6 +86,7 @@ CREATE TABLE `Contenu` (
   `date_contenu` date DEFAULT NULL,
   `id_matiere` int NOT NULL,
   `id_u` int NOT NULL,
+  `id_guilde` int DEFAULT NULL,
   `type_contenu` enum('Exercice','Quete','Cours') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -77,11 +94,23 @@ CREATE TABLE `Contenu` (
 -- Déchargement des données de la table `Contenu`
 --
 
-INSERT INTO `Contenu` (`id_contenu`, `description_contenu`, `date_contenu`, `id_matiere`, `type_contenu`, `id_u`) VALUES
-(1, 'QCM sur le subjonctif', '2024-04-07', 1, 'Exercice', 0),
-(2, 'Cours sur les fonctions affines', '2024-04-07', 2, 'Cours', 0),
-(3, 'Trouve la traduction de ces mots anglais', '2024-04-07', 5, 'Quete', 0),
-(4, 'La quete infini de Mr Long', '2024-04-07', 3, 'Quete', 0);
+INSERT INTO `Contenu` (`id_contenu`, `description_contenu`, `date_contenu`, `id_matiere`, `id_u`, `id_guilde`, `type_contenu`) VALUES
+(1, 'QCM sur le subjonctif', '2024-04-07', 1, 3, NULL, 'Exercice'),
+(2, 'Cours sur les fonctions affines', '2024-04-07', 2, 3, NULL, 'Cours'),
+(5, 'Test du quiz', '2024-04-30', 5, 2, 2, 'Exercice'),
+(6, 'testquiz', '2024-04-30', 4, 2, 1, 'Exercice'),
+(9, 'quiz fin des alertes', '2024-04-30', 4, 2, 2, 'Exercice'),
+(11, 'test', '2024-04-30', 2, 2, 1, 'Exercice'),
+(12, 'retest', '2024-04-30', 3, 2, 2, 'Exercice'),
+(14, 're test ui', '2024-04-30', 2, 2, 1, 'Exercice'),
+(15, 'yeah test', '2024-04-30', 5, 2, 2, 'Cours'),
+(17, 'test test test ', '2024-04-30', 4, 2, 1, 'Cours'),
+(18, 'test test 10000', '2024-05-07', 3, 2, 2, 'Cours'),
+(20, 'test quiz date', '2024-05-07', 4, 2, 1, 'Exercice'),
+(21, 'vdf', '2024-05-07', 4, 2, 2, 'Cours'),
+(24, 'retest ajout contenu guilde', '2024-05-21', 2, 2, 2, 'Exercice'),
+(25, 'test ajout cours guilde', '2024-05-21', 4, 2, 1, 'Cours'),
+(27, 'tsstt', '2024-05-21', 4, 2, 1, 'Cours');
 
 -- --------------------------------------------------------
 
@@ -95,6 +124,7 @@ CREATE TABLE `Cours` (
   `date_contenu` date DEFAULT NULL,
   `id_matiere` int DEFAULT NULL,
   `id_u` int NOT NULL,
+  `id_guilde` int DEFAULT NULL,
   `nom_fichier` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -102,8 +132,14 @@ CREATE TABLE `Cours` (
 -- Déchargement des données de la table `Cours`
 --
 
-INSERT INTO `Cours` (`id_contenu`, `description_contenu`, `date_contenu`, `id_matiere`, `id_u`, `nom_fichier`) VALUES
-(2, 'Cours sur les fonctions affines', '2024-04-07', 2, 0, 'cours_math_fonctions');
+INSERT INTO `Cours` (`id_contenu`, `description_contenu`, `date_contenu`, `id_matiere`, `id_u`, `id_guilde`, `nom_fichier`) VALUES
+(2, 'Cours sur les fonctions affines', '2024-04-07', 2, 3, NULL, 'cours_math_fonctions.pdf'),
+(15, 'yeah test', '2024-04-30', 5, 2, 2, '17150693419073811893.pdf'),
+(17, 'test test test ', '2024-04-30', 4, 2, 1, '17150716502598291874.pdf'),
+(18, 'test test 10000', '2024-05-07', 3, 2, 2, '17150842661162112970.pdf'),
+(21, 'vdf', '2024-05-07', 4, 2, 2, '17150863585144427739.pdf'),
+(25, 'test ajout quiz guilde', '2024-05-21', 4, 2, 1, '1716308952026974152.pdf'),
+(27, 'tsstt', '2024-05-21', 4, 2, 1, '17163306023616384446.pdf');
 
 --
 -- Déclencheurs `Cours`
@@ -120,7 +156,7 @@ then
 end if;
 
 
-insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu,new.id_matiere,new.id_u,'Cours'); 
+insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu,new.id_matiere,new.id_u,new.id_guilde,'Cours'); 
 select count(*) into s 
  from Cours 
  where id_contenu=new.id_contenu ; 
@@ -170,7 +206,8 @@ CREATE TABLE `Eleve` (
 --
 
 INSERT INTO `Eleve` (`id_u`, `nom`, `prenom`, `mail`, `mdp`, `niveau_etude`) VALUES
-(1, 'test', 'test', 'test', 'test', 6);
+(1, 'test', 'testta', 'test@mail.com', 'test', 6),
+(4, 'Lala', 'Tetouan', 'tetouan@mail.com', 'mdp', 6);
 
 --
 -- Déclencheurs `Eleve`
@@ -197,6 +234,34 @@ select count(*) into s
    end if;
 
 end
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `after_insert_eleve` AFTER INSERT ON `Eleve` FOR EACH ROW BEGIN
+    DECLARE matiere_id INT;
+    DECLARE done INT DEFAULT 0;
+    
+    -- This cursor will iterate over the IDs of the subjects (matires)
+    DECLARE matiere_cursor CURSOR FOR SELECT id_matiere FROM Matiere;
+    
+    -- Declare the handler to end the loop when there are no more rows
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    
+    OPEN matiere_cursor;
+    
+    matieres_loop: LOOP
+        FETCH matiere_cursor INTO matiere_id;
+        
+        IF done THEN
+            LEAVE matieres_loop;
+        END IF;
+        
+        -- Insert the new record into Concerner table for each subject
+        INSERT INTO Concerner (id_u, id_matiere, lvl) VALUES (NEW.id_u, matiere_id, 0);
+    END LOOP;
+    
+    CLOSE matiere_cursor;
+END
 $$
 DELIMITER ;
 DELIMITER $$
@@ -229,6 +294,7 @@ CREATE TABLE `Exercice` (
   `date_contenu` date DEFAULT NULL,
   `id_matiere` int NOT NULL,
   `id_u` int NOT NULL,
+  `id_guilde` int DEFAULT NULL,
   `type_exercice` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -236,8 +302,16 @@ CREATE TABLE `Exercice` (
 -- Déchargement des données de la table `Exercice`
 --
 
-INSERT INTO `Exercice` (`id_contenu`, `description_contenu`, `date_contenu`, `id_matiere`, `id_u`, `type_exercice`) VALUES
-(1, 'QCM sur le subjonctif', '2024-04-07', 1, 0, 'QCM');
+INSERT INTO `Exercice` (`id_contenu`, `description_contenu`, `date_contenu`, `id_matiere`, `id_u`, `id_guilde`, `type_exercice`) VALUES
+(1, 'QCM sur le subjonctif', '2024-04-07', 1, 3, NULL, 'QCM'),
+(5, 'Test du quiz', '2024-04-30', 5, 2, 2, 'QCM'),
+(6, 'testquiz', '2024-04-30', 4, 2, 1, 'QCM'),
+(9, 'quiz fin des alertes', '2024-04-30', 4, 2, 2, 'QCM'),
+(11, 'test', '2024-04-30', 2, 2, 1, 'QCM'),
+(12, 'retest', '2024-04-30', 3, 2, 2, 'QCM'),
+(14, 're test ui', '2024-04-30', 2, 2, 1, 'QCM'),
+(20, 'test quiz date', '2024-05-07', 4, 2, 1, 'QCM'),
+(24, 'retest ajout contenu guilde', '2024-05-21', 2, 2, 2, 'QCM');
 
 --
 -- Déclencheurs `Exercice`
@@ -254,7 +328,7 @@ then
 end if;
 
 
-insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu, new.id_matiere,new.id_u, 'Exercice'); 
+insert into Contenu values(new.id_contenu,new.description_contenu,new.date_contenu, new.id_matiere,new.id_u, new.id_guilde, 'Exercice'); 
 select count(*) into s 
  from Exercice 
  where id_contenu=new.id_contenu ; 
@@ -302,7 +376,18 @@ CREATE TABLE `Guilde` (
 --
 
 INSERT INTO `Guilde` (`id_guilde`, `nom_guilde`, `description_guilde`, `id_prof`) VALUES
-(1, 'Long Guilde', 'La guilde de Mr Long', 2);
+(1, 'Long Guilde', 'La guilde de Mr Long', 2),
+(2, 'test de la guilde', 'retest', 2);
+
+--
+-- Déclencheurs `Guilde`
+--
+DELIMITER $$
+CREATE TRIGGER `delete_contenu_after_guilde_delete` AFTER DELETE ON `Guilde` FOR EACH ROW BEGIN
+  DELETE FROM `Contenu` WHERE `id_guilde` = OLD.`id_guilde`;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -335,8 +420,21 @@ INSERT INTO `Matiere` (`id_matiere`, `libelle_matiere`) VALUES
 CREATE TABLE `Noter` (
   `id_u` int NOT NULL,
   `id_contenu` int NOT NULL,
-  `note` int DEFAULT NULL
+  `note` float DEFAULT NULL,
+  `date_note` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `Noter`
+--
+
+INSERT INTO `Noter` (`id_u`, `id_contenu`, `note`, `date_note`) VALUES
+(1, 1, 100, '2024-05-02'),
+(1, 5, 66.6667, '2024-05-01'),
+(1, 6, 50, '2024-05-01'),
+(1, 9, 50, '2024-05-14'),
+(1, 14, 100, '2024-05-13'),
+(1, 20, 100, '2024-05-23');
 
 -- --------------------------------------------------------
 
@@ -363,14 +461,14 @@ CREATE TABLE `Prof` (
   `prenom` varchar(255) DEFAULT NULL,
   `mail` varchar(255) DEFAULT NULL,
   `mdp` varchar(255) DEFAULT NULL,
-  `diplome` varchar(255) DEFAULT NULL
+  `etablissement` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `Prof`
 --
 
-INSERT INTO `Prof` (`id_u`, `nom`, `prenom`, `mail`, `mdp`, `diplome`) VALUES
+INSERT INTO `Prof` (`id_u`, `nom`, `prenom`, `mail`, `mdp`, `etablissement`) VALUES
 (2, 'Long', 'Thomas', 'thomas.long@mail.com', 'mdp', 'licence prof');
 
 --
@@ -437,7 +535,20 @@ CREATE TABLE `Question` (
 
 INSERT INTO `Question` (`id_question`, `intitule`, `reponse`, `id_contenu`) VALUES
 (1, 'Il faut que le verbe qui suit « il faut que » soit au subjonctif. Par exemple : « Il faut que tu te nourrisses bien. »', 'vrai', 1),
-(2, 'On dit \"Il faut que je mettes le gâteau au four.\"', 'faux', 1);
+(2, 'On dit \"Il faut que je mettes le gâteau au four.\"', 'faux', 1),
+(3, 'test question réponse vrai', 'vrai', 5),
+(4, 'test question réponse faux', 'faux', 5),
+(5, 'test question réponse faux', 'faux', 5),
+(6, 'question 1 faux', 'faux', 6),
+(7, 'question 2 vrai ', 'vrai', 6),
+(14, 'fin alerte vrai', 'vrai', 9),
+(15, 'fin alterte faux', 'faux', 9),
+(16, 'ui v', 'vrai', 14),
+(17, 'ui f', 'faux', 14),
+(18, 'date test v', 'vrai', 20),
+(19, 'date test v', 'vrai', 20),
+(20, 'date test f', 'faux', 20),
+(24, 'tetete v', 'vrai', 24);
 
 -- --------------------------------------------------------
 
@@ -662,7 +773,8 @@ CREATE TABLE `Rejoindre` (
 --
 
 INSERT INTO `Rejoindre` (`id_u`, `id_guilde`) VALUES
-(1, 1);
+(1, 1),
+(4, 1);
 
 -- --------------------------------------------------------
 
@@ -682,9 +794,10 @@ CREATE TABLE `User` (
 --
 
 INSERT INTO `User` (`id_u`, `mail`, `mdp`, `type`) VALUES
-(1, 'test', 'test', 'Eleve'),
+(1, 'test@mail.com', 'test', 'Eleve'),
 (2, 'thomas.long@mail.com', 'mdp', 'Prof'),
-(3, 'admin@mail.com', 'admin', 'Admin');
+(3, 'admin@mail.com', 'admin', 'Admin'),
+(4, 'tetouan@mail.com', 'mdp', 'Eleve');
 
 --
 -- Index pour les tables déchargées
@@ -776,7 +889,7 @@ ALTER TABLE `Prof`
 --
 ALTER TABLE `Question`
   ADD PRIMARY KEY (`id_question`),
-  ADD KEY `id_contenu_exercice` (`id_contenu`);
+  ADD KEY `fk_question_exercice` (`id_contenu`);
 
 --
 -- Index pour la table `Quete`
@@ -824,31 +937,31 @@ ALTER TABLE `Commentaire`
 -- AUTO_INCREMENT pour la table `Contenu`
 --
 ALTER TABLE `Contenu`
-  MODIFY `id_contenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_contenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT pour la table `Cours`
 --
 ALTER TABLE `Cours`
-  MODIFY `id_contenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_contenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT pour la table `Eleve`
 --
 ALTER TABLE `Eleve`
-  MODIFY `id_u` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_u` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT pour la table `Exercice`
 --
 ALTER TABLE `Exercice`
-  MODIFY `id_contenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_contenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT pour la table `Guilde`
 --
 ALTER TABLE `Guilde`
-  MODIFY `id_guilde` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_guilde` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `Matiere`
@@ -866,13 +979,13 @@ ALTER TABLE `PostForum`
 -- AUTO_INCREMENT pour la table `Prof`
 --
 ALTER TABLE `Prof`
-  MODIFY `id_u` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_u` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `Question`
 --
 ALTER TABLE `Question`
-  MODIFY `id_question` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_question` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT pour la table `Quete`
@@ -896,7 +1009,7 @@ ALTER TABLE `Quetes_jour`
 -- AUTO_INCREMENT pour la table `User`
 --
 ALTER TABLE `User`
-  MODIFY `id_u` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_u` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Contraintes pour les tables déchargées
@@ -922,6 +1035,33 @@ ALTER TABLE `Concerner`
 ALTER TABLE `Consulter`
   ADD CONSTRAINT `Consulter_ibfk_1` FOREIGN KEY (`id_u`) REFERENCES `Eleve` (`id_u`) ON DELETE CASCADE,
   ADD CONSTRAINT `Consulter_ibfk_2` FOREIGN KEY (`id_contenu`) REFERENCES `Contenu` (`id_contenu`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `Contenu`
+--
+ALTER TABLE `Contenu`
+  ADD CONSTRAINT `fk_contenu_user` FOREIGN KEY (`id_u`) REFERENCES `User` (`id_u`) ON DELETE CASCADE;
+
+
+--
+-- Contraintes pour la table `Noter`
+--
+ALTER TABLE `Noter`
+  ADD CONSTRAINT `fk_noter_contenu` FOREIGN KEY (`id_contenu`) REFERENCES `Contenu` (`id_contenu`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_noter_eleve` FOREIGN KEY (`id_u`) REFERENCES `Eleve` (`id_u`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `Question`
+--
+ALTER TABLE `Question`
+  ADD CONSTRAINT `fk_question_exercice` FOREIGN KEY (`id_contenu`) REFERENCES `Exercice` (`id_contenu`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `Rejoindre`
+--
+ALTER TABLE `Rejoindre`
+  ADD CONSTRAINT `fk_rejoindre_guilde` FOREIGN KEY (`id_guilde`) REFERENCES `Guilde` (`id_guilde`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_rejoindre_user` FOREIGN KEY (`id_u`) REFERENCES `User` (`id_u`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
