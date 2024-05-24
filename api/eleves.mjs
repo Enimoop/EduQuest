@@ -144,6 +144,17 @@ router.get('/notes/:id', (req, res) => {
   });
 });
 
+router.post('/new', (req, res) => {
+  const { nom, prenom, mail, mdp} = req.body;
+  modeleEleve.inscriptionEleve(nom, prenom, mail, mdp, (error, eleve) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la création de l\'élève' });
+      return;
+    }
+    res.json(eleve);
+  });
+});
+
 // Autres routes pour la création, la mise à jour et la suppression des élèves
 
 export default router;

@@ -217,6 +217,16 @@ class ModeleEleve {
     });
 }
 
+  inscriptionEleve(nom, prenom, mail, mdp,callback) {
+    const query = 'INSERT INTO Eleve (nom, prenom, mail, mdp, niveau_etude) VALUES (?, ?, ?, ?, 6)';
+    this.connection.query(query, [nom, prenom,mail, mdp], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, results.insertId);
+    });
+  }
     // Autres méthodes pour créer, mettre à jour et supprimer des élèves
   }
 
