@@ -1,20 +1,12 @@
 <template>
    <NuxtLayout layout="default">
-    <AfficherProfil />
+    <AfficherAccueil />
     <br>
-    <LvlParMatiere v-if="type === 'Eleve'"/> 
-  <div>{{ token || "pas de token" }}</div>
-  <div>
-    <h1>Home</h1>
-    <p>Welcome to EduQuest</p>
-    
-  </div>
 </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-import AfficherProfil from '../components/AfficherProfil.vue';
-import LvlParMatiere from '../components/LvlParMatiere.vue';
+import AfficherAccueil from '~/components/AfficherAccueil.vue';
 import 'bootstrap/dist/css/bootstrap.css';
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;

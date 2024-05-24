@@ -1,101 +1,113 @@
 <template>
-    <div>
-      <h1>Tableau de bord des guildes</h1>
-  
-      <!-- Liste des guildes -->
-      <ul class="list-group">
-        <li v-for="guilde in guildes" :key="guilde.id" class="list-group-item">
-          <!-- Nom de la guilde et bouton pour afficher les détails -->
-          <div>
-            <button @click="fetchGuildDetails(guilde.id)" class="btn btn-link">{{ guilde.nom }}</button>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white text-center">
+            <h5 class="card-title mb-0">Tableau de bord des guildes</h5>
           </div>
-  
-          <!-- Affichage des détails de la guilde -->
-          <div v-if="currentGuildeId === guilde.id">
-            <p>{{ guilde.description }}</p>
-  
-            <!-- Bouton pour ajouter un élève -->
-            <button @click="() => toggleSearchForm(guilde.id)" class="btn btn-primary">Ajouter un élève</button>
-  
-            <!-- Formulaire de recherche -->
-            <div v-if="showSearchForm">
-              <input v-model="searchQuery" type="text" placeholder="Rechercher un élève par nom ou prénom" class="form-control mb-2" />
-              <ul v-if="searchQuery && searchResults.length > 0" class="list-group">
-                <li v-for="result in searchResults" :key="result.id" class="list-group-item">
-                  {{ result.nom }} {{ result.prenom }}
-                  <button @click="addEleveToGuilde(result, guilde.id)" class="btn btn-primary">Ajouter</button>
-                </li>
-              </ul>
-            </div>
-  
-            <!-- Tableau des élèves -->
-            <table class="table table-striped table-hover mt-2">
-              <thead>
-                <tr>
-                  <th scope="col">Nom</th>
-                  <th scope="col">Prénom</th>
-                  <th scope="col">Retirer</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <template v-for="eleve in eleves" :key="eleve.id">
-                  <tr>
-                    <td>{{ eleve.nom }}</td>
-                    <td>{{ eleve.prenom }}</td>
-                    <td><button @click="retirerEleve(eleve.id)" class="btn btn-danger">Retirer</button></td>
-                    <td><button @click="voirPlus(eleve.id, guilde.id)" class="btn btn-primary">Voir plus</button></td>
-                  </tr>
-  
-                  <!-- Tableau des notes -->
-                  <tr v-if="currentEleveId === eleve.id">
-                    <td colspan="4">
-                      <h3>Notes de l'élève</h3>
-                      <table class="table table-striped table-hover">
-                        <thead>
+          <div class="card-body">
+            <!-- Liste des guildes -->
+            <ul class="list-group mb-3">
+              <li v-for="guilde in guildes" :key="guilde.id" class="list-group-item">
+                <!-- Nom de la guilde et bouton pour afficher les détails -->
+                <div>
+                  <button @click="fetchGuildDetails(guilde.id)" class="btn btn-link">{{ guilde.nom }}</button>
+                </div>
+
+                <!-- Affichage des détails de la guilde -->
+                <div v-if="currentGuildeId === guilde.id">
+                  <p>{{ guilde.description }}</p>
+
+                  <!-- Bouton pour ajouter un élève -->
+                  <button @click="() => toggleSearchForm(guilde.id)" class="btn btn-primary">Ajouter un élève</button>
+
+                  <!-- Formulaire de recherche -->
+                  <div v-if="showSearchForm">
+                    <input v-model="searchQuery" type="text" placeholder="Rechercher un élève par nom ou prénom" class="form-control mb-2" />
+                    <ul v-if="searchQuery && searchResults.length > 0" class="list-group">
+                      <li v-for="result in searchResults" :key="result.id" class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ result.nom }} {{ result.prenom }}
+                        <button @click="addEleveToGuilde(result, guilde.id)" class="btn btn-primary btn-sm">Ajouter</button>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- Tableau des élèves -->
+                  <div class="mt-3">
+                    <h5>Élèves</h5>
+                    <table class="table table-striped table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col" class="text-black">Nom</th>
+                          <th scope="col" class="text-black">Prénom</th>
+                          <th scope="col" class="text-black">Retirer</th>
+                          <th scope="col" class="text-black">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <template v-for="eleve in eleves" :key="eleve.id">
                           <tr>
-                            <th scope="col">Description du contenu</th>
-                            <th scope="col">Note</th>
-                            <th scope="col">Date de la note</th>
+                            <td>{{ eleve.nom }}</td>
+                            <td>{{ eleve.prenom }}</td>
+                            <td><button @click="retirerEleve(eleve.id)" class="btn btn-danger btn-sm">Retirer</button></td>
+                            <td><button @click="voirPlus(eleve.id, guilde.id)" class="btn btn-primary btn-sm">Voir plus</button></td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="note in currentEleveNotes" :key="note.id">
-                            <td>{{ note.description }}</td>
-                            <td>{{ note.note }}</td>
-                            <td>{{ format(new Date(note.date), 'dd/MM/yyyy') }}</td>
+
+                          <!-- Tableau des notes -->
+                          <tr v-if="currentEleveId === eleve.id">
+                            <td colspan="4">
+                              <h5 class="mt-3">Notes de l'élève</h5>
+                              <table class="table table-striped table-hover mt-2">
+                                <thead class="thead-dark">
+                                  <tr>
+                                    <th scope="col" class="text-black">Description du contenu</th>
+                                    <th scope="col" class="text-black">Note</th>
+                                    <th scope="col" class="text-black">Date de la note</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr v-for="note in currentEleveNotes" :key="note.id">
+                                    <td>{{ note.description }}</td>
+                                    <td>{{ note.note }}</td>
+                                    <td>{{ format(new Date(note.date), 'dd/MM/yyyy') }}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
                           </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                </template>
-              </tbody>
-            </table>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <!-- Bouton pour créer une nouvelle guilde -->
+            <button @click="toggleNewGuildeForm" class="btn btn-primary mt-3">Créer une nouvelle guilde</button>
+
+            <!-- Formulaire pour créer une nouvelle guilde -->
+            <div v-if="showNewGuildeForm" class="mt-3">
+              <h5>Créer une nouvelle guilde</h5>
+              <form @submit.prevent="creerNouvelleGuilde">
+                <div class="mb-3">
+                  <label for="nomGuilde" class="form-label">Nom de la guilde</label>
+                  <input v-model="nouvelleGuilde.nom" type="text" class="form-control" id="nomGuilde" required>
+                </div>
+                <div class="mb-3">
+                  <label for="descriptionGuilde" class="form-label">Description de la guilde</label>
+                  <textarea v-model="nouvelleGuilde.description" class="form-control" id="descriptionGuilde" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Créer</button>
+              </form>
+            </div>
           </div>
-        </li>
-      </ul>
-  
-      <!-- Bouton pour créer une nouvelle guilde -->
-      <button @click="toggleNewGuildeForm" class="btn btn-primary mt-3">Créer une nouvelle guilde</button>
-  
-      <!-- Formulaire pour créer une nouvelle guilde -->
-      <div v-if="showNewGuildeForm" class="mt-3">
-        <h3>Créer une nouvelle guilde</h3>
-        <form @submit.prevent="creerNouvelleGuilde">
-          <div class="mb-3">
-            <label for="nomGuilde" class="form-label">Nom de la guilde</label>
-            <input v-model="nouvelleGuilde.nom" type="text" class="form-control" id="nomGuilde" required>
-          </div>
-          <div class="mb-3">
-            <label for="descriptionGuilde" class="form-label">Description de la guilde</label>
-            <textarea v-model="nouvelleGuilde.description" class="form-control" id="descriptionGuilde" rows="3" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Créer</button>
-        </form>
+        </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
 <script setup lang="ts">
 import { format } from 'date-fns';
