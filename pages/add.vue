@@ -22,11 +22,10 @@ const headers = useRequestHeaders(["cookie"]);
 
 const { data: token } = await useFetch("/api/token", { headers });
 
-const id = getSubFromToken(token.value);
+const id = getSubFromToken(token);
 
 const type = await returnUserType(id);
-
-if (type !== "Prof" || type !== "Admin") {
+if (type !== "Prof" && type !== "Admin") {
     router.push("/");
 }
 </script>
