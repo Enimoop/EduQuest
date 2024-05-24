@@ -237,3 +237,11 @@ button.sub-btn {
   border-radius: 5px;
   overflow: hidden;
 }
+
+form.registration-form {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto; /* centre horizontalement */
+  padding: 20px;
+  margin-top: 20px;
+}
