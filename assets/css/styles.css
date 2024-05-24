@@ -113,6 +113,20 @@ div.contenu-card:hover {
       pointer-events: none;
   }
 
+  .navbar .dropdown-menu.custom-dropdown {
+    background-color: white; /* Couleur de fond des menus déroulants */
+  }
+  
+  .navbar .dropdown-menu.custom-dropdown .dropdown-item.custom-dropdown-item {
+    color: #000; /* Couleur du texte des éléments */
+    background-color: white; /* Couleur de fond des éléments */
+  }
+  
+  .navbar .dropdown-menu.custom-dropdown .dropdown-item.custom-dropdown-item:hover {
+    color: #000; /* Couleur du texte des éléments au survol */
+    background-color: #4a87ce; /* Couleur de fond des éléments au survol */
+  }
+
 
   .my-footer {
     
