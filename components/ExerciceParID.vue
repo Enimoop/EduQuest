@@ -153,6 +153,8 @@ if (type === "Eleve") {
         console.error('Erreur lors de la récupération du score:', error);
       });
     
+} else {
+  affscore.value = score.value;
 }
 };
 

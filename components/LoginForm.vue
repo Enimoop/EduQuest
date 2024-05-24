@@ -14,7 +14,7 @@
       <label class="form-check-label" for="remember">Se Souvenir de moi</label>
     </div>
     <button type="submit" class="btn btn-primary w-100">Connexion</button>
-    <p class="mt-3 mb-0 text-center">Pas encore de compte ? <a href="#" class="text-primary">Créer un compte</a></p>
+    <p class="mt-3 mb-0 text-center">Pas encore de compte ? <router-link to ="/inscription" class="text-primary">Créer un compte</router-link></p>
   </form>
 </template>
 
