@@ -201,7 +201,6 @@ class ModeleEleve {
             return;
         }
         if (results.length === 0) {
-            console.log('Aucune note trouvée pour l\'id:', id); // Ajout de log pour vérifier les résultats vides
             callback(null, null);
             return;
         }
@@ -227,7 +226,18 @@ class ModeleEleve {
       callback(null, results.insertId);
     });
   }
-    // Autres méthodes pour créer, mettre à jour et supprimer des élèves
+    
+  updateEleve(id, mdp, mail, callback) {
+    const query = 'UPDATE Eleve SET mail = ?, mdp = ? WHERE id_u = ?';
+    this.connection.query(query, [mdp, mail, id], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, results.affectedRows);
+    });
+  
+  }
   }
 
 export default ModeleEleve;

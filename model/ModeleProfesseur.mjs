@@ -42,6 +42,18 @@ class ModeleProfesseur {
           callback(null, professeur);
         });
     }
+
+    updateProf(id, mdp, mail, callback) {
+      const query = 'UPDATE Prof SET mail = ?, mdp = ? WHERE id_u = ?';
+      this.connection.query(query, [mdp, mail, id], (error, results, fields) => {
+        if (error) {
+          callback(error, null);
+          return;
+        }
+        callback(null, results.affectedRows);
+      });
+    
+    }
 }
 
 export default ModeleProfesseur;

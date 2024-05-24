@@ -64,7 +64,6 @@ router.get('/type/:id', (req, res) => {
 });
 
 router.get('/notes/:id', (req, res) => {
-  console.log('GET /notes/:id called'); // Vérifiez que la route est atteinte
   const id = req.params.id;
   modeleProfil.recupererNoteUnCompte(id, (error, notes) => {
     if (error) {
@@ -77,7 +76,6 @@ router.get('/notes/:id', (req, res) => {
       res.status(404).json({ message: 'notes non trouvées' });
       return;
     }
-    console.log('Notes retrieved:', notes);
     res.json(notes);
   });
 });
@@ -85,8 +83,6 @@ router.get('/notes/:id', (req, res) => {
 
 router.put('/update', (req, res) => {
   const { id,mail,mdp } = req.body;
-  console.log("API")
-  console.log(id,mail,mdp)
   modeleProfil.updateProfil(id, mail, mdp, (error, result) => {
     if (error) {
       res.status(500).json({ message: 'Erreur lors de la mise à jour du profil' });

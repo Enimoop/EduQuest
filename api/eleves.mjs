@@ -130,7 +130,6 @@ router.get('/guilde/:ideleve/:idguilde', (req, res) => {
 
 router.get('/notes/:id', (req, res) => {
   const id = req.params.id;
-  console.log(`Requête reçue pour id: ${id}`);
   modeleEleve.recupererNotesParContenu(id, (error, notes) => {
     if (error) {
       res.status(500).json({ message: 'Erreur lors de la récupération des notes' });
@@ -152,6 +151,21 @@ router.post('/new', (req, res) => {
       return;
     }
     res.json(eleve);
+  });
+});
+
+router.put('/update', (req, res) => {
+  const { id,mail,mdp } = req.body;
+  modeleEleve.updateEleve(id, mail, mdp, (error, result) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la mise à jour du profil' });
+      return;
+    }
+    if (result === 0) {
+      res.status(404).json({ message: 'Aucun utilisateur trouvé avec cet ID' });
+      return;
+    }
+    res.json({ message: 'Profil mis à jour avec succès' });
   });
 });
 
