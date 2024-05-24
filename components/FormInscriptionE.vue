@@ -74,7 +74,6 @@
   const handleInsc = async () => {
   try {
     const emailExists = await checkExist(eleve.value.mail);
-    console.log(emailExists);
     if (emailExists) {
       warning.value = "Le mail existe déjà";
       return;
