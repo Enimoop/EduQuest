@@ -56,4 +56,3 @@
   // Dans une vraie application, ces valeurs devraient être fournies dynamiquement.
   const type = ref('Eleve');  // ou 'Professeur' selon le type d'utilisateur
   </script>
-  
