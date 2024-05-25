@@ -284,7 +284,7 @@ class ModeleContenu {
 
 insertNouveauCours(nouveauCours, callback) {
   const {description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier} = nouveauCours;
-  const query = 'INSERT INTO Cours (description_contenu, date_contenu, id_matiere, id_u,  id_guilde, nom_fichier) VALUES (?, ?, ?, ?, ?, ?)';
+  const query = 'INSERT INTO Contenu (description_contenu, date_contenu, id_matiere, id_u,  id_guilde, nom_fichier,type_contenu) VALUES (?, ?, ?, ?, ?, ?, "Cours")';
   const values = [description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier];
   this.connection.query(query, values, (error, results, fields) => {
     if (error) {
