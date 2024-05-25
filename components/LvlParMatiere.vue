@@ -59,7 +59,6 @@ onMounted(() => {
   axios.get(`http://localhost:3001/eleves/lvl/${id}`)
     .then(response => {
       lvls.value = response.data;
-      console.log(lvls.value);
 
     })
     .catch(error => {
