@@ -72,17 +72,9 @@ export async function calculerNiveau(id_matiere, id) {
     }
 }
 
-export function updateEleve(updatedProfil) {
-    return axios.put(`http://localhost:3001/eleves/update`, updatedProfil, {
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    });
-}
 
-export function updateProf(updatedProfil) {
-    console.log(updatedProfil)
-    return axios.put(`http://localhost:3001/professeurs/update`, updatedProfil, {
+export function updateProfil(updatedProfil) {
+    return axios.put(`http://localhost:3001/profils/update`, updatedProfil, {
         headers: {
             'Content-Type': 'application/json',
         }

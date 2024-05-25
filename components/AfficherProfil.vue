@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { getSubFromToken, returnUserType } from "../utils/session.mjs";
-import { updateEleve, updateProf, hashPassword } from "../utils/func.mjs";
+import { updateProfil, hashPassword } from "../utils/func.mjs";
 import axios from 'axios';
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
@@ -110,11 +110,7 @@ const handleUpdate = async () => {
     mail: user.value.mail,
     mdp: password.value,
   };
-  if (type === "Eleve") {
-    updateEleve(updatedUser);
-  } else if (type === "Prof") {
-    updateProf(updatedUser);
-  }
+  updateProfil(updatedUser);
   success.value = "Profil mis à jour avec succès";
   password.value = "";
   confirmPassword.value = "";
