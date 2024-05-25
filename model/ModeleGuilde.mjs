@@ -44,10 +44,10 @@ class ModeleGuilde {
     }
 
     recupererGuildesParEleve(id_u, callback) {
-        const query = `SELECT g.id_guilde, g.nom_guilde, g.description_guilde, p.nom AS nom_prof
+        const query = `SELECT g.id_guilde, g.nom_guilde, g.description_guilde, u.nom AS nom_prof
                         FROM Guilde g
                         JOIN Rejoindre r ON g.id_guilde = r.id_guilde
-                        JOIN Prof p ON g.id_prof = p.id_u
+                        JOIN User u ON g.id_prof = u.id_u
                         WHERE r.id_u = ?`;
         this.connection.query(query, [id_u], (error, results, fields) => {
           if (error) {
