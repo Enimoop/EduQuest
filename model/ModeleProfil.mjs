@@ -83,8 +83,6 @@ recupererUnCompteId(id, callback) {
 }
 
 updateProfil(id, mdp, mail, callback) {
-  console.log("Modele")
-  console.log(id,mdp,mail)
   const query = 'UPDATE User SET mail = ?, mdp = ? WHERE id_u = ?';
   this.connection.query(query, [mdp, mail, id], (error, results, fields) => {
     if (error) {
