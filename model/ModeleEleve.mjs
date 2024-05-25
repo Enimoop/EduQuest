@@ -7,7 +7,7 @@ class ModeleEleve {
   }
 
   recupererTousLesEleves(callback) {
-    const query = 'SELECT * FROM Eleve';
+    const query = 'SELECT * FROM User WHERE type="Eleve"';
     this.connection.query(query, (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -23,7 +23,7 @@ class ModeleEleve {
   }
 
   recupererEleveParId(id, callback) {
-    const query = 'SELECT * FROM Eleve WHERE id_u = ?';
+    const query = 'SELECT * FROM User WHERE id_u = ?';
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -44,9 +44,9 @@ class ModeleEleve {
   }
 
   recupererEleveParNomPrenom(string, guildeid, callback) {
-    const query = `SELECT * FROM Eleve
+    const query = `SELECT * FROM User
                   WHERE (nom LIKE ? OR prenom LIKE ?)
-                  AND id_u NOT IN (SELECT id_u FROM Rejoindre WHERE id_guilde = ?)`;
+                  AND id_u NOT IN (SELECT id_u FROM Rejoindre WHERE id_guilde = ?) and type="Eleve"`;
     const searchString = `%${string}%`;
     this.connection.query(query, [searchString, searchString, guildeid], (error, results, fields) => {
       if (error) {
@@ -145,9 +145,9 @@ class ModeleEleve {
 
 
   recupererElevesDansGuilde(id_guilde, callback) {
-    const query = `SELECT Eleve.id_u, Eleve.nom, Eleve.prenom
-    FROM Eleve
-    JOIN Rejoindre ON Eleve.id_u = Rejoindre.id_u
+    const query = `SELECT User.id_u, User.nom, User.prenom
+    FROM User
+    JOIN Rejoindre ON User.id_u = Rejoindre.id_u
     WHERE Rejoindre.id_guilde = ?`;
     this.connection.query(query, [id_guilde], (error, results, fields) => {
         if (error) {
@@ -164,10 +164,10 @@ class ModeleEleve {
 }
 
   recupererNotesParGuilde(id_eleve, id_guilde, callback) {
-    const query = `SELECT n.id_u AS id_eleve, n.*, e.*, g.nom_guilde, g.description_guilde
+    const query = `SELECT n.id_u AS id_eleve, n.*, c.*, g.nom_guilde, g.description_guilde
                     FROM Noter n
-                    JOIN Exercice e ON n.id_contenu = e.id_contenu
-                    JOIN Guilde g ON e.id_guilde = g.id_guilde
+                    JOIN Contenu c ON n.id_contenu = c.id_contenu
+                    JOIN Guilde g ON c.id_guilde = g.id_guilde
                     WHERE n.id_u = ? AND g.id_guilde = ?
                     `;
     this.connection.query(query, [id_eleve, id_guilde], (error, results, fields) => {
@@ -217,7 +217,7 @@ class ModeleEleve {
 }
 
   inscriptionEleve(nom, prenom, mail, mdp,callback) {
-    const query = 'INSERT INTO Eleve (nom, prenom, mail, mdp, niveau_etude) VALUES (?, ?, ?, ?, 6)';
+    const query = 'INSERT INTO User (nom, prenom, mail, mdp, niveau_etude, type) VALUES (?, ?, ?, ?, 6,"Eleve")';
     this.connection.query(query, [nom, prenom,mail, mdp], (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -227,17 +227,6 @@ class ModeleEleve {
     });
   }
     
-  updateEleve(id, mdp, mail, callback) {
-    const query = 'UPDATE Eleve SET mail = ?, mdp = ? WHERE id_u = ?';
-    this.connection.query(query, [mdp, mail, id], (error, results, fields) => {
-      if (error) {
-        callback(error, null);
-        return;
-      }
-      callback(null, results.affectedRows);
-    });
-  
-  }
   }
 
 export default ModeleEleve;
