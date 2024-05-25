@@ -93,5 +93,51 @@ updateProfil(id, mdp, mail, callback) {
   });
 
 }
+
+updateType(id, type, callback) {
+  const query = 'UPDATE User SET type = ? WHERE id_u = ?';
+  this.connection.query(query, [type, id], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    callback(null, results.affectedRows);
+  });
+
+}
+
+recupererProfilParNomPrenom(string, callback) {
+  const query = `SELECT * FROM User
+                WHERE (nom LIKE ? OR prenom LIKE ?)`;
+  const searchString = `%${string}%`;
+  this.connection.query(query, [searchString, searchString], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    
+    const users = results.map(row => ({
+      id: row.id_u,
+      nom: row.nom,
+      prenom: row.prenom,
+      mail: row.mail,
+      type: row.type,
+      etablissement: row.etablissement,
+      niveau_etude: row.niveau_etude
+    }));
+    callback(null, users);
+  });
+}
+
+deleteUser(id, callback) {
+  const query = 'DELETE FROM User WHERE id_u = ?';
+  this.connection.query(query, [id], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    callback(null, results.affectedRows);
+  });
+}
 }
 export default ModeleProfil;

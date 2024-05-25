@@ -96,6 +96,43 @@ router.put('/update', (req, res) => {
   });
 });
 
+router.put('/update/type', (req, res) => {
+  const { id,type } = req.body;
+  modeleProfil.updateType(id, type, (error, result) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la mise à jour du profil' });
+      return;
+    }
+    if (result === 0) {
+      res.status(404).json({ message: 'Aucun utilisateur trouvé avec cet ID' });
+      return;
+    }
+    res.json({ message: 'Profil mis à jour avec succès' });
+  });
+});
 
+router.get('/nom/:string', (req, res) => {
+  const string = req.params.string;
+  modeleProfil.recupererProfilParNomPrenom(string, (error, profils) => {
+    if (error) {
+      res.status(500).json({
+          message: 'Erreur lors de la récupération des profils'
+      });
+      return;
+  }
+  res.json(profils);
+  });
+});
+
+router.delete('/delete/:id', (req, res) => {
+  const id = req.params.id;
+  modeleProfil.deleteUser(id, (error) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la suppression du profil' });
+      return;
+    }
+    res.json({ message: 'Profil supprimé avec succès' });
+  });
+});
 
 export default router;
