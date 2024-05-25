@@ -325,6 +325,47 @@ recupererContenusParGuilde(id_guilde, callback) {
 
 }
 
+recupererContenusParGuildeProf(id_guilde, page, pageSize, callback) {
+  const offset = (page - 1) * pageSize;
+  const query = `SELECT c.*, g.nom_guilde, g.description_guilde
+                  FROM Contenu c
+                  JOIN Guilde g ON c.id_guilde = g.id_guilde
+                  WHERE c.id_guilde = ?
+                  LIMIT ? OFFSET ?`;
+  this.connection.query(query, [id_guilde, pageSize, offset], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    if (results.length === 0) {
+      callback(null, []); // Aucun contenu trouvé avec cet ID
+      return;
+    }
+    const contenu = results.map(row => ({
+      id: row.id_contenu,
+      description_contenu: row.description_contenu,
+      date_contenu: row.date_contenu,
+      id_matiere: row.id_matiere,
+      id_guilde: row.id_guilde,
+      type_contenu: row.type_contenu,
+      nom_guilde: row.nom_guilde,
+      description_guilde: row.description_guilde
+    }));
+    callback(null, contenu);
+  });
+}
+
+recupererTotalContenus(id_guilde, callback) {
+  const query = 'SELECT COUNT(*) as total FROM Contenu WHERE id_guilde = ?';
+  this.connection.query(query, [id_guilde], (error, results) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    callback(null, results[0].total);
+  });
+}
+
 deleteExo(id, callback) {
   const query = 'DELETE FROM Contenu WHERE id_contenu = ?';
   this.connection.query(query, [id], (error, results, fields) => {
