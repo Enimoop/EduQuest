@@ -6,7 +6,6 @@ ENV MYSQL_PASSWORD=passwd
 ENV MYSQL_ROOT_PASSWORD=password
 
 ADD bddEduQuest.sql /docker-entrypoint-initdb.d/
-ADD triggers.sql /docker-entrypoint-initdb.d/
 
 EXPOSE 3306
 
