@@ -5,15 +5,17 @@
             <table class="table table-striped table-hover mt-2">
                 <thead>
                     <tr>
-                        <th scope="col">Titre</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Retirer</th>
-                        <th scope="col">Actions</th>
+                        <th scope="col" class="text-center">Titre</th>
+                        <th scope="col" class="text-center">Type</th>
+                        <th scope="col" class="text-center">Date</th>
+                        <th scope="col" class="text-center">Retirer</th>
+                        <th scope="col" class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="contenu in contenus" :key="contenu.id">
                         <td>{{ contenu.description_contenu }}</td>
+                        <td>{{ contenu.type_contenu }}</td>
                         <td>{{ format(new Date(contenu.date_contenu), 'dd/MM/yyyy') }}</td>
                         <td>
                             <button @click="retirerContenu(contenu.id, contenu.type_contenu)" class="btn btn-danger">
@@ -24,6 +26,8 @@
                             <button @click="voirPlus(contenu.id, contenu.type_contenu)" class="btn btn-primary">
                                 Voir plus
                             </button>
+                        </td>
+                        <td>
                             <button @click="modifierContenu(contenu.id, contenu.type_contenu)" class="btn btn-primary">
                                 Modifier
                             </button>
