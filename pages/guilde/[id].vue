@@ -2,6 +2,8 @@
     <div>
         <ContenuParGuilde v-if="type === 'Eleve'"/>
         <ContenuParGuildeProf v-if="type === 'Prof'"/>
+        <ModifierContenu v-if="type === 'Prof'" />
+        
     </div>
 </template>
 
@@ -10,7 +12,7 @@
 
 import { ref } from 'vue';
 import 'bootstrap/dist/css/bootstrap.css';
-import { getSubFromToken, returnUserType } from "../utils/session.mjs";
+import { getSubFromToken, returnUserType } from "../../utils/session.mjs";
 import ContenuParGuilde from '../../components/ContenuParGuilde.vue';
 import ContenuParGuildeProf from '../../components/ContenuParGuildeProf.vue';
 import { useRouter } from 'vue-router';
