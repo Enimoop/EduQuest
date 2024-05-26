@@ -51,8 +51,14 @@
   import NotesParMatiere from '~/components/NotesParMatiere.vue';
   import LvlParMatiere from '~/components/LvlParMatiere.vue';
   import ListeGuildeProf from '~/components/ListeGuildeProf.vue';
-  
+
+  const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
+const { data: token } = await useFetch("/api/token", { headers });
+
+const idu = getSubFromToken(token);
+const type = await returnUserType(idu);
   // Simuler les props ou des données dynamiques pour type
   // Dans une vraie application, ces valeurs devraient être fournies dynamiquement.
-  const type = ref('Eleve');  // ou 'Professeur' selon le type d'utilisateur
+ 
   </script>
