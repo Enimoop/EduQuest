@@ -1,113 +1,74 @@
 <template>
-  <div class="container mt-5">
+  <div class="container container-cours">
     <div class="row justify-content-center">
-      <div class="col-lg-12">
-        <div class="card">
-          <div class="card-header bg-primary text-white text-center">
-            <h5 class="card-title mb-0">Tableau de bord des guildes</h5>
-          </div>
-          <div class="card-body">
-            <!-- Liste des guildes -->
-            <ul class="list-group mb-3">
-              <li v-for="guilde in guildes" :key="guilde.id" class="list-group-item">
-                <!-- Nom de la guilde et bouton pour afficher les détails -->
-                <div>
-                  <button @click="fetchGuildDetails(guilde.id)" class="btn btn-link">{{ guilde.nom }}</button>
-                </div>
-
-                <!-- Affichage des détails de la guilde -->
-                <div v-if="currentGuildeId === guilde.id">
-                  <p>{{ guilde.description }}</p>
-
-                  <!-- Bouton pour ajouter un élève -->
-                  <button @click="() => toggleSearchForm(guilde.id)" class="btn btn-primary">Ajouter un élève</button>
-
-                  <!-- Formulaire de recherche -->
-                  <div v-if="showSearchForm">
-                    <input v-model="searchQuery" type="text" placeholder="Rechercher un élève par nom ou prénom" class="form-control mb-2" />
-                    <ul v-if="searchQuery && searchResults.length > 0" class="list-group">
-                      <li v-for="result in searchResults" :key="result.id" class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ result.nom }} {{ result.prenom }}
-                        <button @click="addEleveToGuilde(result, guilde.id)" class="btn btn-primary btn-sm">Ajouter</button>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <!-- Tableau des élèves -->
-                  <div class="mt-3">
-                    <h5>Élèves</h5>
-                    <table class="table table-striped table-hover">
-                      <thead>
-                        <tr>
-                          <th scope="col" class="text-black">Nom</th>
-                          <th scope="col" class="text-black">Prénom</th>
-                          <th scope="col" class="text-black">Retirer</th>
-                          <th scope="col" class="text-black">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <template v-for="eleve in eleves" :key="eleve.id">
-                          <tr>
-                            <td>{{ eleve.nom }}</td>
-                            <td>{{ eleve.prenom }}</td>
-                            <td><button @click="retirerEleve(eleve.id)" class="btn btn-danger btn-sm">Retirer</button></td>
-                            <td><button @click="voirPlus(eleve.id, guilde.id)" class="btn btn-primary btn-sm">Voir plus</button></td>
-                          </tr>
-
-                          <!-- Tableau des notes -->
-                          <tr v-if="currentEleveId === eleve.id">
-                            <td colspan="4">
-                              <h5 class="mt-3">Notes de l'élève</h5>
-                              <table class="table table-striped table-hover mt-2">
-                                <thead class="thead-dark">
-                                  <tr>
-                                    <th scope="col" class="text-black">Description du contenu</th>
-                                    <th scope="col" class="text-black">Note</th>
-                                    <th scope="col" class="text-black">Date de la note</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr v-for="note in currentEleveNotes" :key="note.id">
-                                    <td>{{ note.description }}</td>
-                                    <td>{{ note.note }}</td>
-                                    <td>{{ format(new Date(note.date), 'dd/MM/yyyy') }}</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </td>
-                          </tr>
-                        </template>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+      <div class="cours-details">
+        <h2>Tableau de bord des élèves</h2>
+        <div class="search-bar mb-3 d-flex align-items-center">
+          <div class="position-relative flex-grow-1 me-2">
+            
+            <input v-model="searchQuery" type="text" placeholder="Rechercher un élève par nom ou prénom"
+              class="form-control mb-2" @input="searchEleves" />
+            <ul v-if="searchResults.length > 0" class="list-group position-absolute start-0 w-100 shadow"
+              style="z-index: 1000;">
+              <li class="list-group-item" v-for="result in searchResults" @click="selectUser(result)">
+                {{ result.mail }}
               </li>
             </ul>
-
-            <!-- Bouton pour créer une nouvelle guilde -->
-            <button @click="toggleNewGuildeForm" class="btn btn-primary mt-3">Créer une nouvelle guilde</button>
-
-            <!-- Formulaire pour créer une nouvelle guilde -->
-            <div v-if="showNewGuildeForm" class="mt-3">
-              <h5>Créer une nouvelle guilde</h5>
-              <form @submit.prevent="creerNouvelleGuilde">
-                <div class="mb-3">
-                  <label for="nomGuilde" class="form-label">Nom de la guilde</label>
-                  <input v-model="nouvelleGuilde.nom" type="text" class="form-control" id="nomGuilde" required>
-                </div>
-                <div class="mb-3">
-                  <label for="descriptionGuilde" class="form-label">Description de la guilde</label>
-                  <textarea v-model="nouvelleGuilde.description" class="form-control" id="descriptionGuilde" rows="3" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Créer</button>
-              </form>
-            </div>
           </div>
+          <button @click="addEleveToGuilde(selectedUser)" class="btn btn-success btn-sm">Ajouter</button>
         </div>
+        <!-- Tableau des élèves -->
+        <table class="table table-striped table-hover">
+          <!-- Table header -->
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">Nom</th>
+              <th scope="col" class="text-center">Prénom</th>
+              <th scope="col" class="text-center">Retirer</th>
+              <th scope="col" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <!-- Table body -->
+          <tbody>
+            <template v-for="eleve in eleves" :key="eleve.id">
+              <tr>
+                <td>{{ eleve.nom }}</td>
+                <td>{{ eleve.prenom }}</td>
+                <td><button @click="retirerEleve(eleve.id)" class="btn btn-danger btn-sm">Retirer</button></td>
+                <td><button @click="voirPlus(eleve.id)" class="btn btn-primary btn-sm">Voir plus</button></td>
+              </tr>
+              <!-- Tableau des notes -->
+              <tr v-if="currentEleveId === eleve.id">
+                <td colspan="4">
+                  <h5 class="mt-3">Notes de l'élève</h5>
+                  <table class="table table-striped table-hover mt-2">
+                    <!-- Table header -->
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col" class="text-center">Description du contenu</th>
+                        <th scope="col" class="text-center">Note</th>
+                        <th scope="col" class="text-center">Date de la note</th>
+                      </tr>
+                    </thead>
+                    <!-- Table body -->
+                    <tbody>
+                      <tr v-for="note in currentEleveNotes" :key="note.id">
+                        <td>{{ note.description }}</td>
+                        <td>{{ note.note }}</td>
+                        <td>{{ format(new Date(note.date), 'dd/MM/yyyy') }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { format } from 'date-fns';
@@ -121,175 +82,180 @@ const { data: token } = await useFetch("/api/token", { headers });
 
 
 
-const id = getSubFromToken(token);
-const type = await returnUserType(id);
+const idu = getSubFromToken(token);
+const type = await returnUserType(idu);
 
-interface Guildes {
-    id: number;
-    nom: string;
-    description: string;
-    id_prof: number;
-}
+const route = useRoute();
+const id = route.params.id;
 
 interface Eleves {
-    id: number;
-    nom: string;
-    prenom: string;
+  id: number;
+  mail: string;
+  nom: string;
+  prenom: string;
 }
 
 interface Notes {
-    id: number;
-    description: string;
-    note: number;
-    date: string;
+  id: number;
+  description: string;
+  note: number;
+  date: string;
 }
 
-const guildes = ref<Guildes[]>([]);
 const eleves = ref<Eleves[]>([]);
 const showSearchForm = ref(false);
 const searchQuery = ref('');
 const searchResults = ref<Eleves[]>([]);
-const currentGuildeId = ref<number | null>(null);
 const currentEleveNotes = ref<Notes[] | null>(null);
 const currentEleveId = ref<number | null>(null);
 const showNewGuildeForm = ref(false);
 const nouvelleGuilde = ref({ nom: '', description: '' });
 
+
+const selectedUser = ref<Eleves>({
+  id: 0,
+  mail: "",
+  nom: "",
+  prenom: "",
+});
+
+
 onMounted(() => {
-    axios.get(`http://localhost:3001/guildes/prof/${id}`)
-        .then(response => {
-            guildes.value = response.data;
-        })
-        .catch(error => {
-            console.error('Error fetching guilds:', error);
-        });
+  axios.get(`http://localhost:3001/eleves/guilde/${id}`)
+    .then(response => {
+      eleves.value = response.data;
+    })
+    .catch(error => {
+      console.error('Error fetching eleves:', error);
+    });
 });
 
-// Fonction pour récupérer les détails de la guilde et les élèves associés
-const fetchGuildDetails = (guildeId: number) => {
-    if (currentGuildeId.value === guildeId) {
-        currentGuildeId.value = null;
-        return;
-    }
-    axios.get(`http://localhost:3001/eleves/guilde/${guildeId}`)
-        .then(response => {
-            eleves.value = response.data;
-            currentGuildeId.value = guildeId;
-        })
-        .catch(error => {
-            console.error('Error fetching guild details:', error);
-        });
-};
 
-// Toggle search form visibility
-const toggleSearchForm = (guildeId: number) => {
-    showSearchForm.value = !showSearchForm.value;
-    currentGuildeId.value = guildeId;
-};
-
-// Watch for changes in the search query
-watch(searchQuery, (newQuery) => {
-    if (newQuery.length > 1 && currentGuildeId.value !== null) {
-        searchEleves(newQuery, currentGuildeId.value);
-    } else {
-        searchResults.value = [];
-    }
-});
 
 // Search for students
-const searchEleves = (query: string, guildeId: number) => {
-    axios.get(`http://localhost:3001/eleves/nom/${query}/guilde/${guildeId}`)
-        .then(response => {
-            searchResults.value = response.data;
-        })
-        .catch(error => {
-            console.error('Error searching eleves:', error);
-        });
+const searchEleves = (event: Event) => {
+  const query = (event.target as HTMLInputElement).value;
+  if (query.length > 1) {
+    axios.get(`http://localhost:3001/eleves/nom/${query}/guilde/${id}`)
+      .then(response => {
+        searchResults.value = response.data;
+        console.log('Search results:', searchResults.value);
+      })
+      .catch(error => {
+        console.error('Error searching profils:', error);
+      });
+  } else {
+    searchResults.value = [];
+  }
+};
+
+const selectUser = (user: any) => {
+  axios.get(`http://localhost:3001/profils/id/${user.id}`)
+    .then(response => {
+      selectedUser.value = response.data;
+      console.log('Selected user:', selectedUser.value);
+      searchQuery.value = selectedUser.value.mail;
+      searchResults.value = [];
+
+    })
+    .catch(error => {
+      console.error('Error fetching user:', error);
+    });
 };
 
 // Add a student to a guild
-const addEleveToGuilde = (eleve: Eleves, guildeId: number) => {
-    const nouveauEleve = {
-        id: eleve.id,
-        id_guilde: guildeId
-    };
-    axios.post('http://localhost:3001/guildes/addEleve', nouveauEleve, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
+const addEleveToGuilde = (eleve: Eleves) => {
+  const nouveauEleve = {
+    id: eleve.id,
+    id_guilde: id
+  };
+  axios.post('http://localhost:3001/guildes/addEleve', nouveauEleve, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(() => {
+      // Fetch the updated list of students for the guild
+      return axios.get(`http://localhost:3001/eleves/guilde/${id}`);
     })
-        .then(() => {
-            // Fetch the updated list of students for the guild
-            return axios.get(`http://localhost:3001/eleves/guilde/${guildeId}`);
-        })
-        .then(response => {
-            eleves.value = response.data;
-        })
-        .catch(error => {
-            console.error('Error adding eleve to guilde:', error);
-        });
+    .then(response => {
+      eleves.value = response.data;
+    })
+    .catch(error => {
+      console.error('Error adding eleve to guilde:', error);
+    });
 };
 
 const retirerEleve = (eleveId: number) => {
-    axios.delete(`http://localhost:3001/guildes/deleteEleve/${eleveId}`)
-        .then(response => {
-            // Rafraîchir la liste des élèves après la suppression
-            return axios.get(`http://localhost:3001/eleves/guilde/${currentGuildeId.value}`);
-        })
-        .then(response => {
-            eleves.value = response.data;
-        })
-        .catch(error => {
-            console.error('Erreur lors de la suppression de l\'élève:', error);
-        });
+  axios.delete(`http://localhost:3001/guildes/deleteEleve/${eleveId}`)
+    .then(response => {
+      // Rafraîchir la liste des élèves après la suppression
+      return axios.get(`http://localhost:3001/eleves/guilde/${id}`);
+    })
+    .then(response => {
+      eleves.value = response.data;
+    })
+    .catch(error => {
+      console.error('Erreur lors de la suppression de l\'élève:', error);
+    });
 };
 
-const voirPlus = (eleveId: number, guildeId:number) => {
-    if (currentEleveId.value === eleveId) {
-        currentEleveId.value = null;
-        return;
-    }
-    axios.get(`http://localhost:3001/eleves/guilde/${eleveId}/${guildeId}`)
-        .then(response => {
-            currentEleveNotes.value = response.data;
-            currentEleveId.value = eleveId;
-        })
-        .catch(error => {
-            console.error('Error fetching eleve notes:', error);
-        });
+const voirPlus = (eleveId: number) => {
+  if (currentEleveId.value === eleveId) {
+    currentEleveId.value = null;
+    return;
+  }
+  axios.get(`http://localhost:3001/eleves/guilde/${eleveId}/${id}`)
+    .then(response => {
+      currentEleveNotes.value = response.data;
+      currentEleveId.value = eleveId;
+    })
+    .catch(error => {
+      console.error('Error fetching eleve notes:', error);
+    });
 };
 
-const toggleNewGuildeForm = () => {
-    showNewGuildeForm.value = !showNewGuildeForm.value;
-};
+
 
 // Créer une nouvelle guilde
 const creerNouvelleGuilde = () => {
-    axios.post(`http://localhost:3001/guildes/addGuilde`, {
-        nom_guilde: nouvelleGuilde.value.nom,
-        description_guilde: nouvelleGuilde.value.description,
-        id_prof: id // Utilisation de l'ID du professeur connecté
+  axios.post(`http://localhost:3001/guildes/addGuilde`, {
+    nom_guilde: nouvelleGuilde.value.nom,
+    description_guilde: nouvelleGuilde.value.description,
+    id_prof: id // Utilisation de l'ID du professeur connecté
+  })
+    .then(response => {
+      // Réinitialiser le formulaire et masquer le formulaire de création de guilde
+      nouvelleGuilde.value.nom = '';
+      nouvelleGuilde.value.description = '';
+      showNewGuildeForm.value = false;
+
     })
-        .then(response => {
-            // Réinitialiser le formulaire et masquer le formulaire de création de guilde
-            nouvelleGuilde.value.nom = '';
-            nouvelleGuilde.value.description = '';
-            showNewGuildeForm.value = false;
-            // Rafraîchir la liste des guildes
-            refreshGuildes();
-        })
-        .catch(error => {
-            console.error('Erreur lors de la création de la guilde:', error);
-        });
+    .catch(error => {
+      console.error('Erreur lors de la création de la guilde:', error);
+    });
 };
 
-const refreshGuildes = () => {
-    axios.get(`http://localhost:3001/guildes/prof/${id}`)
-        .then(response => {
-            guildes.value = response.data;
-        })
-        .catch(error => {
-            console.error('Erreur lors du rafraîchissement des guildes:', error);
-        });
-};
 </script>
+
+<style>
+.list-group {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.cours-details {
+  margin-top: 32px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+}
+.search-bar .form-control {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+.search-bar button {
+  margin-left: 10px;
+}
+</style>

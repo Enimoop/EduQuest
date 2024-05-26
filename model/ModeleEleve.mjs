@@ -56,6 +56,7 @@ class ModeleEleve {
       
       const eleves = results.map(row => ({
         id: row.id_u,
+        mail: row.mail,
         nom: row.nom,
         prenom: row.prenom
       }));

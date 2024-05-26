@@ -1,7 +1,7 @@
 <template>
     <div class="container container-cours">
-        <h1 class="title title-cours">{{ nom_guilde }}</h1>
         <div class="cours-details">
+            <h2> Gestion des contenus </h2>
             <table class="table table-striped table-hover mt-2">
                 <thead>
                     <tr>
@@ -43,6 +43,7 @@
             </div>
         </div>
     </div>
+    <AjouterContenu/>
 </template>
 
 <script setup lang="ts">

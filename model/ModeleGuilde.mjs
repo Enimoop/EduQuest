@@ -22,6 +22,27 @@ class ModeleGuilde {
         });
     }
 
+    recupererGuildeParId(id, callback) {
+        const query = 'SELECT * FROM Guilde WHERE id_guilde = ?';
+        this.connection.query(query, [id], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            if (results.length === 0) {
+                callback(null, null); // Aucune guilde trouvée avec cet ID
+                return;
+            }
+            const guilde = {
+                id: results[0].id_guilde,
+                nom: results[0].nom_guilde,
+                description: results[0].description_guilde,
+                id_prof: results[0].id_prof
+            };
+            callback(null, guilde);
+        });
+    }
+
     recupererGuildesParProf(id_prof, callback) {
         const query = 'SELECT * FROM Guilde WHERE id_prof = ?';
         this.connection.query(query, [id_prof], (error, results, fields) => {

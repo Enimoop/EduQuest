@@ -2,8 +2,6 @@
   <NuxtLayout layout="default">
     <AfficherProfil />
     <br>
-    <GuildeProf v-if="type === 'Prof'"/>
-    <br>
     <NotesParMatiere v-if="type === 'Eleve'"/>
     <LvlParMatiere v-if="type === 'Eleve'"/> 
   </NuxtLayout>
@@ -13,7 +11,6 @@
 
 import AfficherProfil from '../components/AfficherProfil.vue';
 import LvlParMatiere from '../components/LvlParMatiere.vue';
-import GuildeProf from '../components/GuildeProf.vue';
 import NotesParMatiere from '../components/NotesParMatiere.vue';
 import 'bootstrap/dist/css/bootstrap.css';
 
