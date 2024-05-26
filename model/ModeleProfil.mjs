@@ -5,19 +5,33 @@ class ModeleProfil {
     this.connection = createConnection();
   }
 
-  recupererTousLesProfils(callback) {
-    const query = 'SELECT * FROM User';
-    this.connection.query(query, (error, results, fields) => {
+  recupererTousLesProfils(page, pageSize,callback) {
+    const offset = (page - 1) * pageSize;
+    const query = 'SELECT * FROM User LIMIT ? OFFSET ?';
+    this.connection.query(query, [pageSize, offset], (error, results, fields) => {
       if (error) {
         callback(error, null);
         return;
       }
       const user = results.map(row => ({
         id: row.id_u,
+        nom: row.nom,
+        prenom: row.prenom,
         mail: row.mail,
         type: row.type
       }));
       callback(null, user);
+    });
+  }
+  
+  recupererTotalProfils(callback) {
+    const query = 'SELECT COUNT(*) AS total FROM User';
+    this.connection.query(query, (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, results[0].total);
     });
   }
 

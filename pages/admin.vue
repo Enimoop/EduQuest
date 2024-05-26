@@ -2,12 +2,15 @@
     <NuxtLayout layout="default">
         <div>
             <br>
+            <AdminAllUser />
+            <br>
             <AdminUpgradeProfil />
         </div>
     </NuxtLayout>
 </template>
 
 <script setup>
+import AdminAllUser from '~/components/AdminAllUser.vue';
 import AdminUpgradeProfil from '~/components/AdminUpgradeProfil.vue';
 import 'bootstrap/dist/css/bootstrap.css'
 

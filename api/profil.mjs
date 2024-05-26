@@ -1,20 +1,29 @@
 
 import express from 'express';
 import ModeleProfil from '../model/ModeleProfil.mjs';
-import { ro } from 'date-fns/locale';
 
 const router = express.Router();
 const modeleProfil = new ModeleProfil();
 router.use(express.json());
 
 router.get('/', (req, res) => {
-  modeleProfil.recupererTousLesProfils((error, profils) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 5;
+
+  modeleProfil.recupererTotalProfils((error, total) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la récupération du nombre total de profils' });
+      return;
+    }
+
+  modeleProfil.recupererTousLesProfils(page, pageSize,(error, profils) => {
     if (error) {
       res.status(500).json({ message: 'Erreur lors de la récupération des profils' });
       return;
     }
-    res.json(profils);
+    res.json({profils, total});
   });
+});
 });
 
 router.get('/:mail', (req, res) => {
