@@ -92,6 +92,13 @@ interface Guildes {
   id_prof: number;
 }
 
+interface Question {
+  id_question?: number;
+  intitule: string;
+  reponse: string;
+}
+
+
 const guildes = ref<Guildes[]>([]);
 const exo = ref<Exo>({
   id: 0,
@@ -99,7 +106,6 @@ const exo = ref<Exo>({
   date_contenu: '',
   id_matiere: 0,
   libelle_matiere: '',
-  nom_fichier: '',
   id_guilde: 0,
   nom_guilde: ''
 });
@@ -141,7 +147,7 @@ onMounted(() => {
   fetchExerciceEtQuestions();
 });
 
-const questions = ref([{ intitule: '', reponse: '' }]);
+const questions = ref<Question[]>([{ intitule: '', reponse: '' }]);;
 
 // Fonction pour ajouter une question
 const addQuestion = () => {
