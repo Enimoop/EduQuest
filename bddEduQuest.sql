@@ -141,3 +141,25 @@ END //
 
 DELIMITER ;
 
+DELIMITER //
+
+CREATE PROCEDURE supprimerNotesEleveGuilde(IN eleveId INT, IN guildeId INT)
+BEGIN
+    DELETE n 
+    FROM Noten
+    JOIN Contenu c ON n.id_contenu = c.id_contenu
+r     WHERE n.id_u = eleveId AND c.id_guilde = guildeId;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER after_delete_rejoindre
+AFTER DELETE ON Rejoindre
+FOR EACH ROW
+BEGIN
+    CALL supprimerNotesEleveGuilde(OLD.id_u, OLD.id_guilde);
+END //
+
+DELIMITER ;
