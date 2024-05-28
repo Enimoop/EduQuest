@@ -22,7 +22,7 @@
                         <td>{{ user.mail }}</td>
                         <td>{{ user.type }}</td>
                         <td>
-                            <button @click="supprimerUser(user.id)" class="btn btn-danger">
+                            <button @click="supprimerUser(user.id)" class="btn btn-outline-danger">
                                 Retirer
                             </button>
                         </td>
