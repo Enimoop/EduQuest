@@ -6,30 +6,48 @@
       </div>
       <div class="card-body">
         <form @submit.prevent="handleUpdate">
+          <div v-if="success" class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ success }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+              @click="success = ''"></button>
+          </div>
+          <div v-if="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+              @click="error = ''"></button>
+          </div>
+          <div v-if="warning" class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ warning }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+              @click="warning = ''"></button>
+          </div>
           <div class="mb-3">
             <label for="userId" class="form-label">Identifiant : <span id="userId">{{ user.id }}</span></label>
             <small class="text-muted d-block">Cet identifiant est unique pour chaque utilisateur.</small>
           </div>
           <div class="mb-3">
             <label for="userEmail" class="form-label">Email :</label>
-            <input type="email" id="userEmail" v-model="user.mail" class="form-control" name = mail required>
+            <input type="email" id="userEmail" v-model="user.mail" class="form-control" name=mail required>
             <small class="text-muted">L'adresse email associée à ce compte utilisateur.</small>
           </div>
           <div class="mb-3">
             <label for="userType" class="form-label">Type : <span id="userType">{{ user.type }}</span></label>
-            <small class="text-muted d-block">Le type d'utilisateur (ex: administrateur, utilisateur standard, etc.).</small>
+            
           </div>
           <div class="mb-3">
             <label for="newPassword" class="form-label">Changer le mot de passe :</label>
-            <input type="password" id="newPassword" v-model="password" class="form-control" placeholder="Nouveau mot de passe" name = mdp>
+            <input type="password" id="newPassword" v-model="password" class="form-control"
+              placeholder="Nouveau mot de passe" name=mdp>
           </div>
           <div class="mb-3">
             <label for="confirmPassword" class="form-label">Confirmer le mot de passe :</label>
-            <input type="password" id="confirmPassword" v-model="confirmPassword" class="form-control" placeholder="Confirmer le mot de passe" name = mdpConfirm>
-            <small class="text-muted">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.</small>
+            <input type="password" id="confirmPassword" v-model="confirmPassword" class="form-control"
+              placeholder="Confirmer le mot de passe" name=mdpConfirm>
+            <small class="text-muted">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre
+              et un caractère spécial.</small>
           </div>
           <div class="text-center">
-            <button type = "submit" class="btn btn-primary">Mettre à jour</button>
+            <button type="submit" class="btn btn-primary">Mettre à jour</button>
           </div>
         </form>
       </div>
@@ -41,7 +59,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { getSubFromToken, returnUserType } from "../utils/session.mjs";
-import {updateProfil} from "../utils/func.mjs";
+import { updateProfil, hashPassword } from "../utils/func.mjs";
 import axios from 'axios';
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
@@ -52,6 +70,10 @@ const id = getSubFromToken(token);
 const type = await returnUserType(id);
 
 const { status } = useAuth();
+
+const error = ref<string>("");
+const warning = ref<string>("");
+const success = ref<string>("");
 
 interface User {
   id: number;
@@ -68,21 +90,31 @@ const user = ref<User>({
 const password = ref<string>("");
 const confirmPassword = ref<string>("");
 
+const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-const handleUpdate = () => {
-  if (password.value !== confirmPassword.value) {
-    console.error("Les mots de passe ne correspondent pas.");
+const handleUpdate = async () => {
+
+  if (!passwordPolicy.test(password.value)) {
+    warning.value = "Le mot de passe n'est pas assez fort";
     return;
   }
 
+
+  if (password.value !== confirmPassword.value) {
+    error.value = "Les mots de passe ne correspondent pas";
+    return;
+  }
+  password.value = await hashPassword(password.value);
   const updatedUser = {
     id: id,
     mail: user.value.mail,
     mdp: password.value,
   };
   updateProfil(updatedUser);
+  success.value = "Profil mis à jour avec succès";
   password.value = "";
   confirmPassword.value = "";
+
 };
 
 
@@ -90,7 +122,6 @@ onMounted(() => {
   axios.get(`http://localhost:3001/profils/id/${id}`)
     .then(response => {
       user.value = response.data;
-      console.log(user.value);
     })
     .catch(error => {
       console.error('Error fetching profils:', error);

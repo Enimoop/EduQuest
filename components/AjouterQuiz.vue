@@ -1,14 +1,14 @@
 <template>
-  <div class="container mt-5">
-    <h1 class="mb-4 text-center">Nouveau Quiz/Exercice</h1>
-    <form @submit.prevent="submitForm" class="mx-auto" style="max-width: 400px;">
-      <!-- Sélection de la guilde -->
-      <div class="mb-3">
-        <label for="guilde" class="form-label">Guilde</label>
-        <select class="form-select" v-model="selectedGuilde" id="guilde" required>
-          <option value="">Choisir une guilde</option>
-          <option v-for="guilde in guildes" :key="guilde.id" :value="guilde.id">{{ guilde.nom }}</option>
-        </select>
+  <div class="container container-cours mt-5" style="width: 50%;">
+    <form @submit.prevent="submitForm" class="form p-4 shadow rounded bg-light">
+      <h2 class="form-title mb-4 text-center">Nouveau Quiz/Exercice</h2>
+      <div v-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ successMessage }}
+        <button type="button" class="btn-close" @click="successMessage = ''"></button>
+      </div>
+      <div v-if="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ errorMessage }}
+        <button type="button" class="btn-close" @click="errorMessage = ''"></button>
       </div>
       <!-- Description du contenu -->
       <div class="mb-3">
@@ -42,7 +42,7 @@
       </div>
       <button type="button" class="btn btn-primary mb-3 me-2" @click="addQuestion">Ajouter une question</button>
       <!-- Bouton pour soumettre le formulaire -->
-      <button type="submit" class="btn btn-primary mb-3">Enregistrer</button>
+      <button type="submit" class="btn btn-primary w-auto mx-auto d-block">Enregistrer</button>
     </form>
   </div>
 </template>
@@ -56,8 +56,11 @@ import {getSubFromToken} from "../utils/session.mjs";
 const descriptionContenu = ref('');
 const selectedMatiere = ref('');
 const selectedGuilde = ref('');
-let id = null;
+let idu = null;
 let insertedId: number | null = null;
+const successMessage = ref('');
+const errorMessage = ref('');
+
 
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
@@ -67,7 +70,7 @@ const { data: token } = await useFetch("/api/token", { headers });
 const { status } = useAuth();
 
 if (status.value === "authenticated") {
- id = getSubFromToken(token); 
+ idu = getSubFromToken(token); 
 }
 
 interface Guildes {
@@ -77,22 +80,12 @@ interface Guildes {
     id_prof: number;
 }
 
-const guildes = ref<Guildes[]>([]);
 
 // Fonction pour récupérer les guildes du professeur
-const fetchGuildes = async () => {
-  try {
-    const response = await axios.get(`http://localhost:3001/guildes/prof/${id}`);
-    guildes.value = response.data;
-  } catch (error) {
-    console.error('Erreur lors de la récupération des guildes:', error);
-    alert('Une erreur s\'est produite lors de la récupération des guildes.');
-  }
-};
 
-onMounted(() => {
-  fetchGuildes();
-});
+
+const route = useRoute();
+const id = route.params.id;
 
 const questions = ref([{ intitule: '', reponse: '' }]);
 
@@ -119,24 +112,21 @@ const nouveauQuiz = {
   description_contenu: descriptionContenu.value,
   date_contenu: new Date().toISOString().slice(0, 10),
   id_matiere: selectedMatiere.value,
-  id_u: id,
-  id_guilde: selectedGuilde.value
+  id_u: idu,
+  id_guilde: id
 };
 
 
 
-// Envoi des données du formulaire à l'API
 axios.post('http://localhost:3001/contenus/exercices', nouveauQuiz, {
   headers: {
     'Content-Type': 'application/json'
   }
 })
   .then(response => {
-    // Affichage de la réponse
-    alert(response.data.message);
+    successMessage.value = response.data.message;
     insertedId = response.data.insertedId;
-    
-    // Envoi des données des questions à l'API
+
     Promise.all(questions.value.map((question, index) => {
       const nouvelleQuestion = {
         intitule: question.intitule,
@@ -153,24 +143,19 @@ axios.post('http://localhost:3001/contenus/exercices', nouveauQuiz, {
       });
     }))
     .then((responses) => {
-      /* responses.forEach((response) => {
-        // Affichage de la réponse pour chaque question
-        alert(response.data.message);
-      }); */
 
-      // Réinitialisation du formulaire
       descriptionContenu.value = '';
       selectedMatiere.value = '';
       questions.value = [{ intitule: '', reponse: '' }];
     })
     .catch(error => {
       console.error('Erreur lors de l\'envoi des questions :', error);
-      alert('Une erreur s\'est produite lors de l\'envoi des questions. Veuillez réessayer.');
+      errorMessage.value = 'Une erreur s\'est produite lors de l\'envoi des questions. Veuillez réessayer.';
     });
   })
   .catch(error => {
     console.error('Erreur lors de la soumission du formulaire :', error);
-    alert('Une erreur s\'est produite. Veuillez réessayer.');
+    errorMessage.value = 'Une erreur s\'est produite. Veuillez réessayer.';
   });
 };
 
@@ -178,3 +163,74 @@ axios.post('http://localhost:3001/contenus/exercices', nouveauQuiz, {
 
 
 </script>
+<style scoped>
+.container {
+  margin-top: 2rem;
+}
+
+.form {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+}
+
+.form-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  background-color: #fff;
+}
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.btn-primary:focus,
+.btn-danger:focus {
+  outline: none;
+}
+
+.btn-primary:hover,
+.btn-danger:hover {
+  filter: brightness(0.9);
+}
+</style>

@@ -17,6 +17,25 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/:id', (req, res) => {
+    const id = req.params.id;
+    modeleGuilde.recupererGuildeParId(id, (error, guilde) => {
+        if (error) {
+            res.status(500).json({
+                message: 'Erreur lors de la récupération de la guilde'
+            });
+            return;
+        }
+        if (!guilde) {
+            res.status(404).json({
+                message: 'Guilde non trouvée'
+            });
+            return;
+        }
+        res.json(guilde);
+    });
+});
+
 router.get('/prof/:idprof', (req, res) => {
     modeleGuilde.recupererGuildesParProf(req.params.idprof, (error, guildes) => {
         if (error) {

@@ -182,6 +182,26 @@ router.get('/guilde/:id_guilde', (req, res) => {
   });
 });
 
+router.get('/guilde/prof/:id_guilde', (req, res) => {
+  const id_guilde = req.params.id_guilde;
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 5;
+
+  modeleContenu.recupererTotalContenus(id_guilde, (error, total) => {
+    if (error) {
+      res.status(500).json({ message: 'Erreur lors de la récupération du total des contenus' });
+      return;
+    }
+    modeleContenu.recupererContenusParGuildeProf(id_guilde, page, pageSize, (error, contenus) => {
+      if (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
+        return;
+      }
+      res.json({ contenus, total });
+    });
+  });
+});
+
 router.delete('/delete/exercice/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.deleteExo(id, (error) => {

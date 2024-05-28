@@ -42,6 +42,7 @@ class ModeleProfesseur {
           callback(null, professeur);
         });
     }
+
 }
 
 export default ModeleProfesseur;

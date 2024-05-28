@@ -76,7 +76,7 @@
             <ul class="navbar-nav ms-auto">
               <li class="nav-item">
                 <router-link to="/add" class="nav-link">
-                  Ajouter un contenu
+                  {{page}}
                 </router-link>         
               </li>
               <li v-if="loggedIn" class="nav-item">

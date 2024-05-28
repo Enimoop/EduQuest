@@ -1,29 +1,37 @@
 <template>
-    <form @submit.prevent="uploadPdf" class="container mt-4">
-      <!-- Sélection de la guilde -->
-    <div class="mb-3">
-      <label for="guilde" class="form-label">Guilde:</label>
-      <select id="guilde" class="form-select" v-model="selectedGuilde" required>
-        <option value="">Choisir une guilde</option>
-        <option v-for="guilde in guildes" :key="guilde.id" :value="guilde.id">{{ guilde.nom }}</option>
-      </select>
-    </div>
+  <div class="container container-cours mt-5" style="width: 50%;" >
+    <form @submit.prevent="uploadPdf" class="form p-4 shadow rounded bg-light">
+      <h2 class="form-title mb-4 text-center">Ajouter un PDF</h2>
       <div class="mb-3">
-        <label for="dropzone-file" class="form-label">Choisir un fichier PDF:</label>
-        <div class="dropzone">
-          <div v-if="!pdf" class="dropzone-placeholder">
-            <p>Click pour télécharger</p>
-          </div>
-          <img v-else :src="pdf" alt="PDF téléchargé" class="img-fluid">
-          <input ref="files" id="dropzone-file" type="file" class="form-control" @change="onFileChange" />
+        <div v-if="success" class="alert alert-success alert-dismissible fade show" role="alert">
+          Téléchargement réussi
+          <button type="button" class="btn-close" @click="success = null"></button>
+        </div>
+        <div v-if="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+          Erreur lors de la mise en ligne
+          <button type="button" class="btn-close" @click="error = null"></button>
         </div>
       </div>
   
+      <!-- Choix du fichier PDF -->
       <div class="mb-3">
-        <label for="description" class="form-label">Description du contenu:</label>
-        <textarea id="description" class="form-control" v-model="contentDescription"></textarea>
+        <label for="dropzone-file" class="form-label">Choisir un fichier PDF:</label>
+        <div class="dropzone p-3 border rounded text-center">
+          <div v-if="!pdf" class="dropzone-placeholder">
+            <p>Cliquer pour télécharger</p>
+          </div>
+          <img v-else :src="pdf" alt="PDF téléchargé" class="img-fluid">
+          <input ref="files" id="dropzone-file" type="file" class="form-control mt-2" @change="onFileChange" />
+        </div>
       </div>
   
+      <!-- Description du contenu -->
+      <div class="mb-3">
+        <label for="description" class="form-label">Description du contenu:</label>
+        <textarea id="description" class="form-control" v-model="contentDescription" rows="3"></textarea>
+      </div>
+  
+      <!-- Sélection de la matière -->
       <div class="mb-3">
         <label for="subject" class="form-label">Matière:</label>
         <select id="subject" class="form-select" v-model="selectedSubject">
@@ -35,18 +43,16 @@
         </select>
       </div>
   
-      <div class="mb-3">
-        <span v-if="success" class="text-success">{{ success }}</span>
-        <span v-if="error" class="text-danger">{{ error }}</span>
-      </div>
-  
-      <button type="submit" class="btn btn-primary">Télécharger le PDF</button>
+      <!-- Bouton de soumission -->
+      <button type="submit" class="btn btn-primary w-auto mx-auto d-block">Télécharger le PDF</button>
     </form>
-  </template>
+  </div>
+</template>
   
   <script setup lang="ts">
   import { ref } from 'vue';
   import axios from 'axios';
+  
 
   import { getSubFromToken } from "../utils/session.mjs";
 import { fi } from 'date-fns/locale';
@@ -55,14 +61,17 @@ const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 
 const { data: token } = await useFetch("/api/token", { headers });
 
-let id: number | null;
+let idu: number | null;
 
 const { status } = useAuth();
 
 if (status.value === "authenticated") {
-    id = getSubFromToken(token);
+    idu = getSubFromToken(token);
 }
-  
+
+const route = useRoute()
+const id = route.params.id;
+
   const files = ref();
   const pdf = ref();
   const success = ref();
@@ -80,20 +89,7 @@ if (status.value === "authenticated") {
 
 const guildes = ref<Guildes[]>([]);
 
-// Fonction pour récupérer les guildes du professeur
-const fetchGuildes = async () => {
-  try {
-    const response = await axios.get(`http://localhost:3001/guildes/prof/${id}`);
-    guildes.value = response.data;
-  } catch (error) {
-    console.error('Erreur lors de la récupération des guildes:', error);
-    alert('Une erreur s\'est produite lors de la récupération des guildes.');
-  }
-};
 
-onMounted(() => {
-  fetchGuildes();
-});
   
   function onFileChange(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
@@ -124,8 +120,8 @@ onMounted(() => {
       description_contenu: contentDescription.value,
       date_contenu: new Date().toISOString().slice(0, 10), 
       id_matiere: selectedSubject.value,
-      id_u: id,
-      id_guilde: selectedGuilde.value,
+      id_u: idu,
+      id_guilde: id,
       nom_fichier: pdfName 
     };
 
@@ -137,10 +133,48 @@ onMounted(() => {
    
 
     success.value = message;
+    
+    clearFields();
 
   } catch (e: any) {
     error.value = e.statusMessage;
   }
 }
+
+function clearFields() {
+  contentDescription.value = '';
+  selectedSubject.value = 'Français';
+  files.value.value = '';
+  pdf.value = null;
+}
   </script>
-  
+ 
+<style scoped>
+.container-cours {
+    margin-top: 2rem;
+}
+.form {
+    background: #ffffff;
+}
+.form-title {
+    font-size: 1.5rem;
+    color: #333;
+}
+.dropzone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+.dropzone:hover {
+    border-color: #007bff;
+}
+.dropzone-placeholder {
+    text-align: center;
+    color: #777;
+}
+</style>

@@ -60,7 +60,6 @@
       axios.get(`http://localhost:3001/eleves/notes/${id}`)
       .then(response => {
         note.value = response.data;
-        console.log(note.value);
       })
       .catch(error => {
         console.error('Error fetching notes:', error);

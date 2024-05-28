@@ -1,42 +1,55 @@
 <template>
     <div class="container container-cours">
-        <h1 class="title title-cours">{{ nom_guilde}}</h1>
         <div class="cours-details">
-
-        <!-- Liste des guildes -->
-
-        <!-- Tableau des élèves -->
-        <table class="table table-striped table-hover mt-2">
-            <thead>
-                <tr>
-                    <th scope="col">Titre</th>
-                    <th scope="col">date</th>
-                    <th scope="col">Retirer</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                <tr v-for="contenu in contenus" :key="contenu.id">
-                    <td>{{ contenu.description_contenu }}</td>
-                    <td>{{ format(new Date(contenu.date_contenu),
-                    'dd/MM/yyyy')}}</td>
-                    <td><button @click="retirerContenu(contenu.id,contenu.type_contenu)" class="btn btn-danger">Retirer</button></td>
-                    <td><button @click="voirPlus(contenu.id, contenu.type_contenu)" class="btn btn-primary">Voir plus</button>
-                    </td>
-                    <td><button @click="modifierContenu(contenu.id, contenu.type_contenu)" class="btn btn-primary">Modifier</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            <h2> Gestion des contenus </h2>
+            <table class="table table-striped table-hover mt-2">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">Titre</th>
+                        <th scope="col" class="text-center">Type</th>
+                        <th scope="col" class="text-center">Date</th>
+                        <th scope="col" class="text-center">Retirer</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="contenu in contenus" :key="contenu.id">
+                        <td>{{ contenu.description_contenu }}</td>
+                        <td>{{ contenu.type_contenu }}</td>
+                        <td>{{ format(new Date(contenu.date_contenu), 'dd/MM/yyyy') }}</td>
+                        <td>
+                            <button @click="retirerContenu(contenu.id, contenu.type_contenu)" class="btn btn-danger">
+                                Retirer
+                            </button>
+                        </td>
+                        <td>
+                            <button @click="voirPlus(contenu.id, contenu.type_contenu)" class="btn btn-primary">
+                                Voir plus
+                            </button>
+                        </td>
+                        <td>
+                            <button @click="modifierContenu(contenu.id, contenu.type_contenu)" class="btn btn-primary">
+                                Modifier
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Pagination -->
+            <div class="pagination">
+                <button @click="prevPage" :disabled="currentPage === 1">Précédent</button>
+                <span>Page {{ currentPage }}</span>
+                <button @click="nextPage" :disabled="isLastPage">Suivant</button>
+            </div>
+        </div>
     </div>
-</div>
+    <AjouterContenu/>
 </template>
 
 <script setup lang="ts">
 
 import { format } from 'date-fns';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed  } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -56,27 +69,70 @@ interface Contenus {
 
 const nom_guilde = ref('');
 const description_guilde = ref('');
-
 const contenus = ref<Contenus[]>([]);
+const currentPage = ref(1);
+const pageSize = 5;
+const totalContenus = ref(0);
 
 const router = useRouter();
+
+
 const route = useRoute();
+const id = route.params.id;
+
+
+const fetchContenus = async (page: number, pageSize: number) => {
+    console.log('Fetching contents...');
+    console.log(page, pageSize)
+    
+    try {
+        const response = await axios.get(`http://localhost:3001/contenus/guilde/prof/${id}`, {
+            params: {
+                page,
+                pageSize
+            }
+        });
+        console.log('Response data:', response.data); // Afficher les données reçues du serveur
+        contenus.value = response.data.contenus;
+        console.log('Updated contenus:', contenus.value); // Vérifier si contenus est correctement mis à jour
+        totalContenus.value = response.data.total;
+        console.log('Total contenus:', totalContenus.value);
+
+        
+        if (response.data.contenus.length > 0) {
+            nom_guilde.value = response.data.contenus[0].nom_guilde;
+            description_guilde.value = response.data.contenus[0].description_guilde;
+        }
+    } catch (error) {
+        console.error('Error fetching contents:', error);
+    }
+};
 
 onMounted(() => {
-    const route = useRoute()
-    const id = route.params.id;
-    axios.get(`http://localhost:3001/contenus/guilde/${id}`)
-        .then(response => {
-            contenus.value = response.data;
-            nom_guilde.value = response.data[0].nom_guilde;
-            description_guilde.value = response.data[0].description_guilde;
-        })
-        .catch(error => {
-            console.error('Error fetching contents:', error);
-        });
+    fetchContenus(currentPage.value, pageSize);
 });
 
-const retirerContenu = (id: number, type_contenu: string) => {
+watch([currentPage, totalContenus], () => {
+    fetchContenus(currentPage.value, pageSize);
+});
+
+const nextPage = () => {
+    if ((currentPage.value * pageSize) < totalContenus.value) {
+        currentPage.value++;
+    }
+};
+
+const prevPage = () => {
+    if (currentPage.value > 1) {
+        currentPage.value--;
+    }
+};
+
+const isLastPage = computed(() => {
+    return (currentPage.value * pageSize) >= totalContenus.value;
+});
+
+const retirerContenu = async (id: number, type_contenu: string) => {
     if(!confirm('Voulez-vous vraiment retirer ce contenu ?')) {
         return;
     } 
@@ -90,14 +146,12 @@ const retirerContenu = (id: number, type_contenu: string) => {
         return;
     }
 
-  axios.delete(`http://localhost:3001/contenus${deleteRoute}`)
-    .then(() => {
-      // Supprimer le contenu de la liste locale après suppression réussie
-      contenus.value = contenus.value.filter(contenu => contenu.id !== id);
-    })
-    .catch(error => {
-      console.error('Erreur lors de la suppression du contenu:', error);
-    });
+    try {
+        await axios.delete(`http://localhost:3001/contenus${deleteRoute}`);
+        fetchContenus(currentPage.value, pageSize); // Rafraîchir les contenus après la suppression
+    } catch (error) {
+        console.error('Erreur lors de la suppression du contenu:', error);
+    }
 };
 
 const voirPlus = (id_contenu: number, type_contenu: string) => {
@@ -121,3 +175,18 @@ const modifierContenu = (id_contenu: number, type_contenu: string) => {
 };
 
 </script>
+<style>
+.list-group {
+    max-height: 200px;
+    overflow-y: auto;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+.pagination button {
+    margin: 0 10px;
+}
+</style>

@@ -5,19 +5,33 @@ class ModeleProfil {
     this.connection = createConnection();
   }
 
-  recupererTousLesProfils(callback) {
-    const query = 'SELECT * FROM User';
-    this.connection.query(query, (error, results, fields) => {
+  recupererTousLesProfils(page, pageSize,callback) {
+    const offset = (page - 1) * pageSize;
+    const query = 'SELECT * FROM User LIMIT ? OFFSET ?';
+    this.connection.query(query, [pageSize, offset], (error, results, fields) => {
       if (error) {
         callback(error, null);
         return;
       }
       const user = results.map(row => ({
         id: row.id_u,
+        nom: row.nom,
+        prenom: row.prenom,
         mail: row.mail,
         type: row.type
       }));
       callback(null, user);
+    });
+  }
+  
+  recupererTotalProfils(callback) {
+    const query = 'SELECT COUNT(*) AS total FROM User';
+    this.connection.query(query, (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, results[0].total);
     });
   }
 
@@ -83,8 +97,6 @@ recupererUnCompteId(id, callback) {
 }
 
 updateProfil(id, mdp, mail, callback) {
-  console.log("Modele")
-  console.log(id,mdp,mail)
   const query = 'UPDATE User SET mail = ?, mdp = ? WHERE id_u = ?';
   this.connection.query(query, [mdp, mail, id], (error, results, fields) => {
     if (error) {
@@ -94,6 +106,52 @@ updateProfil(id, mdp, mail, callback) {
     callback(null, results.affectedRows);
   });
 
+}
+
+updateType(id, type, callback) {
+  const query = 'UPDATE User SET type = ? WHERE id_u = ?';
+  this.connection.query(query, [type, id], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    callback(null, results.affectedRows);
+  });
+
+}
+
+recupererProfilParNomPrenom(string, callback) {
+  const query = `SELECT * FROM User
+                WHERE (nom LIKE ? OR prenom LIKE ?)`;
+  const searchString = `%${string}%`;
+  this.connection.query(query, [searchString, searchString], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    
+    const users = results.map(row => ({
+      id: row.id_u,
+      nom: row.nom,
+      prenom: row.prenom,
+      mail: row.mail,
+      type: row.type,
+      etablissement: row.etablissement,
+      niveau_etude: row.niveau_etude
+    }));
+    callback(null, users);
+  });
+}
+
+deleteUser(id, callback) {
+  const query = 'DELETE FROM User WHERE id_u = ?';
+  this.connection.query(query, [id], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    callback(null, results.affectedRows);
+  });
 }
 }
 export default ModeleProfil;

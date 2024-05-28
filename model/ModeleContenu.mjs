@@ -66,11 +66,11 @@ class ModeleContenu {
     const query = `SELECT c.*,
                   g.nom_guilde,
                   g.description_guilde
-                  FROM Cours c
+                  FROM Contenu c
                   LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
                   LEFT JOIN User u ON c.id_u = u.id_u
                   LEFT JOIN Guilde g ON c.id_guilde = g.id_guilde
-                  WHERE (r.id_u = ? OR u.type = 'Admin')`;
+                  WHERE (r.id_u = ? OR u.type = 'Admin') and type_contenu = 'Cours'`;
     this.connection.query(query, [id],(error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -101,7 +101,7 @@ class ModeleContenu {
                   c.id_guilde,
                   g.nom_guilde 
                   FROM 
-                  Cours c
+                  Contenu c
                   JOIN 
                   Matiere m ON c.id_matiere = m.id_matiere
                   LEFT JOIN 
@@ -133,14 +133,14 @@ class ModeleContenu {
   }
 
   recupererTousLesExercices(id,callback) {
-    const query = `SELECT e.*,
+    const query = `SELECT c.*,
                   g.nom_guilde,
                   g.description_guilde
-                  FROM Exercice e
-                  LEFT JOIN Rejoindre r ON e.id_guilde = r.id_guilde
-                  LEFT JOIN User u ON e.id_u = u.id_u
-                  LEFT JOIN Guilde g ON e.id_guilde = g.id_guilde
-                  WHERE (r.id_u = ? OR u.type = 'Admin')`;
+                  FROM Contenu c
+                  LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
+                  LEFT JOIN User u ON c.id_u = u.id_u
+                  LEFT JOIN Guilde g ON c.id_guilde = g.id_guilde
+                  WHERE (r.id_u = ? OR u.type = 'Admin') and type_contenu = 'Exercice'`;
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -163,26 +163,25 @@ class ModeleContenu {
   recupererExerciceEtQuestionParId(id, callback) {
     const query = `SELECT 
                       q.id_question, 
-                      e.id_contenu, 
-                      e.description_contenu, 
-                      e.date_contenu, 
-                      e.id_matiere, 
+                      c.id_contenu, 
+                      c.description_contenu, 
+                      c.date_contenu, 
+                      c.id_matiere, 
                       m.libelle_matiere, 
                       IFNULL(g.id_guilde, 'Aucune') AS id_guilde, 
                       IFNULL(g.nom_guilde, 'Aucune') AS nom_guilde, 
-                      intitule, 
-                      type_exercice, 
+                      intitule,  
                       reponse 
                   FROM 
-                      Exercice e
+                      Contenu c
                   JOIN 
-                      Matiere m ON e.id_matiere = m.id_matiere
+                      Matiere m ON c.id_matiere = m.id_matiere
                   LEFT JOIN 
-                      Question q ON e.id_contenu = q.id_contenu
+                      Question q ON c.id_contenu = q.id_contenu
                   LEFT JOIN
-                      Guilde g ON e.id_guilde = g.id_guilde
+                      Guilde g ON c.id_guilde = g.id_guilde
                   WHERE 
-                      e.id_contenu =?`;
+                      c.id_contenu =?`;
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -197,7 +196,6 @@ class ModeleContenu {
         id_matiere: row.id_matiere,
         libelle_matiere: row.libelle_matiere,
         intitule: row.intitule,
-        type_exercice: row.type_exercice,
         reponse: row.reponse,
         id_guilde: row.id_guilde,
         nom_guilde: row.nom_guilde
@@ -210,7 +208,7 @@ class ModeleContenu {
 
   insertNouveauQuiz(nouveauQuiz, callback) {
     const {description_contenu, date_contenu, id_matiere, id_u, id_guilde} = nouveauQuiz;
-    const query = 'INSERT INTO Exercice (description_contenu, date_contenu, id_matiere, id_u,id_guilde, type_exercice) VALUES (?, ?, ?, ?, ?,?)';
+    const query = 'INSERT INTO Contenu (description_contenu, date_contenu, id_matiere, id_u,id_guilde,type_contenu) VALUES (?, ?, ?, ?, ?,"Exercice")';
     const values = [description_contenu, date_contenu, id_matiere, id_u,id_guilde, "QCM"];
     this.connection.query(query, values, (error, results, fields) => {
       if (error) {
@@ -284,7 +282,7 @@ class ModeleContenu {
 
 insertNouveauCours(nouveauCours, callback) {
   const {description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier} = nouveauCours;
-  const query = 'INSERT INTO Cours (description_contenu, date_contenu, id_matiere, id_u,  id_guilde, nom_fichier) VALUES (?, ?, ?, ?, ?, ?)';
+  const query = 'INSERT INTO Contenu (description_contenu, date_contenu, id_matiere, id_u,  id_guilde, nom_fichier,type_contenu) VALUES (?, ?, ?, ?, ?, ?, "Cours")';
   const values = [description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier];
   this.connection.query(query, values, (error, results, fields) => {
     if (error) {
@@ -327,8 +325,49 @@ recupererContenusParGuilde(id_guilde, callback) {
 
 }
 
+recupererContenusParGuildeProf(id_guilde, page, pageSize, callback) {
+  const offset = (page - 1) * pageSize;
+  const query = `SELECT c.*, g.nom_guilde, g.description_guilde
+                  FROM Contenu c
+                  JOIN Guilde g ON c.id_guilde = g.id_guilde
+                  WHERE c.id_guilde = ?
+                  LIMIT ? OFFSET ?`;
+  this.connection.query(query, [id_guilde, pageSize, offset], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    if (results.length === 0) {
+      callback(null, []); // Aucun contenu trouvé avec cet ID
+      return;
+    }
+    const contenu = results.map(row => ({
+      id: row.id_contenu,
+      description_contenu: row.description_contenu,
+      date_contenu: row.date_contenu,
+      id_matiere: row.id_matiere,
+      id_guilde: row.id_guilde,
+      type_contenu: row.type_contenu,
+      nom_guilde: row.nom_guilde,
+      description_guilde: row.description_guilde
+    }));
+    callback(null, contenu);
+  });
+}
+
+recupererTotalContenus(id_guilde, callback) {
+  const query = 'SELECT COUNT(*) as total FROM Contenu WHERE id_guilde = ?';
+  this.connection.query(query, [id_guilde], (error, results) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    callback(null, results[0].total);
+  });
+}
+
 deleteExo(id, callback) {
-  const query = 'DELETE FROM Exercice WHERE id_contenu = ?';
+  const query = 'DELETE FROM Contenu WHERE id_contenu = ?';
   this.connection.query(query, [id], (error, results, fields) => {
     if (error) {
       callback(error);
@@ -339,7 +378,7 @@ deleteExo(id, callback) {
 }
 
 deleteCours(id, callback) {
-  const query = 'DELETE FROM Cours WHERE id_contenu = ?';
+  const query = 'DELETE FROM Contenu WHERE id_contenu = ?';
   this.connection.query(query, [id], (error, results, fields) => {
     if (error) {
       callback(error);
@@ -351,7 +390,7 @@ deleteCours(id, callback) {
 
 updateExo(exo, callback) {
   const {id_contenu, description_contenu, id_matiere, id_guilde} = exo;
-  const query = 'UPDATE Exercice SET description_contenu = ?, id_matiere = ?, id_guilde = ? WHERE id_contenu = ?';
+  const query = 'UPDATE Contenu SET description_contenu = ?, id_matiere = ?, id_guilde = ? WHERE id_contenu = ?';
   const values = [description_contenu, id_matiere, id_guilde, id_contenu];
   this.connection.query(query, values, (error, results, fields) => {
     if (error) {
@@ -388,7 +427,7 @@ deleteQuestion(id, callback) {
 
 updateCours(cours, callback) {
   const {id_contenu, description_contenu, id_matiere, id_guilde, nom_fichier} = cours;
-  const query = 'UPDATE Cours SET description_contenu = ?, id_matiere = ?, id_guilde = ?, nom_fichier = ? WHERE id_contenu = ?';
+  const query = 'UPDATE Contenu SET description_contenu = ?, id_matiere = ?, id_guilde = ?, nom_fichier = ? WHERE id_contenu = ?';
   const values = [description_contenu,id_matiere, id_guilde, nom_fichier, id_contenu];
   this.connection.query(query, values, (error, results, fields) => {
     if (error) {

@@ -72,6 +72,7 @@ export async function calculerNiveau(id_matiere, id) {
     }
 }
 
+
 export function updateProfil(updatedProfil) {
     return axios.put(`http://localhost:3001/profils/update`, updatedProfil, {
         headers: {

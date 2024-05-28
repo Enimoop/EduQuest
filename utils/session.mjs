@@ -18,8 +18,11 @@ export async function returnUserType(id) {
       const response = await axios.get(`http://localhost:3001/profils/type/${id}`);
       return response.data.type;
     } catch (error) {
-      console.error('Error fetching profil:', error);
-      return null;
+      console.error("Error fetching profil:", error);
+        if (error.response && error.response.status === 404) {
+            return null; // Retourner null ou une valeur par défaut si le profil n'est pas trouvé
+        }
+        throw new Error("Erreur lors de la récupération du type d'utilisateur");
     }
   }
 
