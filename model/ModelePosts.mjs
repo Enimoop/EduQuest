@@ -6,7 +6,10 @@ class ModelePosts {
   }
 
   recupererToutLesPosts(callback) {
-    const query = "SELECT * FROM PostForum";
+    const query = `
+    SELECT p.id_post, p.nom_post, p.contenu_post, p.date_post, u.nom AS nom_user, u.prenom AS prenom_user
+    FROM PostForum p
+    JOIN Eleve u ON p.id_u = u.id_u`;
     this.connection.query(query, (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -14,16 +17,24 @@ class ModelePosts {
       }
       const posts = results.map((row) => ({
         id: row.id_post,
-        nom: results[0].nom_post,
+        nom: row.nom_post,
         contenu: row.contenu_post,
         date: row.date_post,
+        eleve: {
+          nom: row.nom_user,
+          prenom: row.prenom_user,
+        },
       }));
       callback(null, posts);
     });
   }
 
   RecupererLesPostsParId(id, callback) {
-    const query = "SELECT * from PostForum WHERE id_post = ?";
+    const query = `
+    SELECT p.id_post, p.nom_post, p.contenu_post, p.date_post, u.nom AS nom_user, u.prenom AS prenom_user
+    FROM PostForum p
+    JOIN Eleve u ON p.id_u = u.id_u
+    WHERE p.id_post = ?`;
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -38,21 +49,31 @@ class ModelePosts {
         nom: results[0].nom_post,
         contenu: results[0].contenu_post,
         date: results[0].date_post,
+        eleve: {
+          nom: results[0].nom_user,
+          prenom: results[0].prenom_user,
+        },
       };
       callback(null, post);
     });
   }
 
   insererPost(contenu, callback) {
+    const { nom_post, contenu_post, id_u } = contenu;
+
     const query =
-      "INSERT INTO PostForum (contenu_post, date_post) VALUES (?, NOW())";
-    this.connection.query(query, [contenu], (error, results, fields) => {
-      if (error) {
-        callback(error, null);
-        return;
+      "INSERT INTO PostForum (nom_post, contenu_post, id_u, date_post) VALUES (?, ?, ?, NOW())";
+    this.connection.query(
+      query,
+      [nom_post, contenu_post, id_u],
+      (error, results, fields) => {
+        if (error) {
+          callback(error, null);
+          return;
+        }
+        callback(null, results.insertId);
       }
-      callback(null, results.insertId);
-    });
+    );
   }
 }
 

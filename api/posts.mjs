@@ -17,6 +17,20 @@ router.get("/", (req, res) => {
   });
 });
 
+router.post("/addPost", (req, res) => {
+  const contenu = req.body;
+  console.log(contenu);
+  modelePost.insererPost(contenu, (error, id) => {
+    if (error) {
+      res.status(500).json({
+        message: "Erreur lors de l'ajout du post",
+      });
+      return;
+    }
+    res.json(contenu);
+  });
+});
+
 router.get("/:id", (req, res) => {
   const id = req.params.id;
   modelePost.RecupererLesPostsParId(id, (error, post) => {

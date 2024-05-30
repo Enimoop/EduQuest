@@ -2,6 +2,7 @@
   <div class="container">
     <div class="col-md-4">
       <h1>
+        <!-- {{ nom_post.eleve.nom }} {{ nom_post.eleve.prenom }} : -->
         {{ nom_post.nom }}
       </h1>
       <p>
@@ -14,7 +15,8 @@
           :key="contenu.id"
           class="list-group-item"
         >
-          {{ contenu.user }} - {{ contenu.contenu }}
+          {{ contenu.eleve.nom }} {{ contenu.eleve.prenom }} :
+          {{ contenu.contenu }}
         </li>
       </ul>
     </div>
@@ -43,4 +45,6 @@ onMounted(() => {
     nom_post.value = response.data;
   });
 });
+
+console.log(nom_post);
 </script>
