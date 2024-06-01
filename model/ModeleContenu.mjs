@@ -64,7 +64,8 @@ class ModeleContenu {
   }
 
 
-  recupererTousLesCours(id,callback) {
+  recupererTousLesCours(id, page, pageSize, callback) {
+    const offset = (page - 1) * pageSize;
     const query = `SELECT c.*,
                   g.nom_guilde,
                   g.description_guilde
@@ -72,8 +73,8 @@ class ModeleContenu {
                   LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
                   LEFT JOIN User u ON c.id_u = u.id_u
                   LEFT JOIN Guilde g ON c.id_guilde = g.id_guilde
-                  WHERE (r.id_u = ? OR u.type = 'Admin') and type_contenu = 'Cours'`;
-    this.connection.query(query, [id],(error, results, fields) => {
+                  WHERE (r.id_u = ? OR u.type = 'Admin') and type_contenu = 'Cours' LIMIT ? OFFSET ?`;
+    this.connection.query(query, [id, pageSize, offset],(error, results, fields) => {
       if (error) {
         callback(error, null);
         return;
@@ -89,6 +90,22 @@ class ModeleContenu {
         nom_guilde: row.nom_guilde
       }));
       callback(null, cours);
+    });
+  }
+
+  recupererTotalCours(id, callback) {
+    const query = `SELECT COUNT(*) as total
+                  FROM Contenu c
+                  LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
+                  LEFT JOIN User u ON c.id_u = u.id_u
+                  LEFT JOIN Guilde g ON c.id_guilde = g.id_guilde
+                  WHERE (r.id_u = ? OR u.type = 'Admin') and type_contenu = 'Cours'`;
+    this.connection.query(query, [id], (error, results) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, results[0].total);
     });
   }
 
@@ -137,7 +154,8 @@ class ModeleContenu {
     });
   }
 
-  recupererTousLesExercices(id,callback) {
+  recupererTousLesExercices(id, page, pageSize, callback) {
+    const offset = (page - 1) * pageSize;
     const query = `SELECT c.*,
                   g.nom_guilde,
                   g.description_guilde
@@ -145,8 +163,8 @@ class ModeleContenu {
                   LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
                   LEFT JOIN User u ON c.id_u = u.id_u
                   LEFT JOIN Guilde g ON c.id_guilde = g.id_guilde
-                  WHERE (r.id_u = ? OR u.type = 'Admin') and type_contenu = 'Exercice'`;
-    this.connection.query(query, [id], (error, results, fields) => {
+                  WHERE (r.id_u = ? OR u.type = 'Admin') and type_contenu = 'Exercice' LIMIT ? OFFSET ?`;
+    this.connection.query(query, [id, pageSize, offset], (error, results, fields) => {
       if (error) {
         callback(error, null);
         return;
@@ -162,6 +180,22 @@ class ModeleContenu {
         nom_guilde: row.nom_guilde
       }));
       callback(null, exos);
+    });
+  }
+
+  recupererTotalExercices(id, callback) {
+    const query = `SELECT COUNT(*) as total
+                  FROM Contenu c
+                  LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
+                  LEFT JOIN User u ON c.id_u = u.id_u
+                  LEFT JOIN Guilde g ON c.id_guilde = g.id_guilde
+                  WHERE (r.id_u = ? OR u.type = 'Admin') and type_contenu = 'Exercice'`;
+    this.connection.query(query, [id], (error, results) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, results[0].total);
     });
   }
 

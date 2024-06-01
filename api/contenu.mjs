@@ -7,9 +7,11 @@ router.use(express.json());
 
 router.get('/all/:id', (req, res) => {
   const id = req.params.id;
-  modeleContenu.recupererTousLesContenus(id,(error, contenus) => {
+  modeleContenu.recupererTousLesContenus(id, (error, contenus) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
+      res.status(500).json({
+        message: 'Erreur lors de la récupération des contenus'
+      });
       return;
     }
     res.json(contenus);
@@ -18,13 +20,30 @@ router.get('/all/:id', (req, res) => {
 
 router.get('/cours/:id', (req, res) => {
   const id = req.params.id;
-  modeleContenu.recupererTousLesCours(id,(error, cours) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 12;
 
+  modeleContenu.recupererTotalCours(id, (error, total) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la récupération des cours' });
+      res.status(500).json({
+        message: 'Erreur lors de la récupération du total des cours'
+      });
       return;
     }
-    res.json(cours);
+    modeleContenu.recupererTousLesCours(id, page, pageSize, (error, cours) => {
+
+      if (error) {
+        res.status(500).json({
+          message: 'Erreur lors de la récupération des cours'
+        });
+        return;
+      }
+      res.json({
+        cours,
+        total
+      });
+    });
+
   });
 
 });
@@ -33,11 +52,15 @@ router.get('/cour/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.recupererCoursParId(id, (error, cours) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la récupération du cours' });
+      res.status(500).json({
+        message: 'Erreur lors de la récupération du cours'
+      });
       return;
     }
     if (!cours) {
-      res.status(404).json({ message: 'Cours non trouvé' });
+      res.status(404).json({
+        message: 'Cours non trouvé'
+      });
       return;
     }
     res.json(cours);
@@ -47,27 +70,47 @@ router.get('/cour/:id', (req, res) => {
 
 router.get('/exercices/:id', (req, res) => {
   const id = req.params.id;
-  modeleContenu.recupererTousLesExercices(id,(error, exercices) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 12;
 
+  modeleContenu.recupererTotalExercices(id, (error, total) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la récupération des exercices' });
+      res.status(500).json({
+        message: 'Erreur lors de la récupération du total des exercices'
+      });
       return;
     }
-    res.json(exercices);
+    modeleContenu.recupererTousLesExercices(id, page, pageSize, (error, exercices) => {
+
+      if (error) {
+        res.status(500).json({
+          message: 'Erreur lors de la récupération des exercices'
+        });
+        return;
+      }
+      res.json({
+        exercices,
+        total
+      });
+    });
+
   });
 
 });
-
 
 router.get('/exercice/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.recupererExerciceEtQuestionParId(id, (error, questions) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la récupération du quiz' });
+      res.status(500).json({
+        message: 'Erreur lors de la récupération du quiz'
+      });
       return;
     }
     if (!questions) {
-      res.status(404).json({ message: 'Quiz non trouvé' });
+      res.status(404).json({
+        message: 'Quiz non trouvé'
+      });
       return;
     }
     res.json(questions);
@@ -78,11 +121,15 @@ router.get('/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.recupererContenuParId(id, (error, contenu) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la récupération du contenu' });
+      res.status(500).json({
+        message: 'Erreur lors de la récupération du contenu'
+      });
       return;
     }
     if (!contenu) {
-      res.status(404).json({ message: 'Contenu non trouvé' });
+      res.status(404).json({
+        message: 'Contenu non trouvé'
+      });
       return;
     }
     res.json(contenu);
@@ -96,11 +143,16 @@ router.post('/exercices', (req, res) => {
   // Insérer le nouveau quiz/exercice dans la base de données en utilisant le modèle
   modeleContenu.insertNouveauQuiz(nouveauQuiz, (error, insertedId) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de l\'insertion du quiz/exercice' });
+      res.status(500).json({
+        message: 'Erreur lors de l\'insertion du quiz/exercice'
+      });
       return;
     }
     // Renvoyer une réponse avec l'ID du quiz/exercice nouvellement inséré
-    res.status(201).json({ message: 'Quiz/exercice inséré avec succès', insertedId });
+    res.status(201).json({
+      message: 'Quiz/exercice inséré avec succès',
+      insertedId
+    });
   });
 });
 
@@ -111,11 +163,16 @@ router.post('/exercices/question', (req, res) => {
   // Insérer la nouvelle question dans la base de données en utilisant le modèle
   modeleContenu.insertQuestion(nouvelleQuestion, (error, insertedId) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de l\'insertion de la question' });
+      res.status(500).json({
+        message: 'Erreur lors de l\'insertion de la question'
+      });
       return;
     }
     // Renvoyer une réponse avec l'ID de la question nouvellement insérée
-    res.status(201).json({ message: 'Question insérée avec succès', insertedId });
+    res.status(201).json({
+      message: 'Question insérée avec succès',
+      insertedId
+    });
   });
 });
 
@@ -125,11 +182,15 @@ router.post('/exercices/score', (req, res) => {
   // Insérer le score dans la base de données en utilisant le modèle
   modeleContenu.insertScore(score, (error) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de l\'insertion du score' });
+      res.status(500).json({
+        message: 'Erreur lors de l\'insertion du score'
+      });
       return;
     }
     // Renvoyer une réponse avec un message de succès
-    res.status(201).json({ message: 'Score inséré avec succès' });
+    res.status(201).json({
+      message: 'Score inséré avec succès'
+    });
   });
 });
 
@@ -138,24 +199,33 @@ router.put('/exercices/score', (req, res) => {
   const score = req.body;
   // Mettre à jour le score dans la base de données en utilisant le modèle
   modeleContenu.updateScore(score, (error) => {
-      if (error) {
-          res.status(500).json({ error: 'Erreur lors de la mise à jour du score.' });
-          return;
-      }
-      res.json({ message: 'Score mis à jour avec succès' });
+    if (error) {
+      res.status(500).json({
+        error: 'Erreur lors de la mise à jour du score.'
+      });
+      return;
+    }
+    res.json({
+      message: 'Score mis à jour avec succès'
+    });
   });
 });
 
 
 
 router.get('/exercices/score/:id_u/:id_contenu', (req, res) => {
-  const {id_u, id_contenu} = req.params;
+  const {
+    id_u,
+    id_contenu
+  } = req.params;
   modeleContenu.recupererScoreParId(id_u, id_contenu, (error, scores) => {
-      if (error) {
-          res.status(500).json({ error: 'Erreur lors de la récupération des scores.' });
-          return;
-      }
-      res.json(scores);
+    if (error) {
+      res.status(500).json({
+        error: 'Erreur lors de la récupération des scores.'
+      });
+      return;
+    }
+    res.json(scores);
   });
 });
 
@@ -164,10 +234,15 @@ router.post('/cours', (req, res) => {
   const nouveauCours = req.body;
   modeleContenu.insertNouveauCours(nouveauCours, (error, insertedId) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de l\'insertion du Cours' });
+      res.status(500).json({
+        message: 'Erreur lors de l\'insertion du Cours'
+      });
       return;
     }
-    res.status(201).json({ message: 'Cours inséré avec succès', insertedId });
+    res.status(201).json({
+      message: 'Cours inséré avec succès',
+      insertedId
+    });
   });
 });
 
@@ -175,7 +250,9 @@ router.get('/guilde/:id_guilde', (req, res) => {
   const id_guilde = req.params.id_guilde;
   modeleContenu.recupererContenusParGuilde(id_guilde, (error, contenus) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
+      res.status(500).json({
+        message: 'Erreur lors de la récupération des contenus'
+      });
       return;
     }
     res.json(contenus);
@@ -189,15 +266,22 @@ router.get('/guilde/page/:id_guilde', (req, res) => {
 
   modeleContenu.recupererTotalContenus(id_guilde, (error, total) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la récupération du total des contenus' });
+      res.status(500).json({
+        message: 'Erreur lors de la récupération du total des contenus'
+      });
       return;
     }
     modeleContenu.recupererContenusParGuildePagination(id_guilde, page, pageSize, (error, contenus) => {
       if (error) {
-        res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
+        res.status(500).json({
+          message: 'Erreur lors de la récupération des contenus'
+        });
         return;
       }
-      res.json({ contenus, total });
+      res.json({
+        contenus,
+        total
+      });
     });
   });
 });
@@ -206,10 +290,14 @@ router.delete('/delete/exercice/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.deleteExo(id, (error) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la suppression du contenu' });
+      res.status(500).json({
+        message: 'Erreur lors de la suppression du contenu'
+      });
       return;
     }
-    res.json({ message: 'Contenu supprimé avec succès' });
+    res.json({
+      message: 'Contenu supprimé avec succès'
+    });
   });
 });
 
@@ -217,10 +305,14 @@ router.delete('/delete/cours/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.deleteCours(id, (error) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la suppression du contenu' });
+      res.status(500).json({
+        message: 'Erreur lors de la suppression du contenu'
+      });
       return;
     }
-    res.json({ message: 'Contenu supprimé avec succès' });
+    res.json({
+      message: 'Contenu supprimé avec succès'
+    });
   });
 });
 
@@ -228,10 +320,14 @@ router.put('/update/exo', (req, res) => {
   const exo = req.body;
   modeleContenu.updateExo(exo, (error) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la mise à jour du contenu' });
+      res.status(500).json({
+        message: 'Erreur lors de la mise à jour du contenu'
+      });
       return;
     }
-    res.json({ message: 'Contenu mis à jour avec succès' });
+    res.json({
+      message: 'Contenu mis à jour avec succès'
+    });
   });
 });
 
@@ -240,10 +336,14 @@ router.put('/update/cours', (req, res) => {
   const cours = req.body;
   modeleContenu.updateCours(cours, (error) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la mise à jour du contenu' });
+      res.status(500).json({
+        message: 'Erreur lors de la mise à jour du contenu'
+      });
       return;
     }
-    res.json({ message: 'Contenu mis à jour avec succès' });
+    res.json({
+      message: 'Contenu mis à jour avec succès'
+    });
   });
 });
 
@@ -251,10 +351,14 @@ router.put('/update/question', (req, res) => {
   const question = req.body;
   modeleContenu.updateQuestion(question, (error) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la mise à jour de la question' });
+      res.status(500).json({
+        message: 'Erreur lors de la mise à jour de la question'
+      });
       return;
     }
-    res.json({ message: 'Question mise à jour avec succès' });
+    res.json({
+      message: 'Question mise à jour avec succès'
+    });
   });
 });
 
@@ -263,10 +367,14 @@ router.delete('/delete/question/:id', (req, res) => {
   const id = req.params.id;
   modeleContenu.deleteQuestion(id, (error) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la suppression du contenu' });
+      res.status(500).json({
+        message: 'Erreur lors de la suppression du contenu'
+      });
       return;
     }
-    res.json({ message: 'Contenu supprimé avec succès' });
+    res.json({
+      message: 'Contenu supprimé avec succès'
+    });
   });
 });
 

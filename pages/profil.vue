@@ -1,9 +1,18 @@
 <template>
   <NuxtLayout layout="default">
+
+    <div class="container mt-5">
+      <!-- Section de bienvenue -->
+      <div class="text-center mb-5">
+        <h1 class="display-4">Profil</h1>
+        <p class="lead"></p>
+      </div>
     <AfficherProfil />
     <br>
     <NotesParMatiere v-if="type === 'Eleve'"/>
     <LvlParMatiere v-if="type === 'Eleve'"/> 
+
+    </div>
   </NuxtLayout>
 </template>
 
