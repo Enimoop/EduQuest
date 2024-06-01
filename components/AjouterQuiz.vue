@@ -55,7 +55,6 @@ import {getSubFromToken} from "../utils/session.mjs";
 // Variables réactives pour stocker les données du formulaire
 const descriptionContenu = ref('');
 const selectedMatiere = ref('');
-const selectedGuilde = ref('');
 let idu = null;
 let insertedId: number | null = null;
 const successMessage = ref('');
@@ -71,13 +70,6 @@ const { status } = useAuth();
 
 if (status.value === "authenticated") {
  idu = getSubFromToken(token); 
-}
-
-interface Guildes {
-    id: number;
-    nom: string;
-    description: string;
-    id_prof: number;
 }
 
 
@@ -134,7 +126,6 @@ axios.post('http://localhost:3001/contenus/exercices', nouveauQuiz, {
         id_contenu: insertedId
       };
 
-      console.log(nouvelleQuestion);
 
       return axios.post('http://localhost:3001/contenus/exercices/question', nouvelleQuestion, {
         headers: {
