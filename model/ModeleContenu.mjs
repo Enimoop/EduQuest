@@ -22,6 +22,7 @@ class ModeleContenu {
       }
       const contenus = results.map(row => ({
         id: row.id_contenu,
+        titre_contenu: row.titre_contenu,
         description_contenu: row.description_contenu,
         date_contenu: row.date_contenu,
         id_matiere: row.id_matiere,
@@ -38,7 +39,7 @@ class ModeleContenu {
 
 
   recupererContenuParId(id, callback) {
-    const query = 'SELECT id_contenu, description_contenu, date_contenu, c.id_matiere, libelle_matiere, type_contenu FROM Contenu c, Matiere m WHERE c.id_matiere = m.id_matiere AND id_contenu = ?';
+    const query = 'SELECT id_contenu, titre_contenu, description_contenu, date_contenu, c.id_matiere, libelle_matiere, type_contenu FROM Contenu c, Matiere m WHERE c.id_matiere = m.id_matiere AND id_contenu = ?';
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -50,6 +51,7 @@ class ModeleContenu {
       }
       const contenu = {
         id: results[0].id_contenu,
+        titre_contenu: results[0].titre_contenu,
         description_contenu: results[0].description_contenu,
         date_contenu: results[0].date_contenu,
         id_matiere: results[0].id_matiere,
@@ -78,6 +80,7 @@ class ModeleContenu {
       }
       const cours = results.map(row => ({
         id: row.id_contenu,
+        titre_contenu: row.titre_contenu,
         description_contenu: row.description_contenu,
         date_contenu: row.date_contenu,
         id_matiere: row.id_matiere,
@@ -92,7 +95,8 @@ class ModeleContenu {
 
   recupererCoursParId(id, callback) {
     const query = `SELECT 
-                  c.id_contenu, 
+                  c.id_contenu,
+                  c.titre_contenu, 
                   c.description_contenu, 
                   c.date_contenu, 
                   c.id_matiere, 
@@ -119,6 +123,7 @@ class ModeleContenu {
       }
       const cours = {
         id: results[0].id_contenu,
+        titre_contenu: results[0].titre_contenu,
         description_contenu: results[0].description_contenu,
         date_contenu: results[0].date_contenu,
         id_matiere: results[0].id_matiere,
@@ -148,6 +153,7 @@ class ModeleContenu {
       }
       const exos = results.map(row => ({
         id: row.id_contenu,
+        titre_contenu: row.titre_contenu,
         description_contenu: row.description_contenu,
         date_contenu: row.date_contenu,
         id_matiere: row.id_matiere,
@@ -164,6 +170,7 @@ class ModeleContenu {
     const query = `SELECT 
                       q.id_question, 
                       c.id_contenu, 
+                      c.titre_contenu,
                       c.description_contenu, 
                       c.date_contenu, 
                       c.id_matiere, 
@@ -191,6 +198,7 @@ class ModeleContenu {
       const questions = results.map(row => ({
         id: row.id_question,
         id_contenu: row.id_contenu,
+        titre_contenu: row.titre_contenu,
         description_contenu: row.description_contenu,
         date_contenu: row.date_contenu,
         id_matiere: row.id_matiere,
@@ -207,9 +215,9 @@ class ModeleContenu {
 
 
   insertNouveauQuiz(nouveauQuiz, callback) {
-    const {description_contenu, date_contenu, id_matiere, id_u, id_guilde} = nouveauQuiz;
-    const query = 'INSERT INTO Contenu (description_contenu, date_contenu, id_matiere, id_u,id_guilde,type_contenu) VALUES (?, ?, ?, ?, ?,"Exercice")';
-    const values = [description_contenu, date_contenu, id_matiere, id_u,id_guilde, "QCM"];
+    const {titre_contenu,description_contenu, date_contenu, id_matiere, id_u, id_guilde} = nouveauQuiz;
+    const query = 'INSERT INTO Contenu (titre_contenu, description_contenu, date_contenu, id_matiere, id_u,id_guilde,type_contenu) VALUES (?, ?, ?, ?, ?, ?,"Exercice")';
+    const values = [titre_contenu, description_contenu, date_contenu, id_matiere, id_u,id_guilde, "QCM"];
     this.connection.query(query, values, (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -281,9 +289,9 @@ class ModeleContenu {
 
 
 insertNouveauCours(nouveauCours, callback) {
-  const {description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier} = nouveauCours;
-  const query = 'INSERT INTO Contenu (description_contenu, date_contenu, id_matiere, id_u,  id_guilde, nom_fichier,type_contenu) VALUES (?, ?, ?, ?, ?, ?, "Cours")';
-  const values = [description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier];
+  const {titre_contenu, description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier} = nouveauCours;
+  const query = 'INSERT INTO Contenu (titre_contenu, description_contenu, date_contenu, id_matiere, id_u,  id_guilde, nom_fichier,type_contenu) VALUES (?, ?, ?, ?, ?, ?, ?, "Cours")';
+  const values = [titre_contenu, description_contenu, date_contenu, id_matiere, id_u, id_guilde, nom_fichier];
   this.connection.query(query, values, (error, results, fields) => {
     if (error) {
       callback(error, null);
@@ -312,6 +320,7 @@ recupererContenusParGuilde(id_guilde, callback) {
     }
     const contenu = results.map(row => ({
       id: row.id_contenu,
+      titre_contenu: row.titre_contenu,
       description_contenu: row.description_contenu,
       date_contenu: row.date_contenu,
       id_matiere: row.id_matiere,
@@ -325,7 +334,7 @@ recupererContenusParGuilde(id_guilde, callback) {
 
 }
 
-recupererContenusParGuildeProf(id_guilde, page, pageSize, callback) {
+recupererContenusParGuildePagination(id_guilde, page, pageSize, callback) {
   const offset = (page - 1) * pageSize;
   const query = `SELECT c.*, g.nom_guilde, g.description_guilde
                   FROM Contenu c
@@ -343,6 +352,7 @@ recupererContenusParGuildeProf(id_guilde, page, pageSize, callback) {
     }
     const contenu = results.map(row => ({
       id: row.id_contenu,
+      titre_contenu: row.titre_contenu,
       description_contenu: row.description_contenu,
       date_contenu: row.date_contenu,
       id_matiere: row.id_matiere,
@@ -389,9 +399,9 @@ deleteCours(id, callback) {
 }
 
 updateExo(exo, callback) {
-  const {id_contenu, description_contenu, id_matiere, id_guilde} = exo;
-  const query = 'UPDATE Contenu SET description_contenu = ?, id_matiere = ?, id_guilde = ? WHERE id_contenu = ?';
-  const values = [description_contenu, id_matiere, id_guilde, id_contenu];
+  const {id_contenu, titre_contenu, description_contenu, id_matiere, id_guilde} = exo;
+  const query = 'UPDATE Contenu SET titre_contenu = ?, description_contenu = ?, id_matiere = ?, id_guilde = ? WHERE id_contenu = ?';
+  const values = [titre_contenu, description_contenu, id_matiere, id_guilde, id_contenu];
   this.connection.query(query, values, (error, results, fields) => {
     if (error) {
       callback(error);
@@ -426,9 +436,9 @@ deleteQuestion(id, callback) {
 }
 
 updateCours(cours, callback) {
-  const {id_contenu, description_contenu, id_matiere, id_guilde, nom_fichier} = cours;
-  const query = 'UPDATE Contenu SET description_contenu = ?, id_matiere = ?, id_guilde = ?, nom_fichier = ? WHERE id_contenu = ?';
-  const values = [description_contenu,id_matiere, id_guilde, nom_fichier, id_contenu];
+  const {id_contenu, titre_contenu, description_contenu, id_matiere, id_guilde, nom_fichier} = cours;
+  const query = 'UPDATE Contenu SET titre_contenu = ?, description_contenu = ?, id_matiere = ?, id_guilde = ?, nom_fichier = ? WHERE id_contenu = ?';
+  const values = [titre_contenu, description_contenu,id_matiere, id_guilde, nom_fichier, id_contenu];
   this.connection.query(query, values, (error, results, fields) => {
     if (error) {
       callback(error);

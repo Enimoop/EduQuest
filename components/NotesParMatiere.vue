@@ -16,8 +16,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="note in note" :key="note.id_contenu">
-                  <td>{{ note.description_contenu }}</td>
+                <tr v-for="note in notes" :key="note.id_contenu">
+                  <td>{{ note.titre_contenu }}</td>
                   <td>{{ formatDate(note.date_note) }}</td>
                   <td>{{ note.note }}</td>
                 </tr>
@@ -51,15 +51,16 @@
     id_contenu: number;
     date_note: string;
     note: number;
+    titre_contenu: string;
     description_contenu: string;
   }
   
-  const note = ref<Notes[]>([]);
+  const notes = ref<Notes[]>([]);
   
   onMounted(() => {
       axios.get(`http://localhost:3001/eleves/notes/${id}`)
       .then(response => {
-        note.value = response.data;
+        notes.value = response.data;
       })
       .catch(error => {
         console.error('Error fetching notes:', error);

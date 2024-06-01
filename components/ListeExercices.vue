@@ -6,7 +6,7 @@
         <router-link :to="'/exercice/' + exercice.id" class="col text-decoration-none">
           <div class="card mb-4 contenu-card">
             <div class="card-body">
-              <h5 class="card-title">{{ exercice.description_contenu }}</h5>
+              <h5 class="card-title">{{ exercice.titre_contenu }}</h5>
               <p class="card-text"><small class="text-muted">{{ format(new Date(exercice.date_contenu), 'dd/MM/yyyy')
                   }}</small></p>
               <!-- <p class="card-text">{{ cour.type_contenu }}</p>  -->
@@ -31,7 +31,14 @@ const { data: token } = await useFetch("/api/token", { headers });
 
 const id = getSubFromToken(token);
 
-const exercices = ref([]);
+interface Exercices {
+  id: number;
+  titre_contenu: string;
+  description_contenu: string;
+  date_contenu: string;
+}
+
+const exercices = ref<Exercices[]>([]);
 
 onMounted(() => {
   axios.get(`http://localhost:3001/contenus/exercices/${id}`)
@@ -39,7 +46,7 @@ onMounted(() => {
       exercices.value = response.data;
     })
     .catch(error => {
-      exercices.error('Error fetching exercices:', error);
+      console.error('Error fetching exercices:', error);
     });
 });
 </script>

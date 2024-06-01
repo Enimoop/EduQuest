@@ -6,7 +6,7 @@
         <router-link :to="'/cours/' + cour.id" class="col text-decoration-none">
           <div class="card mb-4 contenu-card">
             <div class="card-body">
-              <h5 class="card-title">{{ cour.description_contenu }}</h5>
+              <h5 class="card-title">{{ cour.titre_contenu }}</h5>
               <p class="card-text"><small class="text-muted">{{ format(new Date(cour.date_contenu), 'dd/MM/yyyy') }}</small></p>
               <!-- <p class="card-text">{{ cour.type_contenu }}</p>  -->
             </div>
@@ -28,8 +28,14 @@ const { data: token } = await useFetch("/api/token", { headers });
 
 const id = getSubFromToken(token);
 
+interface Cours {
+  id: number;
+  titre_contenu: string;
+  description_contenu: string;
+  date_contenu: string;
+}
 
-const cours = ref([]);
+const cours = ref<Cours[]>([]);
 
 
   onMounted(() => {
@@ -38,7 +44,7 @@ const cours = ref([]);
       cours.value = response.data;
     })
     .catch(error => {
-      cours.error('Error fetching lesson:', error);
+      console.error('Error fetching lesson:', error);
     });
 });
   </script>
