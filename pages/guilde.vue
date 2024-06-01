@@ -1,70 +1,60 @@
 <template>
-  <NuxtLayout layout="default">
-    <div>  
-      <!-- Contenu de la page parent -->
-      <template v-if="!afficherPageEnfant">
-        <br>
-        <div class="container">
-      <div class="guilde-details">
-        <ListeGuildeEleve v-if="type === 'Eleve'" @afficherPageEnfant="afficherEnfant" />
-        <ListeGuildeProf v-if="type === 'Prof'" @afficherPageEnfant="afficherEnfant" />
-        <div class="text-center mt-4">
+    <NuxtLayout layout="default">
+      <div>
+        <!-- Contenu de la page parent -->
+        <template v-if="!afficherPageEnfant">
           <br>
-          <button v-if="type === 'Prof'" @click="ouvrirModal" class="btn btn-primary create-guild-btn">Créer une Guilde</button>
+          <div class="container">
+            <div class="guilde-details">
+              <ListeGuildeEleve v-if="type === 'Eleve'" @afficherPageEnfant="afficherEnfant" />
+              <ListeGuildeProf v-if="type === 'Prof'" @afficherPageEnfant="afficherEnfant" />
+              <div class="text-center mt-4">
+                <br>
+                <button v-if="type === 'Prof'" @click="ouvrirModal" class="btn btn-primary create-guild-btn">Créer une Guilde</button>
+              </div>
+            </div>
+          </div>
+        </template>
+        
+        <!-- Contenu de la page enfant -->
+        <template v-if="afficherPageEnfant">
+          <NuxtPage />
+        </template>
+  
+        <!-- Modal -->
+        <div v-if="isModalOpen" class="modal-overlay" @click.self="fermerModal">
+          <div class="modal-content form p-4 shadow rounded bg-light" @click.stop>
+            <div class="modal-header">
+              <button type="button" class="close" @click="fermerModal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <CreerGuilde />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-      </template>
-      
-      <!-- Contenu de la page enfant -->
-      <template v-if="afficherPageEnfant">
-        <NuxtPage />
-      </template>
-
-      <!-- Modal -->
-      <div v-if="isModalOpen" class="modal-overlay" @click.self="fermerModal">
-        <div class="modal-content form p-4 shadow rounded bg-light" @click.stop>
-          <div class="modal-header">
-            
-            <button type="button" class="close" @click="fermerModal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <CreerGuilde />
-          </div>
-        </div>
-      </div>
-    </div>
-   
-  </NuxtLayout>
-</template>
-
+    </NuxtLayout>
+  </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, computed } from 'vue';
 import ListeGuildeEleve from '../components/ListeGuildeEleve.vue';
 import ListeGuildeProf from '../components/ListeGuildeProf.vue';
-import CreerGuilde from '../components/CreerGuilde.vue';
-import 'bootstrap/dist/css/bootstrap.css';
-import { useRouter, useRoute } from 'vue-router';
+import 'bootstrap/dist/css/bootstrap.css'
+import { useRouter } from 'vue-router';
 
-// Import necessary for server-side rendering if using Nuxt ou similaire frameworks
+const router = useRouter();
+
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+
 const { data: token } = await useFetch("/api/token", { headers });
+
 const id = getSubFromToken(token);
 const type = await returnUserType(id);
 
-const router = useRouter();
-const route = useRoute();
-
-const afficherPageEnfant = ref(false);
 const isModalOpen = ref(false);
-
-// Fonction pour afficher la page enfant
-const afficherEnfant = () => {
-  afficherPageEnfant.value = true;
-};
 
 // Fonction pour ouvrir le modal
 const ouvrirModal = () => {
@@ -78,14 +68,11 @@ const fermerModal = () => {
   document.body.classList.remove('modal-open');
 };
 
-// Watch for route changes to show/hide child page content
-watch(router.currentRoute, (newRoute, oldRoute) => {
-  if (newRoute.path.startsWith('/guilde/')) {
-    afficherPageEnfant.value = true;
-  } else if (oldRoute && oldRoute.path.startsWith('/guilde/')) {
-    afficherPageEnfant.value = false;
-  }
-});
+
+const afficherPageEnfant = computed(() => {
+    // Vérifie si l'URL correspond à la structure '/cours/:id'
+    return router.currentRoute.value.path.startsWith('/guilde/');
+  });
 </script>
 
 <style scoped>
@@ -156,5 +143,3 @@ watch(router.currentRoute, (newRoute, oldRoute) => {
   margin-top: 2rem;
 }
 </style>
-
-

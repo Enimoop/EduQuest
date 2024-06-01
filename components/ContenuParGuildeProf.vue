@@ -14,7 +14,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="contenu in contenus" :key="contenu.id">
-                        <td>{{ contenu.description_contenu }}</td>
+                        <td>{{ contenu.titre_contenu }}</td>
                         <td>{{ contenu.type_contenu }}</td>
                         <td>{{ format(new Date(contenu.date_contenu), 'dd/MM/yyyy') }}</td>
                         <td>
@@ -62,6 +62,7 @@ const idu = getSubFromToken(token);
 
 interface Contenus {
     id: number;
+    titre_contenu: string;
     description_contenu: string;
     date_contenu: string;
     type_contenu: string;
@@ -82,21 +83,17 @@ const id = route.params.id;
 
 
 const fetchContenus = async (page: number, pageSize: number) => {
-    console.log('Fetching contents...');
-    console.log(page, pageSize)
     
     try {
-        const response = await axios.get(`http://localhost:3001/contenus/guilde/prof/${id}`, {
+        const response = await axios.get(`http://localhost:3001/contenus/guilde/page/${id}`, {
             params: {
                 page,
                 pageSize
             }
         });
-        console.log('Response data:', response.data); // Afficher les données reçues du serveur
         contenus.value = response.data.contenus;
-        console.log('Updated contenus:', contenus.value); // Vérifier si contenus est correctement mis à jour
         totalContenus.value = response.data.total;
-        console.log('Total contenus:', totalContenus.value);
+
 
         
         if (response.data.contenus.length > 0) {

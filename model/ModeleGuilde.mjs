@@ -76,13 +76,14 @@ class ModeleGuilde {
         });
     }
 
-    recupererGuildesParEleve(id_u, callback) {
+    recupererGuildesParEleve(id_u, page, pageSize, callback) {
+        const offset = (page - 1) * pageSize;
         const query = `SELECT g.id_guilde, g.nom_guilde, g.description_guilde, u.nom AS nom_prof
                         FROM Guilde g
                         JOIN Rejoindre r ON g.id_guilde = r.id_guilde
                         JOIN User u ON g.id_prof = u.id_u
-                        WHERE r.id_u = ?`;
-        this.connection.query(query, [id_u], (error, results, fields) => {
+                        WHERE r.id_u = ? LIMIT ? OFFSET ?`;
+        this.connection.query(query, [id_u, pageSize, offset], (error, results, fields) => {
           if (error) {
             callback(error, null);
             return;
@@ -94,6 +95,20 @@ class ModeleGuilde {
             prof: row.nom_prof
           }));
           callback(null, guildes);
+        });
+      }
+
+      recupererTotalGuildesEleves(id_u, callback) {
+        const query = `SELECT COUNT(*) AS total
+                        FROM Guilde g
+                        JOIN Rejoindre r ON g.id_guilde = r.id_guilde
+                        WHERE r.id_u = ?`;
+        this.connection.query(query, [id_u], (error, results, fields) => {
+          if (error) {
+            callback(error, null);
+            return;
+          }
+          callback(null, results[0].total);
         });
       }
 
