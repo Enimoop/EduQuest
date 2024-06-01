@@ -37,15 +37,27 @@ router.get('/:id', (req, res) => {
 });
 
 router.get('/prof/:idprof', (req, res) => {
-    modeleGuilde.recupererGuildesParProf(req.params.idprof, (error, guildes) => {
+    const id_prof = req.params.idprof;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 9;
+
+    modeleGuilde.recupererTotalGuildesProfs(id_prof, (error, total) => {
+        if (error) {
+            res.status(500).json({ message: 'Erreur lors de la récupération du nombre total de guildes' });
+            return;
+        }
+
+    modeleGuilde.recupererGuildesParProf(id_prof, page, pageSize, (error, guildes) => {
         if (error) {
             res.status(500).json({
                 message: 'Erreur lors de la récupération des guildes'
             });
             return;
         }
-        res.json(guildes);
+        res.json({guildes, total});
     });
+    });
+
 });
 
 router.get('/eleve/:ideleve', (req, res) => {

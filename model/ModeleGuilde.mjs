@@ -43,9 +43,10 @@ class ModeleGuilde {
         });
     }
 
-    recupererGuildesParProf(id_prof, callback) {
-        const query = 'SELECT * FROM Guilde WHERE id_prof = ?';
-        this.connection.query(query, [id_prof], (error, results, fields) => {
+    recupererGuildesParProf(id_prof, page, pageSize, callback) {
+        const offset = (page - 1) * pageSize;
+        const query = 'SELECT * FROM Guilde WHERE id_prof = ? LIMIT ? OFFSET ?';
+        this.connection.query(query, [id_prof, pageSize, offset], (error, results, fields) => {
             if (error) {
                 callback(error, null);
                 return;
@@ -61,6 +62,17 @@ class ModeleGuilde {
                 id_prof: row.id_prof
             }));
             callback(null, guildes);
+        });
+    }
+
+    recupererTotalGuildesProfs(id_prof, callback) {
+        const query = 'SELECT COUNT(*) AS total FROM Guilde WHERE id_prof = ?';
+        this.connection.query(query, [id_prof], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            callback(null, results[0].total);
         });
     }
 
