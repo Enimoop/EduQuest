@@ -21,4 +21,18 @@ router.get("/:id", (req, res) => {
   );
 });
 
+router.post("/addCommentaire", (req, res) => {
+  const contenu = req.body;
+  console.log(contenu);
+  modeleCommentaires.insererCommentaire(contenu, (error, id) => {
+    if (error) {
+      res.status(500).json({
+        message: "Erreur lors de l'ajout du commentaire",
+      });
+      return;
+    }
+    res.json(contenu);
+  });
+});
+
 export default router;

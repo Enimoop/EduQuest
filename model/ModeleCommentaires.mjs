@@ -31,12 +31,14 @@ class ModeleCommentaires {
     });
   }
 
-  insererCommentaire(id_post, contenu, callback) {
+  insererCommentaire(contenu, callback) {
+    const { contenu_com, id_post, id_u } = contenu;
+
     const query =
-      "INSERT INTO Commentaire (contenu_post, date_post, id_post) VALUES (?, NOW(), ?)";
+      "INSERT INTO Commentaire (contenu_com, date_com, id_post, id_u) VALUES (?, NOW(), ?, ?)";
     this.connection.query(
       query,
-      [contenu, id_post],
+      [contenu_com, id_post, id_u],
       (error, results, fields) => {
         if (error) {
           callback(error, null);

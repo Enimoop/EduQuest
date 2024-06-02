@@ -19,6 +19,7 @@
           {{ contenu.contenu }}
         </li>
       </ul>
+      <CreerCommentaire />
     </div>
   </div>
 </template>

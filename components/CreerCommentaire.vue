@@ -2,22 +2,12 @@
   <div class="container mt-5">
     <form @submit.prevent="submitForm">
       <div class="mb-3">
-        <label for="title" class="form-label">Titre</label>
+        <label for="title" class="form-label">Contenu</label>
         <input
           type="text"
           class="form-control"
           id="title"
-          v-model="formData.nom_post"
-          required
-        />
-      </div>
-      <div class="mb-3">
-        <label for="input" class="form-label">Votre Input</label>
-        <input
-          type="text"
-          class="form-control"
-          id="input"
-          v-model="formData.contenu_post"
+          v-model="formData.contenu_com"
           required
         />
       </div>
@@ -29,29 +19,29 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 const { data: token } = await useFetch("/api/token", { headers });
 const idu = getSubFromToken(token);
+const idcom = route.params.id;
 
 const formData = ref({
-  nom_post: "",
-  contenu_post: "",
+  contenu_com: "",
+  id_post: idcom,
   id_u: idu,
 });
 
 const submitForm = () => {
   console.log(formData.value);
   axios
-    .post("http://localhost:3001/posts/addPost", formData.value)
+    .post("http://localhost:3001/commentaires/addCommentaire", formData.value)
     .then((response) => {
-      formData.value = {
-        nom_post: "",
-        contenu_post: "",
-      };
+      formData.value.contenu_com = "";
     })
     .catch((error) => {
-      console.error("Error adding post:", error);
+      console.error("Error adding comment:", error);
     });
 };
 </script>
