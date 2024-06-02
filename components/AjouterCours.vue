@@ -67,13 +67,16 @@ const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 
 const { data: token } = await useFetch("/api/token", { headers });
 
-let idu: number | null;
+let idu: number;
+let type: string | null;
 
 const { status } = useAuth();
 
 if (status.value === "authenticated") {
     idu = getSubFromToken(token);
+    type = await returnUserType(idu);
 }
+
 
 const route = useRoute()
 const id = route.params.id;
@@ -95,7 +98,6 @@ const id = route.params.id;
 }
 
 const guildes = ref<Guildes[]>([]);
-
 
   
   function onFileChange(e: Event) {
@@ -121,18 +123,20 @@ const guildes = ref<Guildes[]>([]);
       method: 'POST',
       body: formData,
     });
-
+  
+    
     
     const nouveauCours = {
       description_contenu: contentDescription.value,
       titre_contenu: contentTitre.value,
-      date_contenu: new Date().toISOString().slice(0, 10), 
+      date_contenu: new Date().toISOString().slice(0, 10),
       id_matiere: selectedSubject.value,
       id_u: idu,
-      id_guilde: id,
-      nom_fichier: pdfName 
+      id_guilde: type === 'Admin' ? null : id,
+      nom_fichier: pdfName
     };
 
+  
     const saveResponse = await axios.post('http://localhost:3001/contenus/cours', nouveauCours, {
       headers: {
         'Content-Type': 'application/json'

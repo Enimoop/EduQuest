@@ -66,7 +66,7 @@ let idu = null;
 let insertedId: number | null = null;
 const successMessage = ref('');
 const errorMessage = ref('');
-
+let type: string | null;
 
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
@@ -77,6 +77,7 @@ const { status } = useAuth();
 
 if (status.value === "authenticated") {
  idu = getSubFromToken(token); 
+  type = await returnUserType(idu);
 }
 
 
@@ -113,7 +114,7 @@ const nouveauQuiz = {
   date_contenu: new Date().toISOString().slice(0, 10),
   id_matiere: selectedMatiere.value,
   id_u: idu,
-  id_guilde: id
+  id_guilde: type === 'Admin' ? null : id
 };
 
 

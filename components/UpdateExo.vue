@@ -1,21 +1,28 @@
 <template>
-  <div class="container mt-5">
-    <h1 class="mb-4 text-center">Nouveau Quiz/Exercice</h1>
-    <form @submit.prevent="submitForm" class="mx-auto" style="max-width: 400px;">
-      <!-- Sélection de la guilde -->
-      <div class="mb-3">
-        <label for="guilde" class="form-label">Guilde</label>
-        <select class="form-select" v-model="selectedGuilde" id="guilde" required>
-          <option value="">Choisir une guilde</option>
-          <option v-for="guilde in guildes" :key="guilde.id" :value="guilde.id">{{ guilde.nom }}</option>
-        </select>
+  <div class="container container-cours mt-5" style="width: 50%;">
+    <form @submit.prevent="submitForm" class="form p-4 shadow rounded bg-light">
+      <h2 class="form-title mb-4 text-center">Nouveau Quiz/Exercice</h2>
+      <div v-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ successMessage }}
+        <button type="button" class="btn-close" @click="successMessage = ''"></button>
       </div>
+      <div v-if="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ errorMessage }}
+        <button type="button" class="btn-close" @click="errorMessage = ''"></button>
+      </div>
+
+      <!-- Titre contenu -->
+      <div class="mb-3">
+        <label for="titre" class="form-label">Titre du contenu:</label>
+        <input id="titre" class="form-control" v-model="contentTitre" rows="3" required></input>
+      </div>
+
       <!-- Description du contenu -->
       <div class="mb-3">
         <label for="descriptionContenu" class="form-label">Description du contenu</label>
-        <textarea class="form-control" v-model="descriptionContenu" id="descriptionContenu" rows="3"
-          required></textarea>
+        <textarea class="form-control" v-model="descriptionContenu" id="descriptionContenu" rows="3" required></textarea>
       </div>
+
       <!-- Matière -->
       <div class="mb-3">
         <label for="matiere" class="form-label">Matière</label>
@@ -28,12 +35,12 @@
           <option value="5">Anglais</option>
         </select>
       </div>
+
       <!-- Ajouter une question -->
       <div class="mb-4" v-for="(question, index) in questions" :key="index">
         <label class="form-label">Question {{ index + 1 }}</label>
         <div class="input-group">
-          <input type="text" class="form-control" v-model="questions[index].intitule"
-            placeholder="Intitulé de la question" required>
+          <input type="text" class="form-control" v-model="questions[index].intitule" placeholder="Intitulé de la question" required>
           <select class="form-select" v-model="questions[index].reponse" required>
             <option value="">Choisir une réponse</option>
             <option value="vrai">Vrai</option>
@@ -44,10 +51,11 @@
       </div>
       <button type="button" class="btn btn-primary mb-3 me-2" @click="addQuestion">Ajouter une question</button>
       <!-- Bouton pour soumettre le formulaire -->
-      <button type="submit" class="btn btn-primary mb-3">Enregistrer</button>
+      <button type="submit" class="btn btn-primary w-auto mx-auto d-block">Enregistrer</button>
     </form>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import axios from 'axios';
@@ -58,6 +66,7 @@ import { getSubFromToken } from "../utils/session.mjs";
 const descriptionContenu = ref('');
 const selectedMatiere = ref('');
 const selectedGuilde = ref('');
+const contentTitre = ref('');
 let idu = null;
 let insertedId: number | null = null;
 
@@ -75,8 +84,12 @@ if (status.value === "authenticated") {
 const route = useRoute();
 const id = route.params.id;
 
+const successMessage = ref('');
+const errorMessage = ref('');
+
 interface Exo {
   id: number;
+  titre_contenu: string;
   description_contenu: string;
   date_contenu: string;
   id_matiere: number;
@@ -102,6 +115,7 @@ interface Question {
 const guildes = ref<Guildes[]>([]);
 const exo = ref<Exo>({
   id: 0,
+  titre_contenu: '',
   description_contenu: '',
   date_contenu: '',
   id_matiere: 0,
@@ -126,6 +140,7 @@ const fetchExerciceEtQuestions = async () => {
     await axios.get(`http://localhost:3001/contenus/exercice/${id}`)
       .then(response => {
         exo.value = response.data;
+        contentTitre.value = response.data[0].titre_contenu;
         descriptionContenu.value = response.data[0].description_contenu;
         selectedMatiere.value = response.data[0].id_matiere;
         selectedGuilde.value = response.data[0].id_guilde;
@@ -166,6 +181,7 @@ const submitForm = () => {
   // Construction de l'objet à envoyer
   const updatedQuiz = {
     id_contenu: id,
+    titre_contenu: contentTitre.value,
     description_contenu: descriptionContenu.value,
     id_matiere: selectedMatiere.value,
     id_guilde: selectedGuilde.value
@@ -179,7 +195,6 @@ const submitForm = () => {
   })
     .then(response => {
       // Affichage de la réponse
-      alert(response.data.message);
       insertedId = response.data.insertedId;
 
       // Envoi des données des questions à l'API
@@ -219,16 +234,16 @@ const submitForm = () => {
             alert(response.data.message);
           }); */
 
-
+          successMessage.value = 'Le quiz a été mis à jour avec succès.';
         })
         .catch(error => {
           console.error('Erreur lors de l\'envoi des questions :', error);
-          alert('Une erreur s\'est produite lors de l\'envoi des questions. Veuillez réessayer.');
+          errorMessage.value = 'Une erreur s\'est produite lors de l\'envoi des questions. Veuillez réessayer.';
         });
     })
     .catch(error => {
       console.error('Erreur lors de la soumission du formulaire :', error);
-      alert('Une erreur s\'est produite. Veuillez réessayer.');
+      errorMessage.value = 'Une erreur s\'est produite. Veuillez réessayer.';
     });
 };
 
@@ -242,13 +257,12 @@ const removeQuestion = (index: number) => {
     axios.delete(`http://localhost:3001/contenus/delete/question/${questionToDelete.id_question}`)
       .then(response => {
         // Affichage de la réponse
-        alert(response.data.message);
         // Suppression de la question de la liste locale
         questions.value.splice(index, 1);
       })
       .catch(error => {
         console.error('Erreur lors de la suppression de la question :', error);
-        alert('Une erreur s\'est produite lors de la suppression de la question. Veuillez réessayer.');
+        errorMessage.value = 'Une erreur s\'est produite lors de la suppression de la question. Veuillez réessayer.';
       });
   } else {
     // Si la question n'existe pas en base de données, nous la supprimons simplement de la liste locale
@@ -257,3 +271,75 @@ const removeQuestion = (index: number) => {
 };
 
 </script>
+
+<style scoped>
+.container {
+  margin-top: 2rem;
+}
+
+.form {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+}
+
+.form-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  background-color: #fff;
+}
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.btn-primary:focus,
+.btn-danger:focus {
+  outline: none;
+}
+
+.btn-primary:hover,
+.btn-danger:hover {
+  filter: brightness(0.9);
+}
+</style>

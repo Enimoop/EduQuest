@@ -3,7 +3,7 @@
   
     <div class="container">
       <div class="list-details">
-      <h1 class="title-cours my-4 text-center">Liste de tes Guildes</h1>
+      <h1 class="title-cours my-4 text-center">Vos Guildes</h1>
       <div class="row">
         <div class="col-md-4 d-flex align-items-stretch" v-for="guilde in guildes" :key="guilde.id">
           <router-link :to="'/guilde/' + guilde.id" class="col text-decoration-none">
