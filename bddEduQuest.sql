@@ -51,6 +51,7 @@ CREATE TABLE `Contenu` (
 
 CREATE TABLE `PostForum` (
   `id_post` int NOT NULL AUTO_INCREMENT,
+  `nom_post` varchar(255),
   `contenu_post` text,
   `date_post` date DEFAULT NULL,
   `id_u` int DEFAULT NULL,
