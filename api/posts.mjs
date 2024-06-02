@@ -6,15 +6,26 @@ const modelePost = new ModelePosts();
 router.use(express.json());
 
 router.get("/", (req, res) => {
-  modelePost.recupererToutLesPosts((error, posts) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 9;
+  modelePost.recupererTotalPosts((error, total) => {
+    if (error) {
+      res.status(500).json({
+        message: "Erreur lors de la récupération du nombre total de posts",
+      });
+      return;
+    }
+
+  modelePost.recupererToutLesPosts(page, pageSize, (error, posts) => {
     if (error) {
       res.status(500).json({
         message: "Erreur lors de la récupération des posts",
       });
       return;
     }
-    res.json(posts);
+    res.json({posts, total});
   });
+});
 });
 
 router.post("/addPost", (req, res) => {
