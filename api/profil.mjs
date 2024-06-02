@@ -91,8 +91,8 @@ router.get('/notes/:id', (req, res) => {
 
 
 router.put('/update', (req, res) => {
-  const { id,mail,mdp } = req.body;
-  modeleProfil.updateProfil(id, mail, mdp, (error, result) => {
+  const { id,mail,mdp,etablissement } = req.body;
+  modeleProfil.updateProfil(id, mail, mdp, etablissement, (error, result) => {
     if (error) {
       res.status(500).json({ message: 'Erreur lors de la mise à jour du profil' });
       return;

@@ -1,3 +1,4 @@
+import { et } from 'date-fns/locale';
 import createConnection from './db.mjs';
 
 class ModeleProfil {
@@ -90,24 +91,32 @@ recupererUnCompteId(id, callback) {
       id: results[0].id_u,
       mail: results[0].mail,
       mdp: results[0].mdp,
+      etablissement: results[0].etablissement,
       type: results[0].type
     };
     callback(null, user);
   });
 }
 
-updateProfil(id, mdp, mail, callback) {
-  const query = 'UPDATE User SET mail = ?, mdp = ? WHERE id_u = ?';
-  this.connection.query(query, [mdp, mail, id], (error, results, fields) => {
+updateProfil(id, mail, mdp, etablissement, callback) {
+  let query;
+  const queryParams = [mail, etablissement, id];
+
+  if (mdp) {
+    query = 'UPDATE User SET mail = ?, mdp = ?, etablissement = ? WHERE id_u = ?';
+    queryParams.splice(1, 0, mdp); // Insérer le mot de passe à la bonne position
+  } else {
+    query = 'UPDATE User SET mail = ?, etablissement = ? WHERE id_u = ?';
+  }
+
+  this.connection.query(query, queryParams, (error, results, fields) => {
     if (error) {
       callback(error, null);
       return;
     }
     callback(null, results.affectedRows);
   });
-
 }
-
 updateType(id, type, callback) {
   const query = 'UPDATE User SET type = ? WHERE id_u = ?';
   this.connection.query(query, [type, id], (error, results, fields) => {
