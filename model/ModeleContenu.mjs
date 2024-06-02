@@ -470,6 +470,7 @@ deleteQuestion(id, callback) {
 }
 
 updateCours(cours, callback) {
+  console.log(cours);
   const {id_contenu, titre_contenu, description_contenu, id_matiere, id_guilde, nom_fichier} = cours;
   const query = 'UPDATE Contenu SET titre_contenu = ?, description_contenu = ?, id_matiere = ?, id_guilde = ?, nom_fichier = ? WHERE id_contenu = ?';
   const values = [titre_contenu, description_contenu,id_matiere, id_guilde, nom_fichier, id_contenu];
@@ -481,6 +482,50 @@ updateCours(cours, callback) {
     callback(null);
   });
 }
+
+recupererAllContenusEleve(id_u, callback) {
+  const query = `SELECT c.id_contenu FROM Contenu c
+                LEFT JOIN Rejoindre r ON c.id_guilde = r.id_guilde
+                LEFT JOIN User u ON c.id_u = u.id_u
+                LEFT JOIN Guilde g ON c.id_guilde = g.id_guilde
+                WHERE (r.id_u = ? OR u.type = 'Admin')`;
+  this.connection.query(query, [id_u], (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    if (results.length === 0) {
+      callback(null, []); // Aucun contenu trouvé avec cet ID
+      return;
+    }
+    const contenus = results.map(row => ({
+      id: row.id_contenu,
+    }));
+    callback(null, contenus);
+  });
+
+}
+
+
+recupererAllContenusProfs(id_u, callback) {
+      const query = `SELECT c.id_contenu FROM Contenu c
+                    WHERE c.id_u = ?`;
+      this.connection.query(query, [id_u], (error, results, fields) => {
+        if (error) {
+          callback(error, null);
+          return;
+        }
+        if (results.length === 0) {
+          callback(null, []); // Aucun contenu trouvé avec cet ID
+          return;
+        }
+        const contenus = results.map(row => ({
+          id: row.id_contenu,
+        }));
+        callback(null, contenus);
+      });
+}
+
 
 }
 

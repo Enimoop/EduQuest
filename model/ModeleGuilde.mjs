@@ -148,6 +148,40 @@ class ModeleGuilde {
             callback(null, results.insertId);
         });
     }
+
+    recupererAllGuildesEleves(id_eleve, callback) {
+        const query = `SELECT g.id_guilde
+                        FROM Guilde g
+                        JOIN Rejoindre r ON g.id_guilde = r.id_guilde
+                        WHERE r.id_u = ?`;
+        this.connection.query(query, [id_eleve], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            const guildes = results.map(row => ({
+                id: row.id_guilde
+            }));
+            callback(null, guildes);
+        });
+    }
+
+    recupererAllGuildesProf(id_prof, callback) {
+        const query = `SELECT g.id_guilde
+                        FROM Guilde g
+                        WHERE g.id_prof = ?`;
+        this.connection.query(query, [id_prof], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            const guildes = results.map(row => ({
+                id: row.id_guilde
+            }));
+            callback(null, guildes);
+        });
+    }
+
 }
 
 export default ModeleGuilde;

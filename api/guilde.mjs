@@ -136,4 +136,30 @@ router.post('/addGuilde', (req, res) => {
     });
 });
 
+router.get('/all/eleve/:id', (req, res) => {
+    const id = req.params.id;
+    modeleGuilde.recupererAllGuildesEleves(id, (error, guildes) => {
+        if (error) {
+            res.status(500).json({
+                message: 'Erreur lors de la récupération des guildes'
+            });
+            return;
+        }
+        res.json(guildes);
+    });
+});
+
+router.get('/all/prof/:id', (req, res) => {
+    const id = req.params.id;
+    modeleGuilde.recupererAllGuildesProf(id, (error, guildes) => {
+        if (error) {
+            res.status(500).json({
+                message: 'Erreur lors de la récupération des guildes'
+            });
+            return;
+        }
+        res.json(guildes);
+    });
+});
+
 export default router;

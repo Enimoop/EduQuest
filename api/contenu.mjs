@@ -378,4 +378,31 @@ router.delete('/delete/question/:id', (req, res) => {
   });
 });
 
+router.get('/all/eleve/:id', (req, res) => {
+  const id = req.params.id;
+  modeleContenu.recupererAllContenusEleve(id, (error, contenus) => {
+    if (error) {
+      res.status(500).json({
+        message: 'Erreur lors de la récupération des contenus'
+      });
+      return;
+    }
+    res.json(contenus);
+  });
+});
+
+
+router.get('/all/prof/:id', (req, res) => {
+  const id = req.params.id;
+  modeleContenu.recupererAllContenusProfs(id, (error, contenus) => {
+    if (error) {
+      res.status(500).json({
+        message: 'Erreur lors de la récupération des contenus'
+      });
+      return;
+    }
+    res.json(contenus);
+  });
+});
+
 export default router;
