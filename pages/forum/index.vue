@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout layout="default">
+
     <br>
     <br>
     <div class="container">
@@ -43,7 +43,7 @@
         </div>
       </div>
     </div>
-  </NuxtLayout>
+
 </template>
 
 <script setup>

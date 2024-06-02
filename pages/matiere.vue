@@ -1,11 +1,11 @@
 <template>
-    <NuxtLayout layout="default">
+
     <div>
         <br>
     <ListeMatiere :matieres="matieres" />
     <NuxtPage />
 </div>
-</NuxtLayout>
+
 </template>
 
 

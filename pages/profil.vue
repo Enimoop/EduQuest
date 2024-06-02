@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout layout="default">
+
 
     <div class="container mt-5">
       <!-- Section de bienvenue -->
@@ -13,7 +13,7 @@
     <LvlParMatiere v-if="type === 'Eleve'"/> 
 
     </div>
-  </NuxtLayout>
+
 </template>
 
 <script setup lang="ts">

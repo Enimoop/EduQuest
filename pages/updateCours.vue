@@ -1,10 +1,10 @@
 <template>
-    <NuxtLayout layout="default">
+
         <div>
             <NuxtPage />
 
         </div>
-    </NuxtLayout>
+
 </template>
 
 <script setup>

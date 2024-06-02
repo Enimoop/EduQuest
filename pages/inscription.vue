@@ -1,7 +1,7 @@
 <template>
-    <NuxtLayout layout="default">
+
       <FormInscriptionE />
-    </NuxtLayout>
+
   </template>
   
   <script setup>

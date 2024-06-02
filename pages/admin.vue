@@ -1,5 +1,5 @@
 <template>
-    <NuxtLayout layout="default">
+
         <div>
             <br>
             <AdminAllUser />
@@ -8,13 +8,11 @@
             <br>
             <AjouterContenu />
         </div>
-    </NuxtLayout>
+
 </template>
 
 <script setup>
-import AdminAllUser from '~/components/AdminAllUser.vue';
-import AdminUpgradeProfil from '~/components/AdminUpgradeProfil.vue';
-import 'bootstrap/dist/css/bootstrap.css'
+
 
 import { getSubFromToken, returnUserType } from "../utils/session.mjs";
 import { useRouter } from 'vue-router';
@@ -31,5 +29,8 @@ const type = await returnUserType(id);
 if (type !== "Admin") {
     router.push("/");
 }
+import AdminAllUser from '~/components/AdminAllUser.vue';
+import AdminUpgradeProfil from '~/components/AdminUpgradeProfil.vue';
+import 'bootstrap/dist/css/bootstrap.css'
 
 </script>
