@@ -29,6 +29,8 @@ const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 const { data: token } = await useFetch("/api/token", { headers });
 const idu = getSubFromToken(token);
 
+const emit = defineEmits(['guildeCreated']);
+
 // Interface pour la guilde
 interface Guilde {
   nom_guilde: string;
@@ -59,6 +61,7 @@ const submitForm = async () => {
     });
     nom.value = '';
     description.value = '';
+    emit('guildeCreated');
   } catch (error) {
     console.error('Erreur lors de l\'envoi de la guilde:', error);
   }
