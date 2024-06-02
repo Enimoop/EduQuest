@@ -7,9 +7,9 @@ class ModeleCommentaires {
 
   recupererCommentaireParPostId(id, callback) {
     const query = `
-    SELECT c.id_com, c.contenu_com, c.date_com, c.id_post, e.nom, e.prenom
+    SELECT c.id_com, c.contenu_com, c.date_com, c.id_post, u.nom, u.prenom
     FROM Commentaire c
-    JOIN Eleve e ON c.id_u = e.id_u
+    JOIN User u ON c.id_u = u.id_u
     WHERE c.id_post = ?`;
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {

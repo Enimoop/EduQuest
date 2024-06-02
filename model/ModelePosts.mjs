@@ -9,7 +9,7 @@ class ModelePosts {
     const query = `
     SELECT p.id_post, p.nom_post, p.contenu_post, p.date_post, u.nom AS nom_user, u.prenom AS prenom_user
     FROM PostForum p
-    JOIN Eleve u ON p.id_u = u.id_u`;
+    JOIN User u ON p.id_u = u.id_u`;
     this.connection.query(query, (error, results, fields) => {
       if (error) {
         callback(error, null);
@@ -33,7 +33,7 @@ class ModelePosts {
     const query = `
     SELECT p.id_post, p.nom_post, p.contenu_post, p.date_post, u.nom AS nom_user, u.prenom AS prenom_user
     FROM PostForum p
-    JOIN Eleve u ON p.id_u = u.id_u
+    JOIN User u ON p.id_u = u.id_u
     WHERE p.id_post = ?`;
     this.connection.query(query, [id], (error, results, fields) => {
       if (error) {
