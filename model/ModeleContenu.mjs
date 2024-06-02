@@ -508,8 +508,14 @@ recupererAllContenusEleve(id_u, callback) {
 
 
 recupererAllContenusProfs(id_u, callback) {
-      const query = `SELECT c.id_contenu FROM Contenu c
-                    WHERE c.id_u = ?`;
+      const query = `SELECT c.id_contenu
+                      FROM Contenu c
+                      WHERE c.id_u = ?
+                      UNION
+                      SELECT c.id_contenu
+                      FROM Contenu c
+                      JOIN User u ON c.id_u = u.id_u
+                      WHERE u.type = 'Admin'`;
       this.connection.query(query, [id_u], (error, results, fields) => {
         if (error) {
           callback(error, null);
