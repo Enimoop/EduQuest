@@ -43,9 +43,10 @@ class ModeleGuilde {
         });
     }
 
-    recupererGuildesParProf(id_prof, callback) {
-        const query = 'SELECT * FROM Guilde WHERE id_prof = ?';
-        this.connection.query(query, [id_prof], (error, results, fields) => {
+    recupererGuildesParProf(id_prof, page, pageSize, callback) {
+        const offset = (page - 1) * pageSize;
+        const query = 'SELECT * FROM Guilde WHERE id_prof = ? LIMIT ? OFFSET ?';
+        this.connection.query(query, [id_prof, pageSize, offset], (error, results, fields) => {
             if (error) {
                 callback(error, null);
                 return;
@@ -64,13 +65,25 @@ class ModeleGuilde {
         });
     }
 
-    recupererGuildesParEleve(id_u, callback) {
+    recupererTotalGuildesProfs(id_prof, callback) {
+        const query = 'SELECT COUNT(*) AS total FROM Guilde WHERE id_prof = ?';
+        this.connection.query(query, [id_prof], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            callback(null, results[0].total);
+        });
+    }
+
+    recupererGuildesParEleve(id_u, page, pageSize, callback) {
+        const offset = (page - 1) * pageSize;
         const query = `SELECT g.id_guilde, g.nom_guilde, g.description_guilde, u.nom AS nom_prof
                         FROM Guilde g
                         JOIN Rejoindre r ON g.id_guilde = r.id_guilde
                         JOIN User u ON g.id_prof = u.id_u
-                        WHERE r.id_u = ?`;
-        this.connection.query(query, [id_u], (error, results, fields) => {
+                        WHERE r.id_u = ? LIMIT ? OFFSET ?`;
+        this.connection.query(query, [id_u, pageSize, offset], (error, results, fields) => {
           if (error) {
             callback(error, null);
             return;
@@ -82,6 +95,20 @@ class ModeleGuilde {
             prof: row.nom_prof
           }));
           callback(null, guildes);
+        });
+      }
+
+      recupererTotalGuildesEleves(id_u, callback) {
+        const query = `SELECT COUNT(*) AS total
+                        FROM Guilde g
+                        JOIN Rejoindre r ON g.id_guilde = r.id_guilde
+                        WHERE r.id_u = ?`;
+        this.connection.query(query, [id_u], (error, results, fields) => {
+          if (error) {
+            callback(error, null);
+            return;
+          }
+          callback(null, results[0].total);
         });
       }
 
@@ -121,6 +148,40 @@ class ModeleGuilde {
             callback(null, results.insertId);
         });
     }
+
+    recupererAllGuildesEleves(id_eleve, callback) {
+        const query = `SELECT g.id_guilde
+                        FROM Guilde g
+                        JOIN Rejoindre r ON g.id_guilde = r.id_guilde
+                        WHERE r.id_u = ?`;
+        this.connection.query(query, [id_eleve], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            const guildes = results.map(row => ({
+                id: row.id_guilde
+            }));
+            callback(null, guildes);
+        });
+    }
+
+    recupererAllGuildesProf(id_prof, callback) {
+        const query = `SELECT g.id_guilde
+                        FROM Guilde g
+                        WHERE g.id_prof = ?`;
+        this.connection.query(query, [id_prof], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            const guildes = results.map(row => ({
+                id: row.id_guilde
+            }));
+            callback(null, guildes);
+        });
+    }
+
 }
 
 export default ModeleGuilde;

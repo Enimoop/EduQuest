@@ -34,6 +34,11 @@
             <label for="userType" class="form-label">Type : <span id="userType">{{ user.type }}</span></label>
             
           </div>
+          <div v-if="user.type === 'Prof'" class="mb-3">
+            <label for="userEtablissement" class="form-label">Etablissement :</label>
+            <input type="text" id="userEtablissement" v-model="user.etablissement" class="form-control" name="etablissement">
+            <small class="text-muted">Nom de l'établissement où le professeur enseigne.</small>
+          </div>
           <div class="mb-3">
             <label for="newPassword" class="form-label">Changer le mot de passe :</label>
             <input type="password" id="newPassword" v-model="password" class="form-control"
@@ -79,12 +84,14 @@ interface User {
   id: number;
   mail: string;
   type: string;
+  etablissement?: string;
 }
 
 const user = ref<User>({
   id: 0,
   mail: "",
   type: "",
+  etablissement: "",
 });
 
 const password = ref<string>("");
@@ -94,28 +101,35 @@ const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@
 
 const handleUpdate = async () => {
 
-  if (!passwordPolicy.test(password.value)) {
+  if (password.value && !passwordPolicy.test(password.value)) {
     warning.value = "Le mot de passe n'est pas assez fort";
     return;
   }
-
 
   if (password.value !== confirmPassword.value) {
     error.value = "Les mots de passe ne correspondent pas";
     return;
   }
-  password.value = await hashPassword(password.value);
-  const updatedUser = {
+  const updatedUser: any = {
     id: id,
     mail: user.value.mail,
-    mdp: password.value,
+    etablissement: user.value.etablissement,
   };
-  updateProfil(updatedUser);
-  success.value = "Profil mis à jour avec succès";
-  password.value = "";
-  confirmPassword.value = "";
 
+  if (password.value) {
+    updatedUser.mdp = await hashPassword(password.value);
+  }
+
+  try {
+    await updateProfil(updatedUser);
+    success.value = "Profil mis à jour avec succès";
+    password.value = "";
+    confirmPassword.value = "";
+  } catch (e) {
+    error.value = "Erreur lors de la mise à jour du profil";
+  }
 };
+
 
 
 onMounted(() => {

@@ -22,17 +22,26 @@ router.get('/', (req, res) => {
 router.get('/:idm/:id', (req, res) => {
   const idm = req.params.idm;
   const id = req.params.id;
-  modeleMatiere.recupererContenusParMatiere(id,idm, (error, contenus_matiere) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 12;
+
+  modeleMatiere.recupererTotalContenuParMatiere(id,idm, (error, total) => {
     if (error) {
-      res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
+      res.status(500).json({ message: 'Erreur lors de la récupération du total des contenus' });
       return;
     }
-    if (!contenus_matiere) {
-      res.status(404).json({ message: 'contenu non trouvé' });
-      return;
-    }
-    res.json(contenus_matiere);
+    modeleMatiere.recupererContenusParMatiere(id,idm, page, pageSize, (error, contenus_matiere) => {
+      if (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des contenus' });
+        return;
+      }
+      res.json({
+        contenus_matiere,
+        total
+      });
+    });
   });
+
 });
 
 

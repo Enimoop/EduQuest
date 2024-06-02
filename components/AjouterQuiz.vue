@@ -1,7 +1,7 @@
 <template>
   <div class="container container-cours mt-5" style="width: 50%;">
     <form @submit.prevent="submitForm" class="form p-4 shadow rounded bg-light">
-      <h2 class="form-title mb-4 text-center">Nouveau Quiz/Exercice</h2>
+      <h2 class="form-title mb-4 text-center">Nouveau Quiz</h2>
       <div v-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
         {{ successMessage }}
         <button type="button" class="btn-close" @click="successMessage = ''"></button>
@@ -9,6 +9,12 @@
       <div v-if="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
         {{ errorMessage }}
         <button type="button" class="btn-close" @click="errorMessage = ''"></button>
+      </div>
+
+       <!-- Titre contenu -->
+       <div class="mb-3">
+        <label for="titre" class="form-label">Titre du contenu:</label>
+        <input id="titre" class="form-control" v-model="contentTitre" rows="3"></input>
       </div>
       <!-- Description du contenu -->
       <div class="mb-3">
@@ -53,14 +59,14 @@ import { ref } from 'vue';
 import {getSubFromToken} from "../utils/session.mjs";
 
 // Variables réactives pour stocker les données du formulaire
+const contentTitre = ref('');
 const descriptionContenu = ref('');
 const selectedMatiere = ref('');
-const selectedGuilde = ref('');
 let idu = null;
 let insertedId: number | null = null;
 const successMessage = ref('');
 const errorMessage = ref('');
-
+let type: string | null;
 
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
@@ -71,13 +77,7 @@ const { status } = useAuth();
 
 if (status.value === "authenticated") {
  idu = getSubFromToken(token); 
-}
-
-interface Guildes {
-    id: number;
-    nom: string;
-    description: string;
-    id_prof: number;
+  type = await returnUserType(idu);
 }
 
 
@@ -109,11 +109,12 @@ if (!descriptionContenu.value || !selectedMatiere.value) {
 
 // Construction de l'objet à envoyer
 const nouveauQuiz = {
+  titre_contenu: contentTitre.value,
   description_contenu: descriptionContenu.value,
   date_contenu: new Date().toISOString().slice(0, 10),
   id_matiere: selectedMatiere.value,
   id_u: idu,
-  id_guilde: id
+  id_guilde: type === 'Admin' ? null : id
 };
 
 
@@ -134,7 +135,6 @@ axios.post('http://localhost:3001/contenus/exercices', nouveauQuiz, {
         id_contenu: insertedId
       };
 
-      console.log(nouvelleQuestion);
 
       return axios.post('http://localhost:3001/contenus/exercices/question', nouvelleQuestion, {
         headers: {
@@ -143,7 +143,7 @@ axios.post('http://localhost:3001/contenus/exercices', nouveauQuiz, {
       });
     }))
     .then((responses) => {
-
+      contentTitre.value = '';
       descriptionContenu.value = '';
       selectedMatiere.value = '';
       questions.value = [{ intitule: '', reponse: '' }];

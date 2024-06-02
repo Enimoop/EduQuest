@@ -89,3 +89,86 @@ export async function hashPassword(password) {
     const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
     return hashHex;
   }
+
+
+  export const verifierAccesGuildeEleve = async (idu, guildeId) => {
+
+    const router = useRouter();
+    
+    try {
+      const response = await axios.get(`http://localhost:3001/guildes/all/eleve/${idu}`);
+      const guildes = response.data;
+
+  
+      return guildes.some((guilde) => { 
+        return guilde.id == guildeId;
+      });
+      
+    } catch (error) {
+      console.error('Erreur lors de la vérification des accès :', error);
+      router.push('/guilde');
+      return false;
+    }
+  };
+
+
+  export const verifierAccesGuildeProf = async (idu, guildeId) => {
+
+    const router = useRouter();
+    
+    try {
+      const response = await axios.get(`http://localhost:3001/guildes/all/prof/${idu}`);
+      const guildes = response.data;
+
+      
+      return guildes.some((guilde) => { 
+        return guilde.id == guildeId;
+      });
+      
+    } catch (error) {
+      console.error('Erreur lors de la vérification des accès :', error);
+      router.push('/guilde');
+      return false;
+    }
+  };
+
+  export const verifierAccesContenuEleve = async (idu, contenuId) => {
+
+    const router = useRouter();
+    
+    try {
+      const response = await axios.get(`http://localhost:3001/contenus/all/eleve/${idu}`);
+      const contenus = response.data;
+
+      
+      return contenus.some((contenu) => { 
+        return contenu.id == contenuId;
+      });
+      
+    } catch (error) {
+      console.error('Erreur lors de la vérification des accès :', error);
+      router.push('/');
+      return false;
+    }
+  };
+
+
+  export const verifierAccesContenuProf = async (idu, contenuId) => {
+
+    const router = useRouter();
+    
+    try {
+      const response = await axios.get(`http://localhost:3001/contenus/all/prof/${idu}`);
+      const contenus = response.data;
+
+      
+      return contenus.some((contenu) => { 
+        return contenu.id == contenuId;
+      });
+      
+    } catch (error) {
+      console.error('Erreur lors de la vérification des accès :', error);
+      router.push('/');
+      return false;
+    }
+  };

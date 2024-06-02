@@ -35,6 +35,7 @@ INSERT INTO `Matiere` (`id_matiere`, `libelle_matiere`) VALUES
 
 CREATE TABLE `Contenu` (
   `id_contenu` int NOT NULL AUTO_INCREMENT,
+  `titre_contenu` varchar(255),
   `description_contenu` text,
   `date_contenu` date DEFAULT NULL,
   `id_matiere` int NOT NULL,

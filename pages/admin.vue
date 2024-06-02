@@ -5,6 +5,8 @@
             <AdminAllUser />
             <br>
             <AdminUpgradeProfil />
+            <br>
+            <AjouterContenu />
         </div>
     </NuxtLayout>
 </template>

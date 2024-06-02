@@ -74,11 +74,7 @@
               </li>
             </ul>
             <ul class="navbar-nav ms-auto">
-              <li class="nav-item">
-                <router-link to="/add" class="nav-link">
-                  {{page}}
-                </router-link>         
-              </li>
+            
               <li v-if="loggedIn" class="nav-item">
                 <router-link to="/profil" class="nav-link">Mon Profil</router-link>         
               </li>

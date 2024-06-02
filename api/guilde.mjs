@@ -37,26 +37,57 @@ router.get('/:id', (req, res) => {
 });
 
 router.get('/prof/:idprof', (req, res) => {
-    modeleGuilde.recupererGuildesParProf(req.params.idprof, (error, guildes) => {
+    const id_prof = req.params.idprof;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 9;
+
+    modeleGuilde.recupererTotalGuildesProfs(id_prof, (error, total) => {
         if (error) {
             res.status(500).json({
-                message: 'Erreur lors de la récupération des guildes'
+                message: 'Erreur lors de la récupération du nombre total de guildes'
             });
             return;
         }
-        res.json(guildes);
+
+        modeleGuilde.recupererGuildesParProf(id_prof, page, pageSize, (error, guildes) => {
+            if (error) {
+                res.status(500).json({
+                    message: 'Erreur lors de la récupération des guildes'
+                });
+                return;
+            }
+            res.json({
+                guildes,
+                total
+            });
+        });
     });
 });
 
 router.get('/eleve/:ideleve', (req, res) => {
-    modeleGuilde.recupererGuildesParEleve(req.params.ideleve, (error, guildes) => {
+    const id_eleve = req.params.ideleve;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 9;
+    modeleGuilde.recupererTotalGuildesEleves(id_eleve, (error, total) => {
         if (error) {
             res.status(500).json({
-                message: 'Erreur lors de la récupération des guildes'
+                message: 'Erreur lors de la récupération du nombre total de guildes'
             });
             return;
         }
-        res.json(guildes);
+
+        modeleGuilde.recupererGuildesParEleve(id_eleve, page, pageSize, (error, guildes) => {
+            if (error) {
+                res.status(500).json({
+                    message: 'Erreur lors de la récupération des guildes'
+                });
+                return;
+            }
+            res.json({
+                guildes,
+                total
+            });
+        });
     });
 });
 
@@ -102,6 +133,32 @@ router.post('/addGuilde', (req, res) => {
         res.json({
             id: id
         });
+    });
+});
+
+router.get('/all/eleve/:id', (req, res) => {
+    const id = req.params.id;
+    modeleGuilde.recupererAllGuildesEleves(id, (error, guildes) => {
+        if (error) {
+            res.status(500).json({
+                message: 'Erreur lors de la récupération des guildes'
+            });
+            return;
+        }
+        res.json(guildes);
+    });
+});
+
+router.get('/all/prof/:id', (req, res) => {
+    const id = req.params.id;
+    modeleGuilde.recupererAllGuildesProf(id, (error, guildes) => {
+        if (error) {
+            res.status(500).json({
+                message: 'Erreur lors de la récupération des guildes'
+            });
+            return;
+        }
+        res.json(guildes);
     });
 });
 

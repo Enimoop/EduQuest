@@ -62,9 +62,8 @@ const showContenuParGuildeProf = () => {
 const showGuildeProf = () => {
   currentView.value = 'guildeProf';
 };
-
-onMounted(() => {
-  axios.get(`http://localhost:3001/guildes/${id}`)
+const fetchGuilde = async () => {
+  await axios.get(`http://localhost:3001/guildes/${id}`)
     .then(response => {
       guilde.value = response.data;
       console.log(response.data);
@@ -72,6 +71,23 @@ onMounted(() => {
     .catch(error => {
       console.error('Error fetching guilde:', error);
     });
+};
+
+if (type =="Eleve") {
+      const accesAutorise = await verifierAccesGuildeEleve(idu,id);
+      if (!accesAutorise) {
+        router.push('/guilde');
+      }
+  } else if (type == "Prof"){
+      const accesAutorise = await verifierAccesGuildeProf(idu,id);
+      if (!accesAutorise) {
+        router.push('/guilde');
+      }
+  }
+
+onMounted(async() => {
+  
+  fetchGuilde();
 });
 
 </script>
