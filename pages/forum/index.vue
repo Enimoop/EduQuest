@@ -4,7 +4,7 @@
     <br>
     <div class="container">
       <div class="text-center">
-        <h3 class="mb-4">Liste des posts</h3>
+        <h3 class="display-4">Forum</h3>
       </div>
       <div class="row justify-content-center">
         <div class="col-md-8">
