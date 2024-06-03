@@ -3,6 +3,7 @@
     <div class="col-md-10 mx-auto">
       <div class="post-content text-center">
         <h1 class="post-title">{{ nom_post.nom }}</h1>
+        <p class="post-date">{{ formatDate(nom_post.date) }}</p>
         <p class="post-text">{{ nom_post.contenu }}</p>
       </div>
       <div class="comments-section mt-4 mx-auto col-md-8">
@@ -69,14 +70,11 @@ const id = route.params.id;
 
 const fetchCommentaires = async (page, pageSize, id) => {
   try {
-    
     const response = await axios.get(`http://localhost:3001/commentaires/${id}`, {
       params: { page, pageSize },
     });
     contenus.value = response.data.commentaires;
     totalCommentaires.value = response.data.total;
-    console.log(contenus.value);
-    console.log(totalCommentaires.value);
   } catch (error) {
     console.error("Error fetching commentaires:", error);
   }
@@ -122,6 +120,13 @@ const handleCommentCreated = async (newComment) => {
   await fetchCommentaires(currentCommentPage.value, commentPageSize, id);
   fermerModal();
 };
+
+// Function to format the date
+const formatDate = (date) => {
+  if (!date) return "";
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return new Date(date).toLocaleDateString("fr-FR", options);
+};
 </script>
 
 <style scoped>
@@ -136,13 +141,19 @@ const handleCommentCreated = async (newComment) => {
 }
 
 .post-title {
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: #343a40;
+  margin-bottom: 0.5rem;
+}
+
+.post-date {
+  font-size: 0.875rem;
+  color: #6c757d;
   margin-bottom: 1rem;
 }
 
 .post-text {
-  font-size: 1.5rem;
+  font-size: 1rem;
   color: #495057;
 }
 
