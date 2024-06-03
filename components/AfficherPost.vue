@@ -14,6 +14,11 @@
           </li>
         </ul>
       </div>
+      <div class="pagination">
+        <button @click="prevCommentPage" :disabled="currentCommentPage === 1">Précédent</button>
+        <span>Page {{ currentCommentPage }}</span>
+        <button @click="nextCommentPage" :disabled="isLastCommentPage">Suivant</button>
+      </div>
       <div class="text-center mt-3">
         <button @click="ouvrirModal" class="btn btn-sm btn-primary">Ajouter un commentaire</button>
       </div>
@@ -37,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import CreerCommentaire from "~/components/CreerCommentaire.vue";
@@ -45,6 +50,9 @@ import CreerCommentaire from "~/components/CreerCommentaire.vue";
 const contenus = ref([]);
 const nom_post = ref({});
 const isModalOpen = ref(false);
+const currentCommentPage = ref(1);
+const commentPageSize = 2;
+const totalCommentaires = ref(0);
 
 const ouvrirModal = () => {
   isModalOpen.value = true;
@@ -56,23 +64,61 @@ const fermerModal = () => {
   document.body.classList.remove('modal-open');
 };
 
-onMounted(() => {
+const route = useRoute();
+const id = route.params.id;
+
+const fetchCommentaires = async (page, pageSize, id) => {
+  try {
+    
+    const response = await axios.get(`http://localhost:3001/commentaires/${id}`, {
+      params: { page, pageSize },
+    });
+    contenus.value = response.data.commentaires;
+    totalCommentaires.value = response.data.total;
+    console.log(contenus.value);
+    console.log(totalCommentaires.value);
+  } catch (error) {
+    console.error("Error fetching commentaires:", error);
+  }
+};
+
+const fetchPost = async () => {
   const route = useRoute();
   const id = route.params.id;
-  axios
-    .get(`http://localhost:3001/commentaires/${id}`)
-    .then((response) => {
-      contenus.value = response.data;
-    })
-    .catch((error) => {
-      console.error("Error fetching contents:", error);
-    });
-  axios.get(`http://localhost:3001/posts/${id}`).then((response) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/posts/${id}`);
     nom_post.value = response.data;
-  });
+  } catch (error) {
+    console.error("Error fetching post:", error);
+  }
+};
+
+onMounted(() => {
+  fetchPost();
+  fetchCommentaires(currentCommentPage.value, commentPageSize, id);
 });
 
-console.log(nom_post);
+watch(currentCommentPage, () => {
+  fetchCommentaires(currentCommentPage.value, commentPageSize, id);
+});
+
+const nextCommentPage = () => {
+  if ((currentCommentPage.value * commentPageSize) < totalCommentaires.value) {
+    currentCommentPage.value++;
+  }
+};
+
+const prevCommentPage = () => {
+  if (currentCommentPage.value > 1) {
+    currentCommentPage.value--;
+  }
+};
+
+const isLastCommentPage = computed(() => {
+  return (currentCommentPage.value * commentPageSize) >= totalCommentaires.value;
+});
+
+
 </script>
 
 <style scoped>
@@ -187,5 +233,16 @@ console.log(nom_post);
 .btn-primary:active {
   background-color: #004494;
   transform: translateY(0);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin: 0 10px;
 }
 </style>

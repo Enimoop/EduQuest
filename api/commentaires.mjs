@@ -6,9 +6,19 @@ const modeleCommentaires = new ModeleCommentaires();
 router.use(express.json());
 
 router.get("/:id", (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 2;
   const id = req.params.id;
+  modeleCommentaires.recupererToutCommentaire(id, (error, total) => {
+    if (error) {
+      res
+        .status(500)
+        .json({ message: "Erreur lors de la récupération des commentaires" });
+      return;
+    }
+
   modeleCommentaires.recupererCommentaireParPostId(
-    id,
+    id, page, pageSize,
     (error, commentaires) => {
       if (error) {
         res
@@ -16,9 +26,10 @@ router.get("/:id", (req, res) => {
           .json({ message: "Erreur lors de la récupération des commentaires" });
         return;
       }
-      res.json(commentaires);
+      res.json({commentaires, total});
     }
   );
+});
 });
 
 router.post("/addCommentaire", (req, res) => {
