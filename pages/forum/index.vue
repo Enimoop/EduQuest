@@ -3,6 +3,18 @@
     <div class="text-center mb-4">
       <h3 class="display-4">Forum</h3>
     </div>
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-8 d-flex">
+        <input
+          type="text"
+          class="form-control me-2"
+          placeholder="Rechercher par titre"
+          v-model="searchQuery"
+          @keyup.enter="searchPosts"
+        />
+        <button class="btn btn-secondary" @click="resetSearch">Réinitialiser</button>
+      </div>
+    </div>
     <div class="row justify-content-center">
       <div class="col-md-8">
         <ul class="list-group custom-list-group">
@@ -50,6 +62,7 @@ const isModalOpen = ref(false);
 const currentPage = ref(1);
 const pageSize = 7;
 const totalPosts = ref(0);
+const searchQuery = ref("");
 
 const ouvrirModal = () => {
   isModalOpen.value = true;
@@ -61,10 +74,10 @@ const fermerModal = () => {
   document.body.classList.remove('modal-open');
 };
 
-const fetchPosts = async (page, pageSize) => {
+const fetchPosts = async (page, pageSize, query = "") => {
   try {
-    const response = await axios.get("http://localhost:3001/posts", {
-      params: { page, pageSize },
+    const response = await axios.get("http://localhost:3001/posts/", {
+      params: { page, pageSize, titre: query },
     });
     posts.value = response.data.posts;
     totalPosts.value = response.data.total;
@@ -74,7 +87,18 @@ const fetchPosts = async (page, pageSize) => {
 };
 
 const handlePostCreated = () => {
-  fetchPosts(currentPage.value, pageSize);
+  fetchPosts(currentPage.value, pageSize, searchQuery.value);
+};
+
+const searchPosts = () => {
+  fetchPosts(1, pageSize, searchQuery.value);
+  currentPage.value = 1; // Reset to first page when searching
+};
+
+const resetSearch = () => {
+  searchQuery.value = "";
+  fetchPosts(1, pageSize);
+  currentPage.value = 1; // Reset to first page when resetting search
 };
 
 onMounted(() => {
@@ -82,7 +106,7 @@ onMounted(() => {
 });
 
 watch(currentPage, () => {
-  fetchPosts(currentPage.value, pageSize);
+  fetchPosts(currentPage.value, pageSize, searchQuery.value);
 });
 
 const nextPage = () => {
@@ -101,6 +125,7 @@ const isLastPage = computed(() => {
   return (currentPage.value * pageSize) >= totalPosts.value;
 });
 </script>
+
 
 <style scoped>
 .container {

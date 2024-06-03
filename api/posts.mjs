@@ -8,7 +8,8 @@ router.use(express.json());
 router.get("/", (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const pageSize = parseInt(req.query.pageSize) || 9;
-  modelePost.recupererTotalPosts((error, total) => {
+  const titre = req.query.titre || "";
+  modelePost.recupererTotalPosts(titre,(error, total) => {
     if (error) {
       res.status(500).json({
         message: "Erreur lors de la récupération du nombre total de posts",
@@ -16,7 +17,7 @@ router.get("/", (req, res) => {
       return;
     }
 
-  modelePost.recupererToutLesPosts(page, pageSize, (error, posts) => {
+  modelePost.recupererToutLesPosts(titre, page, pageSize, (error, posts) => {
     if (error) {
       res.status(500).json({
         message: "Erreur lors de la récupération des posts",
