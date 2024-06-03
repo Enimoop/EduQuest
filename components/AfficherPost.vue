@@ -34,7 +34,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <CreerCommentaire @close="fermerModal" />
+          <CreerCommentaire @commentCreated="handleCommentCreated" @close="fermerModal" />
         </div>
       </div>
     </div>
@@ -118,7 +118,10 @@ const isLastCommentPage = computed(() => {
   return (currentCommentPage.value * commentPageSize) >= totalCommentaires.value;
 });
 
-
+const handleCommentCreated = async (newComment) => {
+  await fetchCommentaires(currentCommentPage.value, commentPageSize, id);
+  fermerModal();
+};
 </script>
 
 <style scoped>

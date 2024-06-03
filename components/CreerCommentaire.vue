@@ -19,9 +19,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 const { data: token } = await useFetch("/api/token", { headers });
 const idu = getSubFromToken(token);
@@ -33,15 +34,17 @@ const formData = ref({
   id_u: idu,
 });
 
-const submitForm = () => {
-  console.log(formData.value);
-  axios
-    .post("http://localhost:3001/commentaires/addCommentaire", formData.value)
-    .then((response) => {
-      formData.value.contenu_com = "";
-    })
-    .catch((error) => {
-      console.error("Error adding comment:", error);
-    });
+const emit = defineEmits(['commentCreated', 'close']);
+
+const submitForm = async () => {
+  try {
+    const response = await axios.post("http://localhost:3001/commentaires/addCommentaire", formData.value);
+    formData.value.contenu_com = "";
+    const newComment = response.data; // Assuming the response contains the new comment data
+    // Emit an event with the new comment data
+    emit("commentCreated", newComment);
+  } catch (error) {
+    console.error("Error adding comment:", error);
+  }
 };
 </script>
