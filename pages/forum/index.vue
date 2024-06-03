@@ -1,34 +1,28 @@
 <template>
-
-    <br>
-    <br>
-    <div class="container">
-      <div class="text-center">
-        <h3 class="display-4">Forum</h3>
-      </div>
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <ul class="list-group">
-            <li v-for="post in posts" :key="post.id" class="list-group-item d-flex justify-content-between align-items-center shadow-sm mb-2">
-              <div>
-                <strong>{{ post.eleve.nom }} {{ post.eleve.prenom }}</strong>: {{ post.nom }}
-              </div>
-              <router-link :to="`/forum/${post.id}`" class="btn btn-primary btn-sm">Voir plus</router-link>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <!-- Pagination -->
-      <div class="pagination">
-        <button @click="prevPage" :disabled="currentPage === 1">Précédent</button>
-        <span>Page {{ currentPage }}</span>
-        <button @click="nextPage" :disabled="isLastPage">Suivant</button>
-      </div>
-      <div class="text-center mt-4">
-        <button @click="ouvrirModal" class="btn btn-primary create-post-btn">Créer un Post</button>
+  <div class="container mt-5">
+    <div class="text-center mb-4">
+      <h3 class="display-4">Forum</h3>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <ul class="list-group custom-list-group">
+          <li v-for="post in posts" :key="post.id" class="list-group-item d-flex justify-content-between align-items-center shadow-sm mb-2 post-item">
+            <div>
+              <strong>{{ post.eleve.nom }} {{ post.eleve.prenom }}</strong>: {{ post.nom }}
+            </div>
+            <router-link :to="`/forum/${post.id}`" class="btn btn-primary btn-sm">Voir plus</router-link>
+          </li>
+        </ul>
       </div>
     </div>
-    
+    <div class="pagination">
+      <button @click="prevPage" :disabled="currentPage === 1">Précédent</button>
+      <span>Page {{ currentPage }}</span>
+      <button @click="nextPage" :disabled="isLastPage">Suivant</button>
+    </div>
+    <div class="text-center mt-4">
+      <button @click="ouvrirModal" class="btn btn-primary create-post-btn">Créer un Post</button>
+    </div>
     <!-- Modal -->
     <div v-if="isModalOpen" class="modal-overlay" @click.self="fermerModal">
       <div class="modal-content form p-4 shadow rounded bg-light" @click.stop>
@@ -43,7 +37,7 @@
         </div>
       </div>
     </div>
-
+  </div>
 </template>
 
 <script setup>
@@ -54,7 +48,7 @@ import CreerPost from "~/components/CreerPost.vue";
 const posts = ref([]);
 const isModalOpen = ref(false);
 const currentPage = ref(1);
-const pageSize = 9;
+const pageSize = 7;
 const totalPosts = ref(0);
 
 const ouvrirModal = () => {
@@ -108,9 +102,33 @@ const isLastPage = computed(() => {
 });
 </script>
 
-
-
 <style scoped>
+.container {
+  margin-top: 2rem;
+}
+
+.custom-list-group {
+  max-height: 600px; /* Ajustez cette valeur selon vos besoins */
+  overflow-y: auto;
+}
+
+.post-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
+  border-radius: 10px;
+  min-height: 50px; /* Hauteur réduite */
+  margin-bottom: 0.5rem;
+}
+
+.post-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -123,6 +141,7 @@ const isLastPage = computed(() => {
   align-items: center;
   z-index: 1000;
 }
+
 .modal-content {
   background: white;
   padding: 20px;
@@ -135,19 +154,11 @@ const isLastPage = computed(() => {
   max-height: 80vh;
   overflow-y: auto;
 }
+
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-.modal-open {
-  overflow: hidden;
 }
 
 .create-post-btn {
@@ -169,21 +180,6 @@ const isLastPage = computed(() => {
 .create-post-btn:active {
   background-color: #004494;
   transform: translateY(0);
-}
-
-.list-group-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f8f9fa;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: none;
-  border-radius: 10px;
-}
-
-.list-group-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary {
@@ -213,8 +209,8 @@ const isLastPage = computed(() => {
   align-items: center;
   margin-top: 20px;
 }
+
 .pagination button {
   margin: 0 10px;
 }
 </style>
-
