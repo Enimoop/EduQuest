@@ -1,3 +1,9 @@
+body {
+  padding-top: 56px !important; /* Ajustez cette valeur selon la hauteur de votre barre de navigation */
+  background-color: #f0ecec !important;  /* Une couleur de fond sombre */
+   /* Couleur du texte pour un bon contraste avec le fond sombre */
+}
+
 .main-container {
   display: flex;
   flex-direction: column;
