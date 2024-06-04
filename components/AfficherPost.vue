@@ -14,7 +14,7 @@
               <strong>{{ contenu.eleve.nom }} {{ contenu.eleve.prenom }}:</strong>
               <p class="mb-0">{{ contenu.contenu }}</p>
             </div>
-            <div v-if="isAdmin">
+            <div v-if="isAdmin || contenu.eleve.id == idu">
               <button @click="deleteComment(contenu.id)" class="btn btn-danger btn-sm">Supprimer</button>
             </div>
           </li>

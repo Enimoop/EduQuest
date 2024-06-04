@@ -8,7 +8,7 @@ class ModeleCommentaires {
   recupererCommentaireParPostId(id, page, pageSize, callback) {
     const offset = (page - 1) * pageSize;
     const query = `
-    SELECT c.id_com, c.contenu_com, c.date_com, c.id_post, u.nom, u.prenom
+    SELECT c.id_com, c.contenu_com, c.date_com, c.id_post, c.id_u, u.nom, u.prenom
     FROM Commentaire c
     JOIN User u ON c.id_u = u.id_u
     WHERE c.id_post = ? LIMIT ? OFFSET ?;`;

@@ -24,7 +24,7 @@
             </div>
             <div>
               <router-link :to="`/forum/${post.id}`" class="btn btn-primary btn-sm">Voir plus</router-link>
-              <button v-if="type === 'Admin'" @click="deletePost(post.id)" class="btn btn-danger btn-sm ms-2">Supprimer</button>
+              <button v-if="type === 'Admin' || post.eleve.id == idu" @click="deletePost(post.id)" class="btn btn-danger btn-sm ms-2">Supprimer</button>
             </div>
           </li>
         </ul>
@@ -71,7 +71,6 @@ const currentPage = ref(1);
 const pageSize = 7;
 const totalPosts = ref(0);
 const searchQuery = ref("");
-const isAdmin = ref(type === 'Admin'); // Ajouter la vérification du type d'utilisateur
 
 const ouvrirModal = () => {
   isModalOpen.value = true;
@@ -242,6 +241,27 @@ const isLastPage = computed(() => {
 
 .btn-primary:active {
   background-color: #004494;
+  transform: translateY(0);
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+.btn-danger:active {
+  background-color: #bd2130;
   transform: translateY(0);
 }
 

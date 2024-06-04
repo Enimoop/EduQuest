@@ -8,7 +8,7 @@ class ModelePosts {
   recupererToutLesPosts(titre, page, pageSize, callback) {
     const offset = (page - 1) * pageSize;
     const query = `
-    SELECT p.id_post, p.nom_post, p.contenu_post, p.date_post, u.nom AS nom_user, u.prenom AS prenom_user
+    SELECT p.id_post, p.nom_post, p.contenu_post, p.date_post, p.id_u as id_user, u.nom AS nom_user, u.prenom AS prenom_user
     FROM PostForum p
     JOIN User u ON p.id_u = u.id_u
     WHERE p.nom_post LIKE ? LIMIT ? OFFSET ?`;
@@ -23,6 +23,7 @@ class ModelePosts {
         contenu: row.contenu_post,
         date: row.date_post,
         eleve: {
+          id: row.id_user,
           nom: row.nom_user,
           prenom: row.prenom_user,
         },
