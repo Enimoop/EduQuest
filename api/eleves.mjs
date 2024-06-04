@@ -105,15 +105,27 @@ router.get('/lvl/:id', (req, res) => {
 });
 
 router.get('/guilde/:idguilde', (req, res) => {
-  modeleEleve.recupererElevesDansGuilde(req.params.idguilde, (error, eleves) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 9;
+
+  modeleEleve.recupererTotalElevesDansGuilde(req.params.idguilde, (error, total) => {
+      if (error) {
+          res.status(500).json({
+              message: 'Erreur lors de la récupération du nombre total d\'eleves'
+          });
+          return;
+      }
+
+  modeleEleve.recupererElevesDansGuilde(req.params.idguilde, page, pageSize, (error, eleves) => {
       if (error) {
           res.status(500).json({
               message: 'Erreur lors de la récupération des eleves'
           });
           return;
       }
-      res.json(eleves);
+      res.json({eleves, total});
   });
+});
 });
 
 router.get('/guilde/:ideleve/:idguilde', (req, res) => {

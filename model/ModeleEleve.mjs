@@ -145,12 +145,13 @@ class ModeleEleve {
   }
 
 
-  recupererElevesDansGuilde(id_guilde, callback) {
+  recupererElevesDansGuilde(id_guilde, page, pageSize, callback) {
+    const offset = (page - 1) * pageSize;
     const query = `SELECT User.id_u, User.nom, User.prenom
     FROM User
     JOIN Rejoindre ON User.id_u = Rejoindre.id_u
-    WHERE Rejoindre.id_guilde = ?`;
-    this.connection.query(query, [id_guilde], (error, results, fields) => {
+    WHERE Rejoindre.id_guilde = ? LIMIT ? OFFSET ?;`;
+    this.connection.query(query, [id_guilde, pageSize, offset], (error, results, fields) => {
         if (error) {
             callback(error, null);
             return;
@@ -161,6 +162,20 @@ class ModeleEleve {
             prenom: row.prenom
         }));
         callback(null, eleves);
+    });
+}
+
+recupererTotalElevesDansGuilde(id_guilde, callback) {
+    const query = `SELECT count(*) as total
+    FROM User
+    JOIN Rejoindre ON User.id_u = Rejoindre.id_u
+    WHERE Rejoindre.id_guilde = ?;`;
+    this.connection.query(query, [id_guilde], (error, results, fields) => {
+        if (error) {
+            callback(error, null);
+            return;
+        }
+        callback(null, results[0].total);
     });
 }
 
