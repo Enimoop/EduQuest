@@ -1,8 +1,6 @@
 <template>
-  <br>
-  
-    <div class="container">
-      <div class="list-details">
+  <div class="container">
+    <div class="list-details">
       <h1 class="title-cours my-4 text-center">Vos Guildes</h1>
       <div class="row">
         <div class="col-md-4 d-flex align-items-stretch" v-for="guilde in guildes" :key="guilde.id">
@@ -23,19 +21,32 @@
         <span>Page {{ currentPage }}</span>
         <button @click="nextPage" :disabled="isLastPage">Suivant</button>
       </div>
+      <div class="text-center mt-4">
+        <button @click="ouvrirModal" class="btn btn-primary create-guild-btn">Créer une Guilde</button>
+      </div>
     </div>
   </div>
-  
+
+  <!-- Modal -->
+  <div v-if="isModalOpen" class="modal-overlay" @click.self="fermerModal">
+    <div class="modal-content form p-4 shadow rounded bg-light" @click.stop>
+      <div class="modal-header">
+        <button type="button" class="close" @click="fermerModal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <CreerGuilde @guildeCreated="handleGuildeCreated" />
+      </div>
+    </div>
+  </div>
 </template>
 
-
-
-
-
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { getSubFromToken } from "../utils/session.mjs";
+import { ref, onMounted, computed, watch } from 'vue';
 import axios from 'axios';
+import CreerGuilde from '../components/CreerGuilde.vue';
+import { getSubFromToken } from "../utils/session.mjs";
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 const { data: token } = await useFetch("/api/token", { headers });
@@ -52,9 +63,19 @@ const guildes = ref<Guildes[]>([]);
 const currentPage = ref(1);
 const pageSize = 9; // 9 guildes per page
 const totalGuildes = ref(0);
+const isModalOpen = ref(false);
+
+const ouvrirModal = () => {
+  isModalOpen.value = true;
+  document.body.classList.add('modal-open');
+};
+
+const fermerModal = () => {
+  isModalOpen.value = false;
+  document.body.classList.remove('modal-open');
+};
 
 const fetchGuildes = async (page: number, pageSize: number) => {
-  console.log(page, pageSize)
   try {
     const response = await axios.get(`http://localhost:3001/guildes/prof/${id}`, {
       params: {
@@ -62,14 +83,16 @@ const fetchGuildes = async (page: number, pageSize: number) => {
         pageSize
       }
     });
-    console.log("res : ",response.data);
     guildes.value = response.data.guildes;
-    console.log("guildes : ",guildes.value);
     totalGuildes.value = response.data.total;
-    console.log("total : ",totalGuildes.value);
   } catch (error) {
     console.error('Error fetching guildes:', error);
   }
+};
+
+const handleGuildeCreated = () => {
+  fermerModal();
+  fetchGuildes(currentPage.value, pageSize);
 };
 
 onMounted(() => {
@@ -79,8 +102,6 @@ onMounted(() => {
 watch([currentPage], () => {
   fetchGuildes(currentPage.value, pageSize);
 });
-
-
 
 const nextPage = () => {
   if ((currentPage.value * pageSize) < totalGuildes.value) {
@@ -98,9 +119,6 @@ const isLastPage = computed(() => {
   return (currentPage.value * pageSize) >= totalGuildes.value;
 });
 </script>
-
-
-
 
 <style scoped>
 .container {
@@ -174,12 +192,67 @@ const isLastPage = computed(() => {
   margin: 0 10px;
 }
 
-.nuxt-page {
-  flex-grow: 1;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  position: relative;
+  z-index: 1001;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
 
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-open {
+  overflow: hidden;
+}
+
+.create-guild-btn {
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.create-guild-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.create-guild-btn:active {
+  background-color: #004494;
+  transform: translateY(0);
+}
 </style>
-
-

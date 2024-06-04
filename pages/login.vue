@@ -1,7 +1,7 @@
 <template>
-  <NuxtLayout layout="default">
+  <br>
   <Login />
-</NuxtLayout>
+
 </template>
 
 <script setup>

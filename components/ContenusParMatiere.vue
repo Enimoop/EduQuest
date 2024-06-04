@@ -71,7 +71,6 @@ const fetchContenus = async (page: number, pageSize: number) => {
       }
     });
     contenus.value = response.data.contenus_matiere;
-    console.log(contenus.value)
     totalContenus.value = response.data.total;
      if (response.data.contenus_matiere.length > 0) {
       libelle_matiere.value = response.data.contenus_matiere[0].libelle_matiere;

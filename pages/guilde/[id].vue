@@ -1,7 +1,6 @@
 <template>
+  <br>
     <div class="text-center">
-        <br>
-        <br>
         <h1 class="title title-cours">{{ guilde.nom }}</h1>
       
         <div class="btn-group mb-4" role="group">
@@ -66,7 +65,6 @@ const fetchGuilde = async () => {
   await axios.get(`http://localhost:3001/guildes/${id}`)
     .then(response => {
       guilde.value = response.data;
-      console.log(response.data);
     })
     .catch(error => {
       console.error('Error fetching guilde:', error);

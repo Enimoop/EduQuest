@@ -1,51 +1,302 @@
 <template>
-  <div class="container">
-    <div class="col-md-4">
-      <h1>
-        <!-- {{ nom_post.eleve.nom }} {{ nom_post.eleve.prenom }} : -->
-        {{ nom_post.nom }}
-      </h1>
-      <p>
-        {{ nom_post.contenu }}
-      </p>
-      <h3>Commentaires</h3>
-      <ul class="list-group">
-        <li
-          v-for="contenu in contenus"
-          :key="contenu.id"
-          class="list-group-item"
-        >
-          {{ contenu.eleve.nom }} {{ contenu.eleve.prenom }} :
-          {{ contenu.contenu }}
-        </li>
-      </ul>
-      <CreerCommentaire />
+  <div class="container mt-5">
+    <div class="col-md-10 mx-auto">
+      <div class="post-content text-center">
+        <h1 class="post-title">{{ nom_post.nom }}</h1>
+        <p class="post-date">{{ formatDate(nom_post.date) }}</p>
+        <p class="post-text">{{ nom_post.contenu }}</p>
+      </div>
+      <div class="comments-section mt-4 mx-auto col-md-8">
+        <h3 class="comments-title text-center">Commentaires</h3>
+        <ul class="list-group list-group-flush">
+          <li v-for="contenu in contenus" :key="contenu.id" class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{ contenu.eleve.nom }} {{ contenu.eleve.prenom }}:</strong>
+              <p class="mb-0">{{ contenu.contenu }}</p>
+            </div>
+            <div v-if="isAdmin || contenu.eleve.id == idu">
+              <button @click="deleteComment(contenu.id)" class="btn btn-danger btn-sm">Supprimer</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="pagination">
+        <button @click="prevCommentPage" :disabled="currentCommentPage === 1">Précédent</button>
+        <span>Page {{ currentCommentPage }}</span>
+        <button @click="nextCommentPage" :disabled="isLastCommentPage">Suivant</button>
+      </div>
+      <div class="text-center mt-3">
+        <button @click="ouvrirModal" class="btn btn-sm btn-primary">Ajouter un commentaire</button>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div v-if="isModalOpen" class="modal-overlay" @click.self="fermerModal">
+      <div class="modal-content form p-4 shadow rounded bg-light" @click.stop>
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter un commentaire</h5>
+          <button type="button" class="close" @click="fermerModal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <CreerCommentaire @commentCreated="handleCommentCreated" @close="fermerModal" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import axios from "axios";
+import { useRoute } from "vue-router";
+import CreerCommentaire from "~/components/CreerCommentaire.vue";
 
 const contenus = ref([]);
-const nom_post = ref([]);
+const nom_post = ref({});
+const isModalOpen = ref(false);
+const currentCommentPage = ref(1);
+const commentPageSize = 2;
+const totalCommentaires = ref(0);
+
+// Assume that you have a function to get the user type, and check if it's Admin
+const headers = useRequestHeaders(["cookie"]);
+const { data: token } = await useFetch("/api/token", { headers });
+const idu = getSubFromToken(token);
+const type = await returnUserType(idu);
+const isAdmin = ref(type === 'Admin'); // Check if the user is an admin
+
+const ouvrirModal = () => {
+  isModalOpen.value = true;
+  document.body.classList.add('modal-open');
+};
+
+const fermerModal = () => {
+  isModalOpen.value = false;
+  document.body.classList.remove('modal-open');
+};
+
+const route = useRoute();
+const id = route.params.id;
+
+const fetchCommentaires = async (page, pageSize, id) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/commentaires/${id}`, {
+      params: { page, pageSize },
+    });
+    contenus.value = response.data.commentaires;
+    totalCommentaires.value = response.data.total;
+  } catch (error) {
+    console.error("Error fetching commentaires:", error);
+  }
+};
+
+const fetchPost = async () => {
+  try {
+    const response = await axios.get(`http://localhost:3001/posts/${id}`);
+    nom_post.value = response.data;
+  } catch (error) {
+    console.error("Error fetching post:", error);
+  }
+};
+
+const deleteComment = async (commentId) => {
+  try {
+    await axios.delete(`http://localhost:3001/commentaires/${commentId}`);
+    fetchCommentaires(currentCommentPage.value, commentPageSize, id);
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+  }
+};
 
 onMounted(() => {
-  const route = useRoute();
-  const id = route.params.id;
-  axios
-    .get(`http://localhost:3001/commentaires/${id}`)
-    .then((response) => {
-      contenus.value = response.data;
-    })
-    .catch((error) => {
-      console.error("Error fetching contents:", error);
-    });
-  axios.get(`http://localhost:3001/posts/${id}`).then((response) => {
-    nom_post.value = response.data;
-  });
+  fetchPost();
+  fetchCommentaires(currentCommentPage.value, commentPageSize, id);
 });
 
-console.log(nom_post);
+watch(currentCommentPage, () => {
+  fetchCommentaires(currentCommentPage.value, commentPageSize, id);
+});
+
+const nextCommentPage = () => {
+  if ((currentCommentPage.value * commentPageSize) < totalCommentaires.value) {
+    currentCommentPage.value++;
+  }
+};
+
+const prevCommentPage = () => {
+  if (currentCommentPage.value > 1) {
+    currentCommentPage.value--;
+  }
+};
+
+const isLastCommentPage = computed(() => {
+  return (currentCommentPage.value * commentPageSize) >= totalCommentaires.value;
+});
+
+const handleCommentCreated = async (newComment) => {
+  await fetchCommentaires(currentCommentPage.value, commentPageSize, id);
+  fermerModal();
+};
+
+// Function to format the date
+const formatDate = (date) => {
+  if (!date) return "";
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return new Date(date).toLocaleDateString("fr-FR", options);
+};
 </script>
+
+<style scoped>
+.container {
+  margin-top: 2rem;
+}
+
+.post-content {
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 5px;
+}
+
+.post-title {
+  font-size: 2.5rem;
+  color: #343a40;
+  margin-bottom: 0.5rem;
+}
+
+.post-date {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.post-text {
+  font-size: 1rem;
+  color: #495057;
+}
+
+.comments-section {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comments-title {
+  font-size: 1.5rem;
+  color: #343a40;
+  margin-bottom: 1rem;
+}
+
+.list-group-item {
+  background-color: #f8f9fa;
+  border: none;
+  border-bottom: 1px solid #dee2e6;
+  font-size: 0.875rem;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  position: relative;
+  z-index: 1001;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-open {
+  overflow: hidden;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 15px;
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  background-color: #004494;
+  transform: translateY(0);
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+.btn-danger:active {
+  background-color: #bd2130;
+  transform: translateY(0);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin: 0 10px;
+}
+</style>

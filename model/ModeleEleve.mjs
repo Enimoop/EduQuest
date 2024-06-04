@@ -145,12 +145,13 @@ class ModeleEleve {
   }
 
 
-  recupererElevesDansGuilde(id_guilde, callback) {
+  recupererElevesDansGuilde(id_guilde, page, pageSize, callback) {
+    const offset = (page - 1) * pageSize;
     const query = `SELECT User.id_u, User.nom, User.prenom
     FROM User
     JOIN Rejoindre ON User.id_u = Rejoindre.id_u
-    WHERE Rejoindre.id_guilde = ?`;
-    this.connection.query(query, [id_guilde], (error, results, fields) => {
+    WHERE Rejoindre.id_guilde = ? LIMIT ? OFFSET ?;`;
+    this.connection.query(query, [id_guilde, pageSize, offset], (error, results, fields) => {
         if (error) {
             callback(error, null);
             return;
@@ -161,6 +162,20 @@ class ModeleEleve {
             prenom: row.prenom
         }));
         callback(null, eleves);
+    });
+}
+
+recupererTotalElevesDansGuilde(id_guilde, callback) {
+    const query = `SELECT count(*) as total
+    FROM User
+    JOIN Rejoindre ON User.id_u = Rejoindre.id_u
+    WHERE Rejoindre.id_guilde = ?;`;
+    this.connection.query(query, [id_guilde], (error, results, fields) => {
+        if (error) {
+            callback(error, null);
+            return;
+        }
+        callback(null, results[0].total);
     });
 }
 
@@ -189,7 +204,7 @@ class ModeleEleve {
 
   recupererNotesParContenu(id, callback) {
     const query = `
-        SELECT n.note, n.id_contenu, n.id_u, n.date_note, c.description_contenu
+        SELECT n.note, n.id_contenu, n.id_u, n.date_note, c.titre_contenu, c.description_contenu
         FROM Noter n
         JOIN Contenu c ON n.id_contenu = c.id_contenu
         WHERE n.id_u = ?
@@ -210,6 +225,7 @@ class ModeleEleve {
             id_contenu: row.id_contenu,
             id_u: row.id_u,
             date_note: row.date_note,
+            titre_contenu: row.titre_contenu,
             description_contenu: row.description_contenu
         }));
 

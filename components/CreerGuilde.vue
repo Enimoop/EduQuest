@@ -29,6 +29,8 @@ const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 const { data: token } = await useFetch("/api/token", { headers });
 const idu = getSubFromToken(token);
 
+const emit = defineEmits(['guildeCreated']);
+
 // Interface pour la guilde
 interface Guilde {
   nom_guilde: string;
@@ -49,7 +51,7 @@ const submitForm = async () => {
     id_prof: idu
   };
 
-  console.log(nouvelleGuilde);
+
 
   try {
     const response = await axios.post('http://localhost:3001/guildes/addGuilde', nouvelleGuilde, {
@@ -59,6 +61,7 @@ const submitForm = async () => {
     });
     nom.value = '';
     description.value = '';
+    emit('guildeCreated');
   } catch (error) {
     console.error('Erreur lors de l\'envoi de la guilde:', error);
   }

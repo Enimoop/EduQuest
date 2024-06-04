@@ -114,10 +114,6 @@ const guildes = ref<Guildes[]>([]);
     const formData = new FormData();
     Array.from(files.value.files).map((file, index) => formData.append(index, file));
   
-    // Logs
-    console.log("Description du contenu:", contentDescription.value);
-    console.log("Matière:", selectedSubject.value);
-    console.log("Fichier PDF uploadé:", files.value.files[0].name);
 
     const {pdfName, message } = await $fetch('/api/upload', {
       method: 'POST',

@@ -1,8 +1,8 @@
 <template>
-   <NuxtLayout layout="default">
+
     <AfficherAccueil />
     <br>
-</NuxtLayout>
+
 </template>
 
 <script setup lang="ts">

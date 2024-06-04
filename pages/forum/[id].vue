@@ -1,9 +1,9 @@
 <template>
-  <NuxtLayout>
+
     <div>
       <AfficherPost :commentaires_post="commentaires_post" />
     </div>
-  </NuxtLayout>
+
 </template>
 
 <script setup>

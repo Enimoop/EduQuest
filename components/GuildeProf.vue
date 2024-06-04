@@ -5,11 +5,14 @@
         <h2>Tableau de bord des élèves</h2>
         <div class="search-bar mb-3 d-flex align-items-center">
           <div class="position-relative flex-grow-1 me-2">
-            
-            <input v-model="searchQuery" type="text" placeholder="Rechercher un élève par nom ou prénom"
-              class="form-control mb-2" @input="searchEleves" />
-            <ul v-if="searchResults.length > 0" class="list-group position-absolute start-0 w-100 shadow"
-              style="z-index: 1000;">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Rechercher un élève par nom ou prénom"
+              class="form-control mb-2"
+              @input="searchEleves"
+            />
+            <ul v-if="searchResults.length > 0" class="list-group position-absolute start-0 w-100 shadow" style="z-index: 1000;">
               <li class="list-group-item" v-for="result in searchResults" @click="selectUser(result)">
                 {{ result.mail }}
               </li>
@@ -64,6 +67,12 @@
             </template>
           </tbody>
         </table>
+        <!-- Pagination controls -->
+        <div class="d-flex justify-content-between mt-4">
+          <button @click="prevPage" :disabled="currentPage === 1">Précédent </button>
+          <span> Page {{ currentPage }} </span>
+          <button @click="nextPage" :disabled="isLastPage" >Suivant</button>
+        </div>
       </div>
     </div>
   </div>
@@ -72,19 +81,15 @@
 
 <script setup lang="ts">
 import { format } from 'date-fns';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { getSubFromToken, returnUserType } from "../utils/session.mjs";
 import axios from 'axios';
+import { useRoute } from 'vue-router';
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
-
 const { data: token } = await useFetch("/api/token", { headers });
-
-
-
 const idu = getSubFromToken(token);
 const type = await returnUserType(idu);
-
 const route = useRoute();
 const id = route.params.id;
 
@@ -103,43 +108,42 @@ interface Notes {
 }
 
 const eleves = ref<Eleves[]>([]);
-const showSearchForm = ref(false);
 const searchQuery = ref('');
 const searchResults = ref<Eleves[]>([]);
 const currentEleveNotes = ref<Notes[] | null>(null);
 const currentEleveId = ref<number | null>(null);
-const showNewGuildeForm = ref(false);
-const nouvelleGuilde = ref({ nom: '', description: '' });
+const selectedUser = ref<Eleves>({ id: 0, mail: "", nom: "", prenom: "" });
 
+const currentPage = ref(1);
+const pageSize = 5;
+const totalEleves = ref(0);
 
-const selectedUser = ref<Eleves>({
-  id: 0,
-  mail: "",
-  nom: "",
-  prenom: "",
-});
-
+const fetchEleves = async (page: number, pageSize: number) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/eleves/guilde/${id}`, {
+      params: { page, pageSize }
+    });
+    eleves.value = response.data.eleves;
+    totalEleves.value = response.data.total;
+  } catch (error) {
+    console.error('Error fetching eleves:', error);
+  }
+};
 
 onMounted(() => {
-  axios.get(`http://localhost:3001/eleves/guilde/${id}`)
-    .then(response => {
-      eleves.value = response.data;
-    })
-    .catch(error => {
-      console.error('Error fetching eleves:', error);
-    });
+  fetchEleves(currentPage.value, pageSize);
 });
 
+watch(currentPage, () => {
+  fetchEleves(currentPage.value, pageSize);
+});
 
-
-// Search for students
 const searchEleves = (event: Event) => {
   const query = (event.target as HTMLInputElement).value;
   if (query.length > 1) {
     axios.get(`http://localhost:3001/eleves/nom/${query}/guilde/${id}`)
       .then(response => {
         searchResults.value = response.data;
-        console.log('Search results:', searchResults.value);
       })
       .catch(error => {
         console.error('Error searching profils:', error);
@@ -149,55 +153,37 @@ const searchEleves = (event: Event) => {
   }
 };
 
-const selectUser = (user: any) => {
+const selectUser = (user: Eleves) => {
   axios.get(`http://localhost:3001/profils/id/${user.id}`)
     .then(response => {
       selectedUser.value = response.data;
-      console.log('Selected user:', selectedUser.value);
       searchQuery.value = selectedUser.value.mail;
       searchResults.value = [];
-
     })
     .catch(error => {
       console.error('Error fetching user:', error);
     });
 };
 
-// Add a student to a guild
-const addEleveToGuilde = (eleve: Eleves) => {
-  const nouveauEleve = {
-    id: eleve.id,
-    id_guilde: id
-  };
-  axios.post('http://localhost:3001/guildes/addEleve', nouveauEleve, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(() => {
-      // Fetch the updated list of students for the guild
-      return axios.get(`http://localhost:3001/eleves/guilde/${id}`);
-    })
-    .then(response => {
-      eleves.value = response.data;
-    })
-    .catch(error => {
-      console.error('Error adding eleve to guilde:', error);
+const addEleveToGuilde = async (eleve: Eleves) => {
+  const nouveauEleve = { id: eleve.id, id_guilde: id };
+  try {
+    await axios.post('http://localhost:3001/guildes/addEleve', nouveauEleve, {
+      headers: { 'Content-Type': 'application/json' }
     });
+    await fetchEleves(currentPage.value, pageSize);
+  } catch (error) {
+    console.error('Error adding eleve to guilde:', error);
+  }
 };
 
-const retirerEleve = (eleveId: number) => {
-  axios.delete(`http://localhost:3001/guildes/deleteEleve/${eleveId}`)
-    .then(response => {
-      // Rafraîchir la liste des élèves après la suppression
-      return axios.get(`http://localhost:3001/eleves/guilde/${id}`);
-    })
-    .then(response => {
-      eleves.value = response.data;
-    })
-    .catch(error => {
-      console.error('Erreur lors de la suppression de l\'élève:', error);
-    });
+const retirerEleve = async (eleveId: number) => {
+  try {
+    await axios.delete(`http://localhost:3001/guildes/deleteEleve/${eleveId}`);
+    await fetchEleves(currentPage.value, pageSize);
+  } catch (error) {
+    console.error('Erreur lors de la suppression de l\'élève:', error);
+  }
 };
 
 const voirPlus = (eleveId: number) => {
@@ -215,34 +201,29 @@ const voirPlus = (eleveId: number) => {
     });
 };
 
-
-
-// Créer une nouvelle guilde
-const creerNouvelleGuilde = () => {
-  axios.post(`http://localhost:3001/guildes/addGuilde`, {
-    nom_guilde: nouvelleGuilde.value.nom,
-    description_guilde: nouvelleGuilde.value.description,
-    id_prof: id // Utilisation de l'ID du professeur connecté
-  })
-    .then(response => {
-      // Réinitialiser le formulaire et masquer le formulaire de création de guilde
-      nouvelleGuilde.value.nom = '';
-      nouvelleGuilde.value.description = '';
-      showNewGuildeForm.value = false;
-
-    })
-    .catch(error => {
-      console.error('Erreur lors de la création de la guilde:', error);
-    });
+const nextPage = () => {
+  if ((currentPage.value * pageSize) < totalEleves.value) {
+    currentPage.value++;
+  }
 };
 
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+const isLastPage = computed(() => {
+  return (currentPage.value * pageSize) >= totalEleves.value;
+});
 </script>
 
-<style>
+<style scoped>
 .list-group {
   max-height: 200px;
   overflow-y: auto;
 }
+
 .cours-details {
   margin-top: 32px;
 }
@@ -251,10 +232,12 @@ const creerNouvelleGuilde = () => {
   display: flex;
   align-items: center;
 }
+
 .search-bar .form-control {
   flex-grow: 1;
   margin-right: 10px;
 }
+
 .search-bar button {
   margin-left: 10px;
 }

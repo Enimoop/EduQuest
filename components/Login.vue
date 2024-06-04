@@ -1,6 +1,5 @@
 <template>
   <section>
-    <br>
 
     <!-- <GithubLogin /> -->
 

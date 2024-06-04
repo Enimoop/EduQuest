@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-5">
-    <h2 class="text-center mb-5">Explorez nos matières</h2>
+    <h2 class="text-center display-4">Matières</h2>
     <div class="row row-cols-2 row-cols-md-5 g-4">
       <router-link
         v-for="matiere in matieres"

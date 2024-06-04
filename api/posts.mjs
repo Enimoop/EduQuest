@@ -6,20 +6,31 @@ const modelePost = new ModelePosts();
 router.use(express.json());
 
 router.get("/", (req, res) => {
-  modelePost.recupererToutLesPosts((error, posts) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 9;
+  const titre = req.query.titre || "";
+  modelePost.recupererTotalPosts(titre,(error, total) => {
+    if (error) {
+      res.status(500).json({
+        message: "Erreur lors de la récupération du nombre total de posts",
+      });
+      return;
+    }
+
+  modelePost.recupererToutLesPosts(titre, page, pageSize, (error, posts) => {
     if (error) {
       res.status(500).json({
         message: "Erreur lors de la récupération des posts",
       });
       return;
     }
-    res.json(posts);
+    res.json({posts, total});
   });
+});
 });
 
 router.post("/addPost", (req, res) => {
   const contenu = req.body;
-  console.log(contenu);
   modelePost.insererPost(contenu, (error, id) => {
     if (error) {
       res.status(500).json({
@@ -45,6 +56,17 @@ router.get("/:id", (req, res) => {
       return;
     }
     res.json(post);
+  });
+});
+
+router.delete("/:id", (req, res) => {
+  const id = req.params.id;
+  modelePost.supprimerPost(id, (error) => {
+    if (error) {
+      res.status(500).json({ message: "Erreur lors de la suppression du post" });
+      return;
+    }
+    res.json({ message: "post supprimé" });
   });
 });
 

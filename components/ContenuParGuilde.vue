@@ -1,5 +1,4 @@
 <template>
-    <br>
     <div class="container mt-5">
       <div class="list-details">
         <h3 class="guilde-description text-center">{{ description_guilde }}</h3>

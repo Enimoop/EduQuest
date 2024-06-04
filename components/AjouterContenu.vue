@@ -1,10 +1,10 @@
 <template>
     <div class="container mt-5">
       <div class="text-center">
-        <button class="btn btn-primary me-2" @click="toggleComponent('quiz')">Ajouter Exo</button>
+        <button class="btn btn-primary me-2" @click="toggleComponent('quiz')">Ajouter Exercice</button>
         <button class="btn btn-primary" @click="toggleComponent('cours')">Ajouter Cours</button>
       </div>
-      
+      <br>
       <div v-if="showQuiz" class="mt-4">
         <AjouterQuiz />
       </div>

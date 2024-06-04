@@ -53,11 +53,9 @@ function updateLevel(id_matiere, id, lvl) {
 }
 
 export async function calculerNiveau(id_matiere, id) {
-    console.log(`Calcul du niveau pour l'élève ${id} en matière ${id_matiere}`);
     try {
         const response = await axios.get(`http://localhost:3001/eleves/notes/${id_matiere}/${id}`);
         const notes = response.data.map(note => note.note);
-        console.log(notes);
         const lvl = calculerNiveauMoyen(notes);
         // Vérifier si la mise à jour du niveau est nécessaire
         const responseNiveauActuel = await axios.get(`http://localhost:3001/eleves/lvl/${id_matiere}/${id}`);
