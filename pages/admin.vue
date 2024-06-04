@@ -3,10 +3,10 @@
         <div>
             <br>
             <AdminAllUser />
+            <ContenusAdmin />
             <br>
             <AdminUpgradeProfil />
             <br>
-            <AjouterContenu />
         </div>
 
 </template>

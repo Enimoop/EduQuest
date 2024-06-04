@@ -405,4 +405,30 @@ router.get('/all/prof/:id', (req, res) => {
   });
 });
 
+router.get('/admin/all', (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 5;
+
+  modeleContenu.recupererTotalContenuAdmin((error, total) => {
+    if (error) {
+      res.status(500).json({
+        message: 'Erreur lors de la récupération du total des contenus'
+      });
+      return;
+    }
+    modeleContenu.recupererContenuAdmin(page, pageSize, (error, contenus) => {
+      if (error) {
+        res.status(500).json({
+          message: 'Erreur lors de la récupération des contenus'
+        });
+        return;
+      }
+      res.json({
+        contenus,
+        total
+      });
+    });
+  });
+});
+
 export default router;
