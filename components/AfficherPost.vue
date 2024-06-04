@@ -9,9 +9,14 @@
       <div class="comments-section mt-4 mx-auto col-md-8">
         <h3 class="comments-title text-center">Commentaires</h3>
         <ul class="list-group list-group-flush">
-          <li v-for="contenu in contenus" :key="contenu.id" class="list-group-item">
-            <strong>{{ contenu.eleve.nom }} {{ contenu.eleve.prenom }}:</strong>
-            <p class="mb-0">{{ contenu.contenu }}</p>
+          <li v-for="contenu in contenus" :key="contenu.id" class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{ contenu.eleve.nom }} {{ contenu.eleve.prenom }}:</strong>
+              <p class="mb-0">{{ contenu.contenu }}</p>
+            </div>
+            <div v-if="isAdmin">
+              <button @click="deleteComment(contenu.id)" class="btn btn-danger btn-sm">Supprimer</button>
+            </div>
           </li>
         </ul>
       </div>
@@ -55,6 +60,13 @@ const currentCommentPage = ref(1);
 const commentPageSize = 2;
 const totalCommentaires = ref(0);
 
+// Assume that you have a function to get the user type, and check if it's Admin
+const headers = useRequestHeaders(["cookie"]);
+const { data: token } = await useFetch("/api/token", { headers });
+const idu = getSubFromToken(token);
+const type = await returnUserType(idu);
+const isAdmin = ref(type === 'Admin'); // Check if the user is an admin
+
 const ouvrirModal = () => {
   isModalOpen.value = true;
   document.body.classList.add('modal-open');
@@ -81,13 +93,20 @@ const fetchCommentaires = async (page, pageSize, id) => {
 };
 
 const fetchPost = async () => {
-  const route = useRoute();
-  const id = route.params.id;
   try {
     const response = await axios.get(`http://localhost:3001/posts/${id}`);
     nom_post.value = response.data;
   } catch (error) {
     console.error("Error fetching post:", error);
+  }
+};
+
+const deleteComment = async (commentId) => {
+  try {
+    await axios.delete(`http://localhost:3001/commentaires/${commentId}`);
+    fetchCommentaires(currentCommentPage.value, commentPageSize, id);
+  } catch (error) {
+    console.error("Error deleting comment:", error);
   }
 };
 
@@ -246,6 +265,27 @@ const formatDate = (date) => {
 
 .btn-primary:active {
   background-color: #004494;
+  transform: translateY(0);
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+.btn-danger:active {
+  background-color: #bd2130;
   transform: translateY(0);
 }
 

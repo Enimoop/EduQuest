@@ -47,6 +47,17 @@ class ModeleCommentaires {
     });
   }
 
+  supprimerCommentaire(id, callback) {
+    const query = "DELETE FROM Commentaire WHERE id_com = ?";
+    this.connection.query(query, [id], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, results.affectedRows);
+    });
+  }
+
 
   insererCommentaire(contenu, callback) {
     const { contenu_com, id_post, id_u } = contenu;

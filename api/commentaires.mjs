@@ -32,6 +32,23 @@ router.get("/:id", (req, res) => {
 });
 });
 
+router.delete("/:id", (req, res) => {
+  const id = req.params.id;
+  modeleCommentaires.supprimerCommentaire(id, (error, affectedRows) => {
+    if (error) {
+      res.status(500).json({
+        message: "Erreur lors de la suppression du commentaire",
+      });
+      return;
+    }
+    if (affectedRows === 0) {
+      res.status(404).json({ message: "Commentaire non trouvé" });
+      return;
+    }
+    res.json({ message: "Commentaire supprimé" });
+  });
+});
+
 router.post("/addCommentaire", (req, res) => {
   const contenu = req.body;
   console.log(contenu);
