@@ -117,7 +117,6 @@
   const checkExist = async (email: string): Promise<boolean> => {
   try {
     const response = await axios.get(`http://localhost:3001/profils/${email}`);
-    console.log(response.data);
     return true; // Si le profil est trouvé, l'email existe
   } catch (error) {
     const axiosError = error as { response?: { status?: number } }; // Spécifiez le type de l'erreur ici

@@ -61,7 +61,6 @@ const successMessage = ref<string>("");
 const errorMessage = ref<string>("");
 
 const submitForm = () => {
-  console.log(formData.value);
   axios
     .post("http://localhost:3001/posts/addPost", formData.value)
     .then((response) => {

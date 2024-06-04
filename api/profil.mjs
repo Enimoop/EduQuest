@@ -81,7 +81,6 @@ router.get('/notes/:id', (req, res) => {
       return;
     }
     if (!notes || notes.length === 0) {
-      console.log('No notes found for user:', id);
       res.status(404).json({ message: 'notes non trouvées' });
       return;
     }

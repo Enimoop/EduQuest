@@ -51,7 +51,7 @@ const submitForm = async () => {
     id_prof: idu
   };
 
-  console.log(nouvelleGuilde);
+
 
   try {
     const response = await axios.post('http://localhost:3001/guildes/addGuilde', nouvelleGuilde, {

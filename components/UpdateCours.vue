@@ -147,7 +147,6 @@ function onFileChange(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
   if (file) {
     pdf.value = URL.createObjectURL(file);
-    console.log(pdf.value);
   }
   else {
     pdf.value = cours.value.nom_fichier;
@@ -162,12 +161,8 @@ function onFileChange(e: Event) {
     let pdfName = '';
 
     if (files.value && files.value.files.length > 0) {
-      console.log("ici");
     Array.from(files.value.files).map((file, index) => formData.append(index, file));
-    // Logs
-    console.log("Description du contenu:", cours.value.description_contenu);
-    console.log("Matière:", cours.value.id_matiere);
-    console.log("Fichier PDF uploadé:", files.value.files[0].name);
+
 
     const {pdfName: uploadedPdfName, message:uploadMessage } = await $fetch('/api/upload', {
       method: 'POST',
@@ -176,8 +171,6 @@ function onFileChange(e: Event) {
     pdfName = uploadedPdfName;
     message = uploadMessage;
   } else {
-    console.log("la");
-    console.log(cours.value.nom_fichier);
     pdfName = cours.value.nom_fichier;
     message = "Mise à jour réussi \nLe fichier n'a pas été modifié";
   }
@@ -191,7 +184,6 @@ function onFileChange(e: Event) {
         id_guilde: cours.value.id_guilde,
         nom_fichier: pdfName 
     };
-    console.log(updatedCours);
     const response = await axios.put('http://localhost:3001/contenus/update/cours', updatedCours, {
       headers: {
         'Content-Type': 'application/json'
@@ -200,8 +192,6 @@ function onFileChange(e: Event) {
    
 
     success.value = message;
-    console.log("success");
-    console.log(success.value);
 
  
 }

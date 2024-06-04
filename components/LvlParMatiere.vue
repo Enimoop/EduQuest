@@ -67,7 +67,6 @@ onMounted(() => {
     axios.get(`http://localhost:3001/eleves/notes/${id}`)
     .then(response => {
       notes.value = response.data;
-      console.log(notes.value);
     })
     .catch(error => {
       console.error('Error fetching notes:', error);

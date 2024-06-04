@@ -26,7 +26,6 @@ onMounted(() => {
     .then(response => {
       cours.value = response.data;
       pdfPath = "/pdf/" + response.data.nom_fichier;
-      console.log(pdfPath);
     })
     .catch(error => {
       console.error('Error fetching contents:', error);

@@ -33,7 +33,7 @@
   };
 
   onUnmounted(() => {
-    console.log('Component EleveParID is unmounted');
+    
   });
 
   

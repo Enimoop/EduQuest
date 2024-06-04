@@ -31,7 +31,6 @@ router.get("/", (req, res) => {
 
 router.post("/addPost", (req, res) => {
   const contenu = req.body;
-  console.log(contenu);
   modelePost.insererPost(contenu, (error, id) => {
     if (error) {
       res.status(500).json({

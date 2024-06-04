@@ -45,7 +45,7 @@ let type: string | null = null;
 
 if (status.value === "authenticated") {
    id = getSubFromToken(token);
-   console.log('id', id);
+
   type = await returnUserType(id);
 }
 
@@ -71,7 +71,6 @@ const id = route.params.id;
 axios.get(`http://localhost:3001/contenus/exercice/${id}`)
   .then(response => {
     questions.value = response.data;
-    console.log('Questions:', questions.value);
     description_contenu.value = response.data[0].description_contenu;
     
   })
@@ -91,9 +90,7 @@ questions.value.forEach(question => {
   }
 });
 
-// Envoyer les réponses au backend pour vérification
-console.log('Réponses soumises:', responses);
-// Vous pouvez envoyer les réponses au backend via une requête axios, par exemple
+
 
 // Calculer le score
 score.value = calculateScore(responses);
@@ -115,9 +112,7 @@ if (type === "Eleve") {
             }
           })
             .then(response => {
-              console.log('Score enregistré:', response.data);
               let niveau = calculerNiveau(questions.value[0].id_matiere,id);
-              console.log('niveau', niveau);
             })
             .catch(error => {
               console.error('Erreur lors de l\'enregistrement du score:', error);
@@ -128,17 +123,13 @@ if (type === "Eleve") {
             let date = format(new Date(), 'yyyy-MM-dd');
             let date_note = format (new Date(response.data[0].date_note), 'yyyy-MM-dd');
             if(date_note !== date) {
-              console.log ('date_note', response.data[0].date_note);
-              console.log ('date', date);
               axios.put('http://localhost:3001/contenus/exercices/score', nouveauScore, {
                 headers: {
                   'Content-Type': 'application/json'
                 }
               })
                 .then(response => {
-                  console.log('Score mis à jour:', response.data);
                   let niveau = calculerNiveau(questions.value[0].id_matiere,id);
-                  console.log('niveau', niveau);
                 })
                 .catch(error => {
                   console.error('Erreur lors de la mise à jour du score:', error);

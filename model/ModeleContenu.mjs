@@ -470,7 +470,7 @@ deleteQuestion(id, callback) {
 }
 
 updateCours(cours, callback) {
-  console.log(cours);
+
   const {id_contenu, titre_contenu, description_contenu, id_matiere, id_guilde, nom_fichier} = cours;
   const query = 'UPDATE Contenu SET titre_contenu = ?, description_contenu = ?, id_matiere = ?, id_guilde = ?, nom_fichier = ? WHERE id_contenu = ?';
   const values = [titre_contenu, description_contenu,id_matiere, id_guilde, nom_fichier, id_contenu];
@@ -534,7 +534,6 @@ recupererAllContenusProfs(id_u, callback) {
 
 
 recupererContenuAdmin(page, pageSize,callback) {
-  console.log(page, pageSize);
   const offset = (page - 1) * pageSize;
   const query = `SELECT c.*
                   FROM Contenu c

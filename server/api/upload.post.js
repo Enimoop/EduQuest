@@ -12,7 +12,6 @@ export default defineEventHandler(async (event) => {
     });
 
     if (!Object.keys(files).length) {
-      console.log("No files found"); 
       throw createError({
         statusMessage: "2001",
         statusCode: 400,
