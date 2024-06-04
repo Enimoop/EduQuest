@@ -1,7 +1,6 @@
 <template>
 
     <div>
-        <br>
     <ListeMatiere :matieres="matieres" />
     <NuxtPage />
 </div>

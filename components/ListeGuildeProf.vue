@@ -1,5 +1,4 @@
 <template>
-  <br>
   <div class="container">
     <div class="list-details">
       <h1 class="title-cours my-4 text-center">Vos Guildes</h1>

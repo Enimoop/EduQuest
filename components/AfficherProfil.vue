@@ -22,10 +22,6 @@
               @click="warning = ''"></button>
           </div>
           <div class="mb-3">
-            <label for="userId" class="form-label">Identifiant : <span id="userId">{{ user.id }}</span></label>
-            <small class="text-muted d-block">Cet identifiant est unique pour chaque utilisateur.</small>
-          </div>
-          <div class="mb-3">
             <label for="userEmail" class="form-label">Email :</label>
             <input type="email" id="userEmail" v-model="user.mail" class="form-control" name=mail required>
             <small class="text-muted">L'adresse email associée à ce compte utilisateur.</small>
