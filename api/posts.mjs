@@ -60,4 +60,15 @@ router.get("/:id", (req, res) => {
   });
 });
 
+router.delete("/:id", (req, res) => {
+  const id = req.params.id;
+  modelePost.supprimerPost(id, (error) => {
+    if (error) {
+      res.status(500).json({ message: "Erreur lors de la suppression du post" });
+      return;
+    }
+    res.json({ message: "post supprimé" });
+  });
+});
+
 export default router;

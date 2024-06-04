@@ -88,6 +88,17 @@ class ModelePosts {
       }
     );
   }
+
+  supprimerPost(id, callback) {
+    const query = "DELETE FROM PostForum WHERE id_post = ?";
+    this.connection.query(query, [id], (error, results, fields) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, results.affectedRows > 0);
+    });
+  }
 }
 
 export default ModelePosts;

@@ -22,7 +22,10 @@
             <div>
               <strong>{{ post.eleve.nom }} {{ post.eleve.prenom }}</strong>: {{ post.nom }}
             </div>
-            <router-link :to="`/forum/${post.id}`" class="btn btn-primary btn-sm">Voir plus</router-link>
+            <div>
+              <router-link :to="`/forum/${post.id}`" class="btn btn-primary btn-sm">Voir plus</router-link>
+              <button v-if="type === 'Admin'" @click="deletePost(post.id)" class="btn btn-danger btn-sm ms-2">Supprimer</button>
+            </div>
           </li>
         </ul>
       </div>
@@ -57,12 +60,18 @@ import { ref, onMounted, computed, watch } from "vue";
 import axios from "axios";
 import CreerPost from "~/components/CreerPost.vue";
 
+const headers = useRequestHeaders(["cookie"]);
+const { data: token } = await useFetch("/api/token", { headers });
+const idu = getSubFromToken(token);
+const type = await returnUserType(idu);
+
 const posts = ref([]);
 const isModalOpen = ref(false);
 const currentPage = ref(1);
 const pageSize = 7;
 const totalPosts = ref(0);
 const searchQuery = ref("");
+const isAdmin = ref(type === 'Admin'); // Ajouter la vérification du type d'utilisateur
 
 const ouvrirModal = () => {
   isModalOpen.value = true;
@@ -101,6 +110,15 @@ const resetSearch = () => {
   currentPage.value = 1; // Reset to first page when resetting search
 };
 
+const deletePost = async (postId) => {
+  try {
+    await axios.delete(`http://localhost:3001/posts/${postId}`);
+    fetchPosts(currentPage.value, pageSize, searchQuery.value);
+  } catch (error) {
+    console.error("Error deleting post:", error);
+  }
+};
+
 onMounted(() => {
   fetchPosts(currentPage.value, pageSize);
 });
@@ -125,7 +143,6 @@ const isLastPage = computed(() => {
   return (currentPage.value * pageSize) >= totalPosts.value;
 });
 </script>
-
 
 <style scoped>
 .container {
