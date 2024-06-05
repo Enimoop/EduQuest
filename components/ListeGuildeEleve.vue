@@ -2,28 +2,34 @@
   <div class="container mt-5">
     <div class="list-details">
       <h1 class="title-cours my-4 text-center">Tes Guildes</h1>
-      <div class="row">
-        <div class="col-md-4 d-flex align-items-stretch" v-for="guilde in paginatedGuildes" :key="guilde.id">
-          <router-link :to="'/guilde/' + guilde.id" class="col text-decoration-none">
-            <div class="card mb-4 contenu-card shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title">{{ guilde.nom }}</h5>
-                <p class="card-text"><small class="text-muted">{{ guilde.prof }}</small></p>
-                <p class="card-text">{{ guilde.description }}</p>
-              </div>
-            </div>
-          </router-link>
-        </div>
+      <div v-if="guildes.length === 0" class="text-center">
+        <p>Vous ne faites partie d'aucune guilde</p>
       </div>
-      <!-- Pagination -->
-      <div class="pagination">
-        <button @click="prevPage" :disabled="currentPage === 1">Précédent</button>
-        <span>Page {{ currentPage }}</span>
-        <button @click="nextPage" :disabled="isLastPage">Suivant</button>
+      <div v-else>
+        <div class="row">
+          <div class="col-md-4 d-flex align-items-stretch" v-for="guilde in paginatedGuildes" :key="guilde.id">
+            <router-link :to="'/guilde/' + guilde.id" class="col text-decoration-none">
+              <div class="card mb-4 contenu-card shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">{{ guilde.nom }}</h5>
+                  <p class="card-text"><small class="text-muted">{{ guilde.prof }}</small></p>
+                  <p class="card-text">{{ guilde.description }}</p>
+                </div>
+              </div>
+            </router-link>
+          </div>
+        </div>
+        <!-- Pagination -->
+        <div class="pagination">
+          <button @click="prevPage" :disabled="currentPage === 1">Précédent</button>
+          <span>Page {{ currentPage }}</span>
+          <button @click="nextPage" :disabled="isLastPage">Suivant</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
