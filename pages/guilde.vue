@@ -7,7 +7,7 @@
         <div class="container">
           <div class="guilde-details">
             <ListeGuildeEleve v-if="type === 'Eleve'" @afficherPageEnfant="afficherEnfant" />
-            <ListeGuildeProf v-if="type === 'Prof'" @afficherPageEnfant="afficherEnfant" />
+            <ListeGuildeProf v-if="type === 'Prof' || type === 'Admin'" @afficherPageEnfant="afficherEnfant" />
           </div>
         </div>
       </template>
