@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
       <div class="col-lg-12">
         <div class="card">
-          <div class="card-header bg-primary text-white text-center">
+          <div class="card-header custom-card-header text-white text-center">
             <h5 class="card-title mb-0">Notes des Contenus</h5>
           </div>
           <div class="card-body">
@@ -83,3 +83,9 @@ function formatDate(dateString: string): string {
 }
   
   </script>
+
+<style scoped>
+.custom-card-header {
+  background-color: #4a87ce !important;
+}
+</style>

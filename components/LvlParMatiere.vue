@@ -1,8 +1,8 @@
 <template>
   <div class="container mt-5">
     <div class="card">
-      <div class="card-header bg-primary text-white text-center">
-        <h5 class="card-title mb-0">Niveaux par Matière</h5>
+      <div class="card-header custom-card-header text-white text-center">
+        <h5 class="card-title mb-0">Rangs par Matière</h5>
       </div>
       <div class="card-body">
         <div class="row justify-content-center text-center">
@@ -74,3 +74,9 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+.custom-card-header {
+  background-color: #4a87ce !important;
+}
+</style>

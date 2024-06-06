@@ -1,6 +1,6 @@
 <template>
     <div class="container container-cours">
-        <h1 class="title title-cours"> Gerer les contenus </h1>
+        <h1 class="title title-cours"> Gérer les contenus </h1>
         <div class="cours-details">
             <table class="table table-striped table-hover mt-2">
                 <thead>

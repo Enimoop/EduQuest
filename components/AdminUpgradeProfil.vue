@@ -1,7 +1,7 @@
 <template>
     <div class="container mt-5">
         <div class="card">
-            <div class="card-header bg-primary text-white text-center">
+            <div class="card-header custom-card-header text-white text-center">
                 <h5 class="card-title mb-0">Recherche Utilisateur</h5>
             </div>
             <div class="card-body">
@@ -192,4 +192,9 @@ watch(searchQuery, (newQuery, oldQuery) => {
     max-height: 200px;
     overflow-y: auto;
 }
+
+.custom-card-header {
+  background-color: #4a87ce !important;
+}
+
 </style>

@@ -33,7 +33,7 @@
       <div v-if="type === 'Prof'" class="row mb-5">
         <div class="col-lg-12">
           <div class="card">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header custom-card-header text-white">
               <h5 class="mb-0">Liste des guildes</h5>
             </div>
             <div class="card-body">
@@ -62,3 +62,8 @@ const type = await returnUserType(idu);
   // Dans une vraie application, ces valeurs devraient être fournies dynamiquement.
  
   </script>
+  <style scoped>
+  .custom-card-header {
+    background-color: #4a87ce !important;
+  }
+  </style>

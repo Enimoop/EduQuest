@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <div class="card">
-      <div class="card-header bg-primary text-white text-center">
+      <div class="card-header custom-card-header text-white text-center">
         <h5 class="card-title mb-0">Profil Utilisateur</h5>
       </div>
       <div class="card-body">
@@ -99,6 +99,8 @@ const handleUpdate = async () => {
 
   if (password.value && !passwordPolicy.test(password.value)) {
     warning.value = "Le mot de passe n'est pas assez fort";
+    password.value = "";
+    confirmPassword.value = "";
     return;
   }
 
@@ -139,3 +141,9 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+.custom-card-header {
+  background-color: #4a87ce !important;
+}
+</style>

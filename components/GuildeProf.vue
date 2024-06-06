@@ -3,6 +3,10 @@
     <div class="row justify-content-center">
       <div class="cours-details">
         <h2>Tableau de bord des élèves</h2>
+        <div v-if="showSuccessMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+          L'élève a été ajouté avec succès !
+          <button type="button" class="btn-close" @click="hideSuccessMessage" aria-label="Close"></button>
+        </div>
         <div class="search-bar mb-3 d-flex align-items-center">
           <div class="position-relative flex-grow-1 me-2">
             <input
@@ -68,7 +72,7 @@
           </tbody>
         </table>
         <!-- Pagination controls -->
-        <div class="d-flex justify-content-between mt-4">
+        <div class="pagination">
           <button @click="prevPage" :disabled="currentPage === 1">Précédent </button>
           <span> Page {{ currentPage }} </span>
           <button @click="nextPage" :disabled="isLastPage" >Suivant</button>
@@ -77,7 +81,6 @@
     </div>
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { format } from 'date-fns';
@@ -118,6 +121,12 @@ const selectedUser = ref<Eleves>({ id: 0, mail: "", nom: "", prenom: "" });
 const currentPage = ref(1);
 const pageSize = 5;
 const totalEleves = ref(0);
+const showSuccessMessage = ref(false);
+
+const resetSearch = () => {
+  searchQuery.value = '';
+  searchResults.value = [];
+};
 
 const fetchEleves = async (page: number, pageSize: number) => {
   try {
@@ -173,6 +182,8 @@ const addEleveToGuilde = async (eleve: Eleves) => {
       headers: { 'Content-Type': 'application/json' }
     });
     await fetchEleves(currentPage.value, pageSize);
+    resetSearch();
+    showSuccessMessage.value = true;
   } catch (error) {
     console.error('Error adding eleve to guilde:', error);
   }
@@ -217,6 +228,10 @@ const prevPage = () => {
 const isLastPage = computed(() => {
   return (currentPage.value * pageSize) >= totalEleves.value;
 });
+
+const hideSuccessMessage = () => {
+  showSuccessMessage.value = false;
+};
 </script>
 
 <style scoped>
@@ -241,5 +256,15 @@ const isLastPage = computed(() => {
 
 .search-bar button {
   margin-left: 10px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+.pagination button {
+    margin: 0 10px;
 }
 </style>
