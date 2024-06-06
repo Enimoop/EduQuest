@@ -182,6 +182,17 @@ class ModeleGuilde {
         });
     }
 
+    deleteGuilde(id, callback) {
+        const query = 'DELETE FROM Guilde WHERE id_guilde = ?';
+        this.connection.query(query, [id], (error, results, fields) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            callback(null, results.affectedRows);
+        });
+    }
+
 }
 
 export default ModeleGuilde;
