@@ -1,7 +1,7 @@
 <template>
   <div class="container container-cours mt-5" style="width: 50%;">
     <form @submit.prevent="submitForm" class="form p-4 shadow rounded bg-light">
-      <h2 class="form-title mb-4 text-center">Nouveau Quiz/Exercice</h2>
+      <h2 class="form-title mb-4 text-center">Modifier la quête</h2>
       <div v-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
         {{ successMessage }}
         <button type="button" class="btn-close" @click="successMessage = ''"></button>

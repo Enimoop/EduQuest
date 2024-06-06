@@ -148,9 +148,9 @@ DELIMITER //
 CREATE PROCEDURE supprimerNotesEleveGuilde(IN eleveId INT, IN guildeId INT)
 BEGIN
     DELETE n 
-    FROM Noten
+    FROM Noter n
     JOIN Contenu c ON n.id_contenu = c.id_contenu
-r     WHERE n.id_u = eleveId AND c.id_guilde = guildeId;
+    WHERE n.id_u = eleveId AND c.id_guilde = guildeId;
 END //
 
 DELIMITER ;
