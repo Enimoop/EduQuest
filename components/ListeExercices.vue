@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <div class="list-details">
-    <h1 class="title-cours my-4 text-center">Les Exercices</h1>
+    <h1 class="title-cours my-4 text-center">Quêtes</h1>
     <div class="row">
       <div class="col-md-4 d-flex align-items-stretch" v-for="exercice in exercices" :key="exercice.id">
         <router-link :to="'/exercice/' + exercice.id" class="col text-decoration-none">
