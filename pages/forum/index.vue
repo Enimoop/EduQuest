@@ -1,4 +1,6 @@
 <template>
+  <br>
+    <br>
   <div class="container mt-5">
     <div class="text-center mb-4">
       <h3 class="display-4">Forum</h3>
@@ -53,6 +55,7 @@
       </div>
     </div>
   </div>
+  <br>
 </template>
 
 <script setup>

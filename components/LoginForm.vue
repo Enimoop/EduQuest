@@ -1,4 +1,5 @@
 <template>
+  <br>
   <form class="registration-form py-4 px-2 bg-light rounded shadow-sm mx-auto" style="max-width: 400px;" @submit.prevent="handleSignIn">
     <h2 class="mb-4 text-center">Se connecter</h2>
     <div v-if="success" class="alert alert-success alert-dismissible fade show" role="alert">

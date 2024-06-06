@@ -10,7 +10,6 @@
 
 <style>
 body {
-  padding-top: 56px; /* Ajustez cette valeur selon la hauteur de votre barre de navigation */
   background-color: #121212; /* Une couleur de fond sombre */
   color: #e0e0e0; /* Couleur du texte pour un bon contraste avec le fond sombre */
 }
