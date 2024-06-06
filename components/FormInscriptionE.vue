@@ -1,4 +1,5 @@
 <template>
+  <br>
     <form class="registration-form py-4 px-2 bg-light rounded shadow-sm mx-auto" @submit.prevent="handleInsc">
       <h2 class="mb-4 text-center">S'enregistrer</h2>
       <div v-if="success" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -33,10 +34,7 @@
         <label for="password" class="form-label">Confirmez le mot de passe</label>
         <input v-model="confirmPassword" type="password" class="form-control" id="confirmPassword" placeholder="••••••••" required>
       </div>
-      <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="remember">
-        <label class="form-check-label" for="remember">Se Souvenir de moi</label>
-      </div>
+     
       <button type="submit" class="btn btn-primary w-100">Créer</button>
       <p class="mt-3 mb-0 text-center">Déjà un compte ? <router-link to="/login" class="text-primary">Se connecter</router-link></p>
     </form>

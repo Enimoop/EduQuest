@@ -1,6 +1,8 @@
 <template>
   <div class="container scp">
     <div class="list-details">
+      <h3 class="guilde-description text-center">{{ libelle_matiere }}</h3>
+      <br>
       <div class="row">
         <div class="col-md-4 d-flex align-items-stretch" v-for="contenu in contenus" :key="contenu.id">
           <router-link :to="'/' + contenu.type_contenu.toLowerCase() + '/' + contenu.id" class="col text-decoration-none">
@@ -38,6 +40,11 @@ import { format } from 'date-fns';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 
+import { getSubFromToken } from "../utils/session.mjs";
+const headers = useRequestHeaders(["cookie"]) as HeadersInit;
+const { data: token } = await useFetch("/api/token", { headers });
+const idu = getSubFromToken(token);
+
 interface Contenus {
   id: number;
   titre_contenu: string;
@@ -46,6 +53,7 @@ interface Contenus {
   type_contenu: string;
 }
 
+const libelle_matiere = ref('');
 const nom_guilde = ref('');
 const description_guilde = ref('');
 const contenus = ref<Contenus[]>([]);
@@ -58,18 +66,17 @@ const id = route.params.id;
 
 const fetchContenus = async (page: number, pageSize: number) => {
   try {
-    const response = await axios.get(`http://localhost:3001/contenus/guilde/page/${id}`, {
+    const response = await axios.get(`http://localhost:3001/matieres/${id}/${idu}`, {
       params: {
         page,
         pageSize
       }
     });
-    contenus.value = response.data.contenus;
+    contenus.value = response.data.contenus_matiere;
     totalContenus.value = response.data.total;
-    if (response.data.contenus.length > 0) {
-      nom_guilde.value = response.data.contenus[0].nom_guilde;
-      description_guilde.value = response.data.contenus[0].description_guilde;
-    }
+    if (response.data.contenus_matiere.length > 0) {
+      libelle_matiere.value = response.data.contenus_matiere[0].libelle_matiere;
+    } 
   } catch (error) {
     console.error('Error fetching contents:', error);
   }
