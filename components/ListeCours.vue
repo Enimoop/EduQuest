@@ -6,13 +6,17 @@
         <div class="col-md-4 d-flex align-items-stretch" v-for="cour in cours" :key="cour.id">
           <router-link :to="'/cours/' + cour.id" class="col text-decoration-none">
             <div class="card mb-4 contenu-card shadow-sm">
-              <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                <span class="badge position-absolute top-0 end-0 m-2">
-                  <img src="@/public/image/parcheminc.png" alt="Cours" class="icon-image">
-                </span>
+              <div class="card-body d-flex flex-column">
                 <h5 class="card-title text-center">{{ cour.titre_contenu }}</h5>
                 <p class="card-description text-center">{{ truncate(cour.description_contenu, 100) }}</p>
-                <p class="card-text text-center"><small class="text-muted">{{ format(new Date(cour.date_contenu), 'dd/MM/yyyy') }}</small></p>
+                <div class="d-flex justify-content-center align-items-center mt-auto">
+                  <p class="card-text date-text"><small class="text-muted">{{ format(new Date(cour.date_contenu), 'dd/MM/yyyy') }}</small></p>
+                </div>
+                <div class="icon-container">
+                  <span class="badge">
+                    <img src="@/public/image/parcheminc.png" alt="Cours" class="icon-image">
+                  </span>
+                </div>
               </div>
             </div>
           </router-link>
@@ -32,6 +36,7 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { format } from 'date-fns';
 import axios from 'axios';
+import { getSubFromToken } from "../utils/session.mjs";
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 
@@ -136,7 +141,17 @@ const truncate = (text: string, length: number) => {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
+
+.date-text {
+  text-align: center;
+  margin-top: auto;
+}
+
+.icon-container {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 
 .my-4 {

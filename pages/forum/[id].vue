@@ -1,5 +1,7 @@
 <template>
-
+  <br>
+  <br>
+  
     <div>
       <AfficherPost :commentaires_post="commentaires_post" />
     </div>

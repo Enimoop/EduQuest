@@ -48,7 +48,7 @@
                     <!-- Table header -->
                     <thead class="thead-dark">
                       <tr>
-                        <th scope="col" class="text-center">Description du contenu</th>
+                        <th scope="col" class="text-center">Titre du contenu</th>
                         <th scope="col" class="text-center">Note</th>
                         <th scope="col" class="text-center">Date de la note</th>
                       </tr>
@@ -56,7 +56,7 @@
                     <!-- Table body -->
                     <tbody>
                       <tr v-for="note in currentEleveNotes" :key="note.id">
-                        <td>{{ note.description }}</td>
+                        <td>{{ note.titre }}</td>
                         <td>{{ note.note }}</td>
                         <td>{{ format(new Date(note.date), 'dd/MM/yyyy') }}</td>
                       </tr>
@@ -102,6 +102,7 @@ interface Eleves {
 
 interface Notes {
   id: number;
+  titre: string;
   description: string;
   note: number;
   date: string;

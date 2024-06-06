@@ -16,7 +16,7 @@ CREATE TABLE `User` (
 INSERT INTO `User` (`id_u`, `nom`, `prenom`, `mail`, `mdp`, `etablissement`, `niveau_etude`, `type`) VALUES
 (1, 'Admin', 'Admin', 'admin@mail.com', '6593d31a65175d624afc703a4070db550d4c7b91c795e431da9a69e52c1f313e', NULL, NULL, 'Admin'),
 (2, 'Prof', 'Thomas', 'thomas.prof@mail.com', 'ecfa0c25f6ad24a4fe594ea4835fb352e39ce8dab049a80382a26d979f08f888', 'ESIEE-IT', NULL, 'Prof'),
-(3, 'Eleve', 'Marine', 'marin.eleve@mail.com', '2579fabbc2c6bfa559d4c94b2bb72b295076cd00f4a0699d9b56cbfa60f3b3e0', NULL, 6, 'Eleve');
+(3, 'Eleve', 'Marine', 'marine.eleve@mail.com', '2579fabbc2c6bfa559d4c94b2bb72b295076cd00f4a0699d9b56cbfa60f3b3e0', NULL, 6, 'Eleve');
 
 CREATE TABLE `Matiere` (
   `id_matiere` int NOT NULL AUTO_INCREMENT,
@@ -35,7 +35,7 @@ INSERT INTO `Matiere` (`id_matiere`, `libelle_matiere`) VALUES
 
 CREATE TABLE `Contenu` (
   `id_contenu` int NOT NULL AUTO_INCREMENT,
-  `titre_contenu` varchar(255),
+  `titre_contenu` varchar(255) NOT NULL,
   `description_contenu` text,
   `date_contenu` date DEFAULT NULL,
   `id_matiere` int NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE `Contenu` (
 
 CREATE TABLE `PostForum` (
   `id_post` int NOT NULL AUTO_INCREMENT,
-  `nom_post` varchar(255),
+  `nom_post` varchar(255) NOT NULL,
   `contenu_post` text,
   `date_post` date DEFAULT NULL,
   `id_u` int DEFAULT NULL,

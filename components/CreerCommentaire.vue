@@ -3,7 +3,7 @@
     <form @submit.prevent="submitForm">
       <div class="mb-3">
         <label for="title" class="form-label">Contenu</label>
-        <input
+        <textarea
           type="text"
           class="form-control"
           id="title"

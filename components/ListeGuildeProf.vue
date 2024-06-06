@@ -2,7 +2,7 @@
   <div class="container">
     <div class="list-details">
       <h1 class="title-cours my-4 text-center">Vos Guildes</h1>
-      <div v-if="guildes.length === 0" class="text-center">
+      <div v-if="!guildes || guildes.length === 0" class="text-center">
         <p>Vous n'avez pas de guilde</p>
       </div>
       <div v-else>
@@ -48,6 +48,7 @@
 </template>
 
 
+
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
 import axios from 'axios';
@@ -72,7 +73,9 @@ const totalGuildes = ref(0);
 const isModalOpen = ref(false);
 
 const ouvrirModal = () => {
+  console.log('ouvrirModal');
   isModalOpen.value = true;
+  console.log(isModalOpen.value);
   document.body.classList.add('modal-open');
 };
 
@@ -125,6 +128,7 @@ const isLastPage = computed(() => {
   return (currentPage.value * pageSize) >= totalGuildes.value;
 });
 </script>
+
 
 <style scoped>
 .container {

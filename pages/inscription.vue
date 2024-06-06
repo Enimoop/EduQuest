@@ -1,5 +1,6 @@
 <template>
-
+<br>
+    <br>
       <FormInscriptionE />
 
   </template>

@@ -1,5 +1,6 @@
 <template>
-
+<br>
+    <br>
     <div>
       <!-- Contenu de la page parent -->
       <template v-if="!afficherPageEnfant">
