@@ -1,20 +1,22 @@
 <template>
-  <div class="container mt-5">
+  <div class="container scp">
     <div class="list-details">
-      <h3 class="guilde-description text-center">{{ libelle_matiere }}</h3>
-      <br>
       <div class="row">
         <div class="col-md-4 d-flex align-items-stretch" v-for="contenu in contenus" :key="contenu.id">
           <router-link :to="'/' + contenu.type_contenu.toLowerCase() + '/' + contenu.id" class="col text-decoration-none">
             <div class="card mb-4 contenu-card shadow-sm">
-              <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                <span class="badge position-absolute top-0 end-0 m-2">
-                  <img v-if="contenu.type_contenu === 'Cours'" src="@/public/image/parcheminc.png" alt="Cours" class="icon-image">
-                  <img v-else-if="contenu.type_contenu === 'Exercice'" src="@/public/image/epee2c.png" alt="Exercice" class="icon-image">
-                </span>
+              <div class="card-body d-flex flex-column">
                 <h5 class="card-title text-center">{{ contenu.titre_contenu }}</h5>
-                <p class="card-description text-center">{{ truncate(contenu.description_contenu, 100) }}</p>
-                <p class="card-text text-center"><small class="text-muted">{{ format(new Date(contenu.date_contenu), 'dd/MM/yyyy') }}</small></p>
+                <p class="card-description text-center description-text">{{ truncate(contenu.description_contenu, 100) }}</p>
+                <div class="d-flex justify-content-center align-items-center mt-auto">
+                  <p class="card-text date-text"><small class="text-muted">{{ format(new Date(contenu.date_contenu), 'dd/MM/yyyy') }}</small></p>
+                </div>
+                <div class="icon-container">
+                  <span class="badge">
+                    <img v-if="contenu.type_contenu === 'Cours'" src="@/public/image/parcheminc.png" alt="Cours" class="icon-image">
+                    <img v-else-if="contenu.type_contenu === 'Exercice'" src="@/public/image/epee2c.png" alt="Exercice" class="icon-image">
+                  </span>
+                </div>
               </div>
             </div>
           </router-link>
@@ -30,22 +32,13 @@
   </div>
 </template>
 
-
-
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
-import { useRoute } from 'vue-router';
 import { format } from 'date-fns';
 import axios from 'axios';
-import { getSubFromToken } from "../utils/session.mjs";
+import { useRoute } from 'vue-router';
 
-const headers = useRequestHeaders(["cookie"]) as HeadersInit;
-
-const { data: token } = await useFetch("/api/token", { headers });
-
-const idu = getSubFromToken(token);
-
-interface Contenu {
+interface Contenus {
   id: number;
   titre_contenu: string;
   description_contenu: string;
@@ -53,8 +46,9 @@ interface Contenu {
   type_contenu: string;
 }
 
-const contenus = ref<Contenu[]>([]);
-const libelle_matiere = ref('');
+const nom_guilde = ref('');
+const description_guilde = ref('');
+const contenus = ref<Contenus[]>([]);
 const currentPage = ref(1);
 const pageSize = 12;
 const totalContenus = ref(0);
@@ -64,17 +58,18 @@ const id = route.params.id;
 
 const fetchContenus = async (page: number, pageSize: number) => {
   try {
-    const response = await axios.get(`http://localhost:3001/matieres/${id}/${idu}`, {
+    const response = await axios.get(`http://localhost:3001/contenus/guilde/page/${id}`, {
       params: {
         page,
         pageSize
       }
     });
-    contenus.value = response.data.contenus_matiere;
+    contenus.value = response.data.contenus;
     totalContenus.value = response.data.total;
-     if (response.data.contenus_matiere.length > 0) {
-      libelle_matiere.value = response.data.contenus_matiere[0].libelle_matiere;
-    } 
+    if (response.data.contenus.length > 0) {
+      nom_guilde.value = response.data.contenus[0].nom_guilde;
+      description_guilde.value = response.data.contenus[0].description_guilde;
+    }
   } catch (error) {
     console.error('Error fetching contents:', error);
   }
@@ -151,7 +146,17 @@ const truncate = (text: string, length: number) => {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
+
+.date-text {
+  text-align: center;
+  margin-top: auto;
+}
+
+.icon-container {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 
 .guilde-description {
@@ -214,5 +219,16 @@ const truncate = (text: string, length: number) => {
   padding: 2rem;
   border-radius: 5px;
   margin-top: 2rem;
+}
+
+.d-flex.justify-content-center.align-items-center.mt-auto {
+  margin-top: auto;
+  width: 100%;
+}
+
+.description-text {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #666;
 }
 </style>

@@ -193,6 +193,7 @@ recupererTotalElevesDansGuilde(id_guilde, callback) {
       }
       const notes = results.map(row => ({
         id: row.id_contenu,
+        titre: row.titre_contenu,
         description: row.description_contenu,
         note: row.note,
         id_eleve: row.id_eleve,

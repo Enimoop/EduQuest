@@ -1,37 +1,42 @@
 <template>
   <div class="container mt-5">
     <div class="list-details">
-    <h1 class="title-cours my-4 text-center">Quêtes</h1>
-    <div class="row">
-      <div class="col-md-4 d-flex align-items-stretch" v-for="exercice in exercices" :key="exercice.id">
-        <router-link :to="'/exercice/' + exercice.id" class="col text-decoration-none">
-          <div class="card mb-4 contenu-card shadow-sm">
-            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-              <span class="badge position-absolute top-0 end-0 m-2">
-                <img src="@/public/image/epee2c.png" alt="Exercice" class="icon-image">
-              </span>
-              <h5 class="card-title text-center">{{ exercice.titre_contenu }}</h5>
-              <p class="card-description text-center">{{ truncate(exercice.description_contenu, 100) }}</p>
-              <p class="card-text text-center"><small class="text-muted">{{ format(new Date(exercice.date_contenu), 'dd/MM/yyyy') }}</small></p>
+      <h1 class="title-cours my-4 text-center">Quêtes</h1>
+      <div class="row">
+        <div class="col-md-4 d-flex align-items-stretch" v-for="exercice in exercices" :key="exercice.id">
+          <router-link :to="'/exercice/' + exercice.id" class="col text-decoration-none">
+            <div class="card mb-4 contenu-card shadow-sm">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-center">{{ exercice.titre_contenu }}</h5>
+                <p class="card-description text-center">{{ truncate(exercice.description_contenu, 100) }}</p>
+                <div class="d-flex justify-content-center align-items-center mt-auto">
+                  <p class="card-text date-text"><small class="text-muted">{{ format(new Date(exercice.date_contenu), 'dd/MM/yyyy') }}</small></p>
+                </div>
+                <div class="icon-container">
+                  <span class="badge">
+                    <img src="@/public/image/epee2c.png" alt="Exercice" class="icon-image">
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-        </router-link>
+          </router-link>
+        </div>
+      </div>
+      <!-- Pagination -->
+      <div class="pagination">
+        <button @click="prevPage" :disabled="currentPage === 1">Précédent</button>
+        <span>Page {{ currentPage }}</span>
+        <button @click="nextPage" :disabled="isLastPage">Suivant</button>
       </div>
     </div>
-    <!-- Pagination -->
-    <div class="pagination">
-      <button @click="prevPage" :disabled="currentPage === 1">Précédent</button>
-      <span>Page {{ currentPage }}</span>
-      <button @click="nextPage" :disabled="isLastPage">Suivant</button>
-    </div>
   </div>
-</div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
 import { format } from 'date-fns';
 import axios from 'axios';
+import { getSubFromToken } from "../utils/session.mjs";
 
 const headers = useRequestHeaders(["cookie"]) as HeadersInit;
 
@@ -136,7 +141,17 @@ const truncate = (text: string, length: number) => {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
+
+.date-text {
+  text-align: center;
+  margin-top: auto;
+}
+
+.icon-container {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 
 .my-4 {
@@ -187,7 +202,6 @@ const truncate = (text: string, length: number) => {
 
 .text-center {
   font-weight: bold;
-
 }
 
 .list-details {
